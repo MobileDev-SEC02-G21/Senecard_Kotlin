@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Sombra blanca -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#1AFFFFFF" />
+            <corners android:radius="16dp" />
+        </shape>
+    </item>
+    <item android:bottom="1dp" >
+        <shape android:shape="rectangle">
+            <solid android:color="#33FFFFFF" />
+            <corners android:radius="16dp" />
+        </shape>
+    </item>
+    <item android:bottom="1.5dp" >
+        <shape android:shape="rectangle">
+            <solid android:color="#4DFFFFFF" />
+            <corners android:radius="16dp" />
+        </shape>
+    </item>
+    <item android:bottom="2dp" >
+        <shape android:shape="rectangle">
+            <solid android:color="#66FFFFFF" />
+            <corners android:radius="16dp" />
+        </shape>
+    </item>
+    <item android:bottom="2.5dp" >
+        <shape android:shape="rectangle">
+            <solid android:color="#80FFFFFF" />
+            <corners android:radius="16dp" />
+        </shape>
+    </item>
+    <!-- Botón -->
+    <item android:bottom="5dp" >
+        <selector>
+            <item android:state_pressed="true">
+                <shape android:shape="rectangle">
+                    <solid android:color="#CCCCCC" />
+                    <corners android:radius="16dp" />
+                    <padding
+                        android:left="20dp"
+                        android:top="10dp"
+                        android:right="20dp"
+                        android:bottom="10dp" />
+                </shape>
+            </item>
+            <item>
+                <shape android:shape="rectangle">
+                    <solid android:color="#FFFFFF" />
+                    <corners android:radius="16dp" />
+                    <padding
+                        android:left="20dp"
+                        android:top="10dp"
+                        android:right="20dp"
+                        android:bottom="10dp" />
+                </shape>
+            </item>
+        </selector>
+    </item>
+</layer-list>
+

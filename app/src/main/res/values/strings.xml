@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">senecard</string>
+    <string name="app_name">SeneCard</string>
+    <string name="auth_enter">Enter</string>
+    <string name="auth_register">Register</string>
 </resources>
