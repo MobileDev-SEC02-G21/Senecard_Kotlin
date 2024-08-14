@@ -14,7 +14,9 @@
         <activity
             android:name=".ActivityAuth"
             android:exported="true"
-            android:theme="@style/Theme.Senecard">
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Senecard"
+            tools:ignore="DiscouragedApi,LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

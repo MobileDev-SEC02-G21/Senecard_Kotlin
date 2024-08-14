@@ -2,4 +2,16 @@
     <string name="app_name">SeneCard</string>
     <string name="auth_enter">Enter</string>
     <string name="auth_register">Register</string>
+    <string name="auth_document">Document</string>
+    <string name="auth_password">Password</string>
+    <string name="auth_forgotten_your_password">Forgotten your password?</string>
+    <string name="auth_remember_me">Remember me</string>
+    <string name="auth_new_sign_up_here">New? Sign up here</string>
+    <string name="auth_user">User</string>
+    <string name="auth_name">Name</string>
+    <string name="auth_phone">Phone</string>
+    <string name="auth_next">Next</string>
+    <string name="auth_already_have_an_account">Already have an account? Login here</string>
+    <string name="auth_confirm_password">Confirm password</string>
+    <string name="auth_student_code">Student code</string>
 </resources>

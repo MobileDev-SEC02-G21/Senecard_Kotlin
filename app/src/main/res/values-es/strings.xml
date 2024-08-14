@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">SeneCard</string>
+    <string name="auth_enter">Ingresar</string>
+    <string name="auth_register">Registrarse</string>
+    <string name="auth_document">Documento</string>
+    <string name="auth_password">Contraseña</string>
+    <string name="auth_forgotten_your_password">¿Olvidaste tu contraseña?</string>
+    <string name="auth_remember_me">Recuérdame</string>
+    <string name="auth_new_sign_up_here">¿Nuevo? Regístrate aquí</string>
+    <string name="auth_user">Usuario</string>
+    <string name="auth_name">Nombre</string>
+    <string name="auth_phone">Teléfono</string>
+    <string name="auth_next">Siguiente</string>
+    <string name="auth_already_have_an_account">¿Ya tienes una cuenta? Inicia sesión aquí</string>
+    <string name="auth_confirm_password">Confirmar contraseña</string>
+    <string name="auth_student_code">Código de estudiante</string>
 </resources>
