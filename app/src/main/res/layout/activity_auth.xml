@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+    android:id="@+id/main_layout"
     android:background="@drawable/auth_background"
     tools:context=".ActivityAuth"
 
@@ -11,8 +11,6 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:visibility="gone"
-
         android:text="@string/app_name"
         android:fontFamily="@font/questrial"
         android:textColor="@color/white"
@@ -21,11 +19,14 @@
         android:layout_gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:ignore="MissingConstraints" />
+        tools:ignore="MissingConstraints"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.2" />
 
     <Button
-        android:visibility="gone"
-
         android:id="@+id/auth_auxiliary_button_enter"
         android:text="@string/auth_enter"
         android:fontFamily="@font/montserratsemibold"
@@ -38,11 +39,13 @@
         android:layout_width="300dp"
         android:layout_height="60dp"
         android:layout_margin="10dp"
-        tools:ignore="MissingConstraints" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.70"  />
 
     <Button
-        android:visibility="gone"
-
         android:id="@+id/auth_auxiliary_button_register"
         android:text="@string/auth_register"
         android:fontFamily="@font/montserratsemibold"
@@ -51,11 +54,13 @@
         android:textAllCaps="false"
         android:background="@drawable/auth_auxiliary_button_background"
 
-        android:layout_gravity="center"
         android:layout_width="300dp"
         android:layout_height="60dp"
-        android:layout_margin="10dp"
-        tools:ignore="MissingConstraints" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.82" />
 
     <LinearLayout
         android:visibility="gone"
@@ -155,6 +160,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:visibility="gone"
 
         android:id="@+id/auth_sign_up_form_one"
         android:background="@drawable/auth_rounded_background_form"
