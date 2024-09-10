@@ -1,4 +1,5 @@
 <resources>
+    <string name="empty_string"></string>
     <string name="app_name">SeneCard</string>
     <string name="auth_enter">Ingresar</string>
     <string name="auth_register">Registrarse</string>

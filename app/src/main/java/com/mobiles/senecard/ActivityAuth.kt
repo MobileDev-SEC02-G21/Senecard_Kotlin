@@ -1,9 +1,10 @@
 package com.mobiles.senecard
 
+import android.os.Bundle
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
-import android.os.Bundle
+import android.content.Intent
 import android.view.MotionEvent
 import android.view.View
 import android.view.animation.AccelerateInterpolator
@@ -18,12 +19,16 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class ActivityAuth : AppCompatActivity() {
 
-    private lateinit var mainLayout: ConstraintLayout
+    private val auth = FirebaseAuth.getInstance()
+    private val db = FirebaseFirestore.getInstance()
 
     // Initial View
+    private lateinit var mainLayout: ConstraintLayout
     private lateinit var authAuxiliaryButtonEnter: Button
     private lateinit var authAuxiliaryButtonRegister: Button
 
@@ -55,7 +60,7 @@ class ActivityAuth : AppCompatActivity() {
     private var isAuthSignupFormOneVisible: Boolean = false
     private var isAuthSignupFormTwoVisible: Boolean = false
 
-    private fun setViews() {
+    private fun setElements() {
         mainLayout = findViewById(R.id.main_layout)
         authAuxiliaryButtonEnter = findViewById(R.id.auth_auxiliary_button_enter)
         authAuxiliaryButtonRegister = findViewById(R.id.auth_auxiliary_button_register)
@@ -78,14 +83,13 @@ class ActivityAuth : AppCompatActivity() {
         authSignUpFormTwoConfirmPassword = findViewById(R.id.auth_sign_up_form_two_confirm_password)
         authSignUpFormTwoButtonRegister = findViewById(R.id.auth_sign_up_form_two_button_register)
         authSignUpFormTwoLoginText = findViewById(R.id.auth_sign_up_form_two_login_text)
-
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_auth)
-        setViews()
+        setElements()
         ViewCompat.setOnApplyWindowInsetsListener(mainLayout) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -94,34 +98,143 @@ class ActivityAuth : AppCompatActivity() {
         setButtons()
     }
 
-    private fun setButtons() {
+    private fun goHomePage(user: String) {
+        resetAuthActivity()
+        val homeIntent = Intent(this, ActivityHome::class.java).apply {
+            putExtra("user", user)
+        }
+        startActivity(homeIntent)
+    }
 
+    private fun logicAuthLoginFormButtonEnter() {
+        if (authLoginFormUser.text.isEmpty()) {
+            CustomDialog(getString(R.string.auth_enter_user), "info").show(supportFragmentManager, "customDialog")
+        }
+        else if (authLoginFormPassword.text.isEmpty()) {
+            CustomDialog(getString(R.string.auth_enter_password), "info").show(supportFragmentManager, "customDialog")
+        }
+        else {
+            db.collection("users").document(authLoginFormUser.text.toString()).get().addOnSuccessListener { document ->
+                if (document.exists()) {
+                    auth.signInWithEmailAndPassword(authLoginFormUser.text.toString()+"@uniandes.edu.co", authLoginFormPassword.text.toString()).addOnCompleteListener(this) { task ->
+                        if (task.isSuccessful) {
+                            goHomePage(authLoginFormUser.text.toString())
+                        } else {
+                            CustomDialog(getString(R.string.auth_error_not_correct_password), "error").show(supportFragmentManager, "customDialog")
+                        }
+                    }
+                } else {
+                    CustomDialog(getString(R.string.auth_user_not_found), "error").show(supportFragmentManager, "customDialog")
+                }
+            }.addOnFailureListener {
+                CustomDialog(getString(R.string.auth_error_querying_database), "error").show(supportFragmentManager, "customDialog")
+            }
+        }
+    }
+
+    private fun logicAuthSignUpFormOneButtonNext() {
+        if (authSignUpFormOneName.text.isEmpty()) {
+            CustomDialog(getString(R.string.auth_enter_name), "info").show(supportFragmentManager, "customDialog")
+        }
+        else if (authSignUpFormOneStudentCode.text.isEmpty()) {
+            CustomDialog(getString(R.string.auth_enter_student_code), "info").show(supportFragmentManager, "customDialog")
+        }
+        else if (authSignUpFormOnePhone.text.isEmpty()) {
+            CustomDialog(getString(R.string.auth_enter_phone), "info").show(supportFragmentManager, "customDialog")
+        }
+        else {
+            CustomDialog(getString(R.string.auth_message_button_next), "info") {
+                hideAuthSignUpFormOne {
+                    showAuthSignUpFormTwo()
+                }
+            }.show(supportFragmentManager, "customDialog")
+        }
+    }
+
+    private fun logicAuthSignUpFormTwoButtonRegister() {
+        if (authSignUpFormTwoUser.text.isEmpty()) {
+            CustomDialog(getString(R.string.auth_enter_user), "info").show(supportFragmentManager, "customDialog")
+        }
+        else if (!(authSignUpFormTwoUser.text.toString()).matches(Regex("[a-zA-Z0-9.]+"))) {
+            CustomDialog(getString(R.string.auth_user_not_correct), "error").show(supportFragmentManager, "customDialog")
+        }
+        else if (authSignUpFormTwoPassword.text.isEmpty()) {
+            CustomDialog(getString(R.string.auth_enter_password), "info").show(supportFragmentManager, "customDialog")
+        }
+        else if (authSignUpFormTwoPassword.text.length < 6) {
+            CustomDialog(getString(R.string.auth_password_minimum_characters), "info").show(supportFragmentManager, "customDialog")
+        }
+        else if (authSignUpFormTwoConfirmPassword.text.isEmpty()) {
+            CustomDialog(getString(R.string.auth_enter_confirm_password), "info").show(supportFragmentManager, "customDialog")
+        }
+        else if (authSignUpFormTwoPassword.text.toString() != authSignUpFormTwoConfirmPassword.text.toString()) {
+            CustomDialog(getString(R.string.auth_not_equal_passwords), "info").show(supportFragmentManager, "customDialog")
+        }
+        else {
+            FirebaseAuth.getInstance().createUserWithEmailAndPassword(
+                authSignUpFormTwoUser.text.toString() + "@uniandes.edu.co",
+                authSignUpFormTwoPassword.text.toString()
+            ).addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    db.collection("users").document(authSignUpFormTwoUser.text.toString()).set(
+                        hashMapOf(
+                            "name" to authSignUpFormOneName.text.toString(),
+                            "student_code" to authSignUpFormOneStudentCode.text.toString(),
+                            "phone" to authSignUpFormOnePhone.text.toString()
+                        )
+                    )
+                    goHomePage(authSignUpFormTwoUser.text.toString())
+                } else {
+                    CustomDialog(getString(R.string.auth_error_registering_user), "error").show(supportFragmentManager, "customDialog")
+                }
+            }
+        }
+    }
+
+    private fun setButtons() {
         authAuxiliaryButtonEnter.setOnClickListener {
             hideAuthAuxiliaryButtons {
                 showAuhLoginForm()
             }
         }
-
         authAuxiliaryButtonRegister.setOnClickListener {
             hideAuthAuxiliaryButtons {
                 showAuthSignUpFormOne()
             }
         }
-
         authLoginFormButtonEnter.setOnClickListener {
-
+            logicAuthLoginFormButtonEnter()
         }
-
         authSignUpFormOneAuxiliaryButtonNext.setOnClickListener {
-            hideAuthSignUpFormOne {
-                showAuthSignUpFormTwo()
-            }
+            logicAuthSignUpFormOneButtonNext()
         }
-
         authSignUpFormTwoButtonRegister.setOnClickListener {
-
+            logicAuthSignUpFormTwoButtonRegister()
         }
+    }
 
+    private fun resetAuthActivity() {
+        authLoginForm.visibility = View.GONE
+        authSignUpFormOne.visibility = View.GONE
+        authSignUpFormTwo.visibility = View.GONE
+
+        isAuthLoginFormVisible = false
+        isAuthSignupFormOneVisible = false
+        isAuthSignupFormTwoVisible = false
+
+        authLoginFormUser.setText(getString(R.string.empty_string))
+        authLoginFormPassword.setText(getString(R.string.empty_string))
+        authSignUpFormOneName.setText(getString(R.string.empty_string))
+        authSignUpFormOneStudentCode.setText(getString(R.string.empty_string))
+        authSignUpFormOnePhone.setText(getString(R.string.empty_string))
+        authSignUpFormTwoUser.setText(getString(R.string.empty_string))
+        authSignUpFormTwoPassword.setText(getString(R.string.empty_string))
+        authSignUpFormTwoConfirmPassword.setText(getString(R.string.empty_string))
+
+        authAuxiliaryButtonEnter.visibility = View.VISIBLE
+        authAuxiliaryButtonRegister.visibility = View.VISIBLE
+        authAuxiliaryButtonEnter.translationY = 0f
+        authAuxiliaryButtonRegister.translationY = 0f
     }
 
     private fun hideAuthAuxiliaryButtons(onAnimationEnd: () -> Unit) {
@@ -143,7 +256,7 @@ class ActivityAuth : AppCompatActivity() {
         })
     }
 
-    private fun showAuthAuxiliaryButton() {
+    private fun showAuthAuxiliaryButtons() {
         isAuthLoginFormVisible = false
         isAuthSignupFormOneVisible = false
         isAuthSignupFormTwoVisible = false
@@ -237,58 +350,43 @@ class ActivityAuth : AppCompatActivity() {
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
-        if (ev?.action == MotionEvent.ACTION_DOWN && isAuthLoginFormVisible) {
-            val rect = IntArray(2)
-            authLoginForm.getLocationOnScreen(rect)
-            val x = ev.rawX.toInt()
-            val y = ev.rawY.toInt()
-            val formLeft = rect[0]
-            val formTop = rect[1]
-            val formRight = formLeft + authLoginForm.width
-            val formBottom = formTop + authLoginForm.height
+        fun handleTouchOutsideForm(formView: View, isVisible: Boolean, hideFormAction: () -> Unit): Boolean {
+            if (ev?.action == MotionEvent.ACTION_DOWN && isVisible) {
+                val rect = IntArray(2)
+                formView.getLocationOnScreen(rect)
+                val x = ev.rawX.toInt()
+                val y = ev.rawY.toInt()
+                val formLeft = rect[0]
+                val formTop = rect[1]
+                val formRight = formLeft + formView.width
+                val formBottom = formTop + formView.height
 
-            if (x < formLeft || x > formRight || y < formTop || y > formBottom) {
-                hideAuthLoginForm {
-                    showAuthAuxiliaryButton()
+                if (x < formLeft || x > formRight || y < formTop || y > formBottom) {
+                    hideFormAction()
+                    return true
                 }
-                return true
             }
+            return false
         }
-        else if (ev?.action == MotionEvent.ACTION_DOWN && isAuthSignupFormOneVisible) {
-            val rect = IntArray(2)
-            authSignUpFormOne.getLocationOnScreen(rect)
-            val x = ev.rawX.toInt()
-            val y = ev.rawY.toInt()
-            val formLeft = rect[0]
-            val formTop = rect[1]
-            val formRight = formLeft + authSignUpFormOne.width
-            val formBottom = formTop + authSignUpFormOne.height
 
-            if (x < formLeft || x > formRight || y < formTop || y > formBottom) {
-                hideAuthSignUpFormOne {
-                    showAuthAuxiliaryButton()
-                }
-                return true
-            }
+        if (handleTouchOutsideForm(authLoginForm, isAuthLoginFormVisible) {
+                hideAuthLoginForm { showAuthAuxiliaryButtons() }
+            }) {
+            return true
         }
-        else if (ev?.action == MotionEvent.ACTION_DOWN && isAuthSignupFormTwoVisible) {
-            val rect = IntArray(2)
-            authSignUpFormTwo.getLocationOnScreen(rect)
-            val x = ev.rawX.toInt()
-            val y = ev.rawY.toInt()
-            val formLeft = rect[0]
-            val formTop = rect[1]
-            val formRight = formLeft + authSignUpFormTwo.width
-            val formBottom = formTop + authSignUpFormTwo.height
 
-            if (x < formLeft || x > formRight || y < formTop || y > formBottom) {
-                hideAuthSignUpFormTwo {
-                    showAuthAuxiliaryButton()
-                }
-                return true
-            }
+        if (handleTouchOutsideForm(authSignUpFormOne, isAuthSignupFormOneVisible) {
+                hideAuthSignUpFormOne { showAuthAuxiliaryButtons() }
+            }) {
+            return true
         }
+
+        if (handleTouchOutsideForm(authSignUpFormTwo, isAuthSignupFormTwoVisible) {
+                hideAuthSignUpFormTwo { showAuthAuxiliaryButtons() }
+            }) {
+            return true
+        }
+
         return super.dispatchTouchEvent(ev)
     }
-
 }

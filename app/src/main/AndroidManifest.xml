@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Senecard" >
         <activity
+            android:name=".ActivityHome"
+            android:exported="false" />
+        <activity
             android:name=".ActivityAuth"
             android:exported="true"
             android:screenOrientation="portrait"

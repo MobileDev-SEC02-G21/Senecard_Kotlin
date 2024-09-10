@@ -27,6 +27,8 @@
         app:layout_constraintVertical_bias="0.2" />
 
     <Button
+        android:visibility="gone"
+
         android:id="@+id/auth_auxiliary_button_enter"
         android:text="@string/auth_enter"
         android:fontFamily="@font/montserratsemibold"
@@ -46,6 +48,8 @@
         app:layout_constraintVertical_bias="0.70" />
 
     <Button
+        android:visibility="gone"
+
         android:id="@+id/auth_auxiliary_button_register"
         android:text="@string/auth_register"
         android:fontFamily="@font/montserratsemibold"
@@ -63,8 +67,6 @@
         app:layout_constraintVertical_bias="0.82" />
 
     <LinearLayout
-        android:visibility="gone"
-
         android:id="@+id/auth_login_form"
         android:background="@drawable/auth_rounded_background_form"
         android:orientation="vertical"
@@ -75,10 +77,11 @@
         app:layout_constraintBottom_toBottomOf="parent" >
 
         <EditText
+
             android:id="@+id/auth_login_form_user"
             android:autofillHints="auth_user"
             android:hint="@string/auth_user"
-            android:inputType="number"
+            android:inputType="textNoSuggestions"
             android:fontFamily="@font/montserratsemibold"
             android:textColor="@color/black"
             android:gravity="center"
@@ -192,7 +195,7 @@
             android:id="@+id/auth_sign_up_form_one_student_code"
             android:autofillHints="auth_student_code"
             android:hint="@string/auth_student_code"
-            android:inputType="textEmailAddress"
+            android:inputType="number"
             android:fontFamily="@font/montserratsemibold"
             android:textColor="@color/black"
             android:gravity="center"
@@ -266,7 +269,7 @@
             android:id="@+id/auth_sign_up_form_two_user"
             android:autofillHints="auth_user"
             android:hint="@string/auth_user"
-            android:inputType="number"
+            android:inputType="textNoSuggestions"
             android:fontFamily="@font/montserratsemibold"
             android:textColor="@color/black"
             android:gravity="center"

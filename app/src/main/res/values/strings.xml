@@ -1,4 +1,5 @@
 <resources>
+    <string name="empty_string"></string>
     <string name="app_name">SeneCard</string>
     <string name="auth_enter">Enter</string>
     <string name="auth_register">Register</string>
@@ -14,4 +15,32 @@
     <string name="auth_already_have_an_account">Already have an account? Login here</string>
     <string name="auth_confirm_password">Confirm password</string>
     <string name="auth_student_code">Student code</string>
+    <string name="auth_enter_user">Enter a user</string>
+    <string name="auth_enter_name">Enter a name</string>
+    <string name="auth_enter_student_code">Enter a student code</string>
+    <string name="auth_enter_phone">Enter a phone</string>
+    <string name="auth_enter_password">Enter a password</string>
+    <string name="auth_enter_confirm_password">Enter a confirm password</string>
+    <string name="auth_password_minimum_characters">The password must have at least 6 characters</string>
+    <string name="auth_not_equal_passwords">The password and confirm password not are the same</string>
+    <string name="auth_message_button_next">Esta información será usada como medio de comunicación para la llegada de notificaciones y usted podrá actualizarla dentro de la aplicación en cualquier momento</string>
+    <string name="auth_user_not_found">User not found</string>
+    <string name="auth_user_not_correct">User is invalid</string>
+    <string name="auth_error_not_correct_password">Password is not correct</string>
+    <string name="auth_error_querying_database">Error querying database</string>
+
+
+
+
+    <string name="auth_error_registering_user">Error registering user</string>
+
+
+    <string name="custom_dialog_accept">Accept</string>
+    <string name="custom_dialog_message">Message</string>
+    <string name="custom_dialog_type">Type</string>
+    <string name="custom_dialog_icon">Icon</string>
+    <string name="custom_dialog_info">Info</string>
+    <string name="custom_dialog_error">Error</string>
+    <string name="custom_dialog_success">Success</string>
+    <string name="home_log_out">Log Out</string>
 </resources>
