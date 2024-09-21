@@ -27,7 +27,6 @@
         app:layout_constraintVertical_bias="0.2" />
 
     <Button
-        android:visibility="gone"
 
         android:id="@+id/auth_auxiliary_button_enter"
         android:text="@string/auth_enter"
@@ -48,7 +47,6 @@
         app:layout_constraintVertical_bias="0.70" />
 
     <Button
-        android:visibility="gone"
 
         android:id="@+id/auth_auxiliary_button_register"
         android:text="@string/auth_register"
@@ -67,6 +65,8 @@
         app:layout_constraintVertical_bias="0.82" />
 
     <LinearLayout
+        android:visibility="gone"
+
         android:id="@+id/auth_login_form"
         android:background="@drawable/auth_rounded_background_form"
         android:orientation="vertical"
