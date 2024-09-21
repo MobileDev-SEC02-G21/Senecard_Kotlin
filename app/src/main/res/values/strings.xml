@@ -30,8 +30,6 @@
     <string name="auth_error_querying_database">Error querying database</string>
 
 
-
-
     <string name="auth_error_registering_user">Error registering user</string>
 
 
@@ -43,4 +41,8 @@
     <string name="custom_dialog_error">Error</string>
     <string name="custom_dialog_success">Success</string>
     <string name="home_log_out">Log Out</string>
+    <string name="icon_senecard">icon_senecard</string>
+    <string name="know_more_stores_with_us">¡Know more stores with us!</string>
+    <string name="sign_up">sign up</string>
+    <string name="sing_in">sing in</string>
 </resources>
