@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/white"
+    tools:context=".activitiesSignUp.activitySignUp.ActivitySignUp"
+
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <ImageView
+        android:id="@+id/back_image_view"
+        android:src="@mipmap/icon_back"
+        android:contentDescription="@string/icon_back"
+
+        android:layout_gravity="start"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="30dp"
+        android:layout_marginStart="30dp"
+        tools:ignore="ImageContrastCheck" />
+
+    <TextView
+        android:text="@string/sign_up_sign_up"
+        android:fontFamily="@font/sen_bold"
+        android:textColor="@color/black"
+        android:textSize="30sp"
+
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"/>
+
+    <TextView
+        android:text="@string/sign_up_please_select_if_you_are_member_of_the_uniandes_community_or_a_store_owner"
+        android:fontFamily="@font/sen_regular"
+        android:textColor="@color/text"
+        android:textSize="16sp"
+        android:gravity="center"
+
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:layout_marginBottom="40dp" />
+
+    <Button
+        android:id="@+id/uniandes_community_button"
+        android:text="@string/sign_up_uniandes_community"
+        android:fontFamily="@font/sen_bold"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        android:background="@drawable/auth_button_background"
+
+        android:layout_gravity="center"
+        android:layout_width="320dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="20dp"
+        tools:ignore="TextContrastCheck" />
+
+    <Button
+        android:id="@+id/store_owner_button"
+        android:text="@string/sign_up_store_owner"
+        android:fontFamily="@font/sen_bold"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        android:background="@drawable/auth_button_background"
+
+        android:layout_gravity="center"
+        android:layout_width="320dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="30dp"
+        tools:ignore="TextContrastCheck" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:text="@string/sign_up_already_you_have_an_account"
+            android:fontFamily="@font/sen_semibold"
+            android:textColor="@color/text"
+            android:textSize="14sp"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/sign_in_text_view"
+            android:text="@string/sign_up_sign_in"
+            android:fontFamily="@font/sen_semibold"
+            android:textColor="@color/primary"
+            android:textSize="14sp"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            tools:ignore="TextContrastCheck" />
+
+    </LinearLayout>
+
+</LinearLayout>

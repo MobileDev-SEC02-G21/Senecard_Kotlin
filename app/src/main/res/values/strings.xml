@@ -1,38 +1,46 @@
 <resources>
-    <string name="empty_string"></string>
+    <!-- Array for Schedule -->
+    <string-array name="time_slots">
+        <item>00</item>
+        <item>01</item>
+        <item>02</item>
+        <item>03</item>
+        <item>04</item>
+        <item>05</item>
+        <item>06</item>
+        <item>07</item>
+        <item>08</item>
+        <item>09</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+        <item>16</item>
+        <item>17</item>
+        <item>18</item>
+        <item>19</item>
+        <item>20</item>
+        <item>21</item>
+        <item>22</item>
+        <item>23</item>
+        <item>24</item>
+    </string-array>
+    <!-- Array for Categories -->
+    <string-array name="categories">
+        <item>Restaurant</item>
+        <item>Stationery</item>
+        <item>Food</item>
+        <item>Electronics</item>
+        <item>Other</item>
+    </string-array>
+    <!-- Global Strings -->
     <string name="app_name">SeneCard</string>
-    <string name="auth_enter">Enter</string>
-    <string name="auth_register">Register</string>
-    <string name="auth_document">Document</string>
-    <string name="auth_password">Password</string>
-    <string name="auth_forgotten_your_password">Forgotten your password?</string>
-    <string name="auth_remember_me">Remember me</string>
-    <string name="auth_new_sign_up_here">New? Sign up here</string>
-    <string name="auth_user">User</string>
-    <string name="auth_name">Name</string>
-    <string name="auth_phone">Phone</string>
-    <string name="auth_next">Next</string>
-    <string name="auth_already_have_an_account">Already have an account? Login here</string>
-    <string name="auth_confirm_password">Confirm password</string>
-    <string name="auth_student_code">Student code</string>
-    <string name="auth_enter_user">Enter a user</string>
-    <string name="auth_enter_name">Enter a name</string>
-    <string name="auth_enter_student_code">Enter a student code</string>
-    <string name="auth_enter_phone">Enter a phone</string>
-    <string name="auth_enter_password">Enter a password</string>
-    <string name="auth_enter_confirm_password">Enter a confirm password</string>
-    <string name="auth_password_minimum_characters">The password must have at least 6 characters</string>
-    <string name="auth_not_equal_passwords">The password and confirm password not are the same</string>
-    <string name="auth_message_button_next">Esta información será usada como medio de comunicación para la llegada de notificaciones y usted podrá actualizarla dentro de la aplicación en cualquier momento</string>
-    <string name="auth_user_not_found">User not found</string>
-    <string name="auth_user_not_correct">User is invalid</string>
-    <string name="auth_error_not_correct_password">Password is not correct</string>
-    <string name="auth_error_querying_database">Error querying database</string>
-
-
-    <string name="auth_error_registering_user">Error registering user</string>
-
-
+    <string name="icon_launcher">icon launcher</string>
+    <string name="icon_back">icon back</string>
+    <string name="icon_image">icon_image</string>
+    <!-- Custom Dialog Strings -->
     <string name="custom_dialog_accept">Accept</string>
     <string name="custom_dialog_message">Message</string>
     <string name="custom_dialog_type">Type</string>
@@ -40,9 +48,131 @@
     <string name="custom_dialog_info">Info</string>
     <string name="custom_dialog_error">Error</string>
     <string name="custom_dialog_success">Success</string>
-    <string name="home_log_out">Log Out</string>
-    <string name="icon_senecard">icon_senecard</string>
-    <string name="know_more_stores_with_us">¡Know more stores with us!</string>
-    <string name="sign_up">sign up</string>
-    <string name="sing_in">sing in</string>
+    <!-- Initial Activity Strings -->
+    <string name="initial_know_more_stores_with_us">¡Know more stores with us!</string>
+    <string name="initial_sign_in">SIGN IN</string>
+    <string name="initial_sign_up">SIGN UP</string>
+    <!-- Sign In Activity Strings -->
+    <string name="sign_in_sign_in">Sign In</string>
+    <string name="sign_in_please_sign_in_to_your_existing_account">Please sign in to your existing account</string>
+    <string name="sign_in_email">EMAIL</string>
+    <string name="sign_in_password">PASSWORD</string>
+    <string name="sign_in_did_you_forget_your_password">Did you forget your password?</string>
+    <string name="sign_in_remember_me">Remember me</string>
+    <string name="sign_in_enter">ENTER</string>
+    <string name="sing_in_don_t_have_an_account">Don\'t have an account?</string>
+    <string name="sign_in_sing_up">Sing up</string>
+    <string name="sign_in_email_empty">Please enter a valid email to sign in</string>
+    <string name="sign_in_password_empty">Please enter a valid password to sign in</string>
+    <string name="sign_in_email_invalid">The email is not valid</string>
+    <string name="sign_in_error_firebase_auth">The email/password are incorrect</string>
+    <string name="sign_in_authenticate_succesfully">You have been successfully authenticated</string>
+    <!-- Sign In Forgot Password Activity Strings -->
+    <string name="sign_in_forgot_password_forgot_password">Forgot Password</string>
+    <string name="sign_in_forgot_password_please_write_your_existing_account">Please write your existing account</string>
+    <string name="sign_in_forgot_password_email">EMAIL</string>
+    <string name="sign_in_forgot_password_send_code">SEND CODE</string>
+    <!-- Sign In Verification Activity Strings -->
+    <string name="sign_in_verification_verification">Verification</string>
+    <string name="sign_in_verification_we_have_sent_a_code_to_your_email">We have sent a code to your email</string>
+    <string name="sign_in_verification_email">example@uniandes.edu.co</string>
+    <string name="sign_in_verification_code">CODE</string>
+    <string name="sign_in_verification_verify">VERIFY</string>
+    <!-- Sign In Change Password Activity Strings -->
+    <string name="sign_in_change_password_change_password">Change Password</string>
+    <string name="sign_in_change_password_please_enter_a_new_password_for">Please enter a new password for</string>
+    <string name="sign_in_change_password_email">example@uniandes.edu.co</string>
+    <string name="sign_in_change_password_new_password">NEW PASSWORD</string>
+    <string name="sign_in_change_password_change">CHANGE</string>
+    <string name="sign_in_change_password_confirm_new_password">CONFIRM NEW PASSWORD</string>
+    <!-- Sign Up Activity Strings -->
+    <string name="sign_up_sign_up">Sign Up</string>
+    <string name="sign_up_please_select_if_you_are_member_of_the_uniandes_community_or_a_store_owner">Please select if you are member of the uniandes community or a store owner</string>
+    <string name="sign_up_uniandes_community">UNIANDES COMMUNITY</string>
+    <string name="sign_up_store_owner">STORE OWNER</string>
+    <string name="sign_up_already_you_have_an_account">Already you have an account?</string>
+    <string name="sign_up_sign_in">Sign in</string>
+    <!-- Sign Up Uniandes Member Activity Strings -->
+    <string name="sing_up_uniandes_member_uniandes_member">Uniandes Member</string>
+    <string name="sign_up_uniandes_member_enter_the_information_to_get_started">Enter the information to get started</string>
+    <string name="sign_up_uniandes_member_name">NAME</string>
+    <string name="sign_up_uniandes_member_email">EMAIL</string>
+    <string name="sign_up_uniandes_member_phone">PHONE</string>
+    <string name="sign_up_uniandes_member_password">PASSWORD</string>
+    <string name="sign_up_uniandes_member_confirm_password">CONFIRM PASSWORD</string>
+    <string name="sign_up_uniandes_member_already_you_have_an_account">Already you have an account?</string>
+    <string name="sign_up_uniandes_member_register">REGISTER</string>
+    <string name="sign_up_uniandes_member_sign_in">Sign in</string>
+    <string name="sign_up_uniandes_member_name_empty">Please enter a valid name to sign up</string>
+    <string name="sign_up_uniandes_member_email_empty">Please enter a valid email to sign up</string>
+    <string name="sign_up_uniandes_member_phone_empty">Please enter a valid phone to sign up</string>
+    <string name="sign_up_uniandes_member_password_empty">Please enter a valid password to sign up</string>
+    <string name="sign_up_uniandes_member_confirm_password_empty">Please enter a valid confirm password to sign up</string>
+    <string name="sign_up_uniandes_member_email_invalid">The email is not valid</string>
+    <string name="sign_up_uniandes_member_password_short">Please enter a password more large to sign up</string>
+    <string name="sign_up_uniandes_member_passwords_not_equals">The passwords are not equals</string>
+    <string name="sign_up_uniandes_member_user_exists">The email are used by other user</string>
+    <string name="sign_up_uniandes_member_error_firebase_auth">We were unable to register your user</string>
+    <string name="sign_up_uniandes_member_error_firebase_firestore">We were unable to register your user</string>
+    <string name="sign_up_uniandes_member_register_succesfully">You have been successfully registered</string>
+    <!-- Sign Up Store Owner 1 Activity Strings -->
+    <string name="sign_up_store_owner_1_store_owner">Store Owner</string>
+    <string name="sign_up_store_owner_1_enter_the_information_to_get_started">Enter the information to get started</string>
+    <string name="sign_up_store_owner_1_name">NAME</string>
+    <string name="sign_up_store_owner_1_email">EMAIL</string>
+    <string name="sign_up_store_owner_1_phone">PHONE</string>
+    <string name="sign_up_store_owner_1_password">PASSWORD</string>
+    <string name="sign_up_store_owner_1_confirm_password">CONFIRM PASSWORD</string>
+    <string name="sign_up_store_owner_1_next">NEXT</string>
+    <string name="sign_up_store_owner_1_already_you_have_an_account">Already you have an account?</string>
+    <string name="sign_up_store_owner_1_sign_in">Sign in</string>
+    <string name="sign_up_store_owner_1_name_empty">Please enter a valid name to sign up</string>
+    <string name="sign_up_store_owner_1_email_empty">Please enter a valid email to sign up</string>
+    <string name="sign_up_store_owner_1_phone_empty">Please enter a valid phone to sign up</string>
+    <string name="sign_up_store_owner_1_password_empty">Please enter a valid password to sign up</string>
+    <string name="sign_up_store_owner_1_confirm_password_empty">Please enter a valid confirm password to sign up</string>
+    <string name="sign_up_store_owner_1_email_invalid">The email is not valid</string>
+    <string name="sign_up_store_owner_1_password_short">Please enter a password more large to sign up</string>
+    <string name="sign_up_store_owner_1_passwords_not_equals">The passwords are not equals</string>
+    <string name="sign_up_store_owner_1_user_exists">The email are used by other user</string>
+    <!-- Sign Up Store Owner 2 Activity Strings -->
+    <string name="sign_up_store_owner_2_store_owner">Store Owner</string>
+    <string name="sign_up_store_owner_2_enter_the_information_to_get_started">Enter the information to get started</string>
+    <string name="sign_up_store_owner_2_store_name">STORE NAME</string>
+    <string name="sign_up_store_owner_2_store_address">STORE ADDRESS</string>
+    <string name="sign_up_store_owner_2_store_image">STORE IMAGE</string>
+    <string name="sign_up_store_owner_2_register">REGISTER</string>
+    <string name="sign_up_store_owner_2_already_you_have_an_account">Already you have an account?</string>
+    <string name="sign_up_store_owner_2_sign_in">Sign in</string>
+    <string name="sign_up_store_owner_2_store_name_empty">Please enter a valid store name to continue</string>
+    <string name="sign_up_store_owner_2_store_address_empty">Please enter a valid store address to continue</string>
+    <string name="sign_up_store_owner_2_store_category_empty">Please enter a valid store category to continue</string>
+    <string name="sign_up_store_owner_2_store_image_empty">Please enter a store image to continue</string>
+    <string name="sign_up_store_owner_2_permission_denied_to_access_images">Permission denied to access images, change in settings.</string>
+    <!-- Sign Up Store Owner 3 Activity Strings -->
+    <string name="sign_up_store_owner_3_enter_the_schedule_of_the_store">Enter the schedule of the store</string>
+    <string name="sign_up_store_owner_3_register">REGISTER</string>
+    <string name="sign_up_store_owner_3_already_you_have_an_account">Already you have an account?</string>
+    <string name="sign_up_store_owner_3_sign_in">Sign in</string>
+    <string name="sign_up_store_owner_3_monday">MONDAY</string>
+    <string name="sign_up_store_owner_3_line">-</string>
+    <string name="sign_up_store_owner_3_tuesday">TUESDAY</string>
+    <string name="sign_up_store_owner_3_wednesday">WEDNESDAY</string>
+    <string name="sign_up_store_owner_3_thursday">THURSDAY</string>
+    <string name="sign_up_store_owner_3_friday">FRIDAY</string>
+    <string name="sign_up_store_owner_3_saturday">SATURDAY</string>
+    <string name="sign_up_store_owner_3_sunday">SUNDAY</string>
+    <string name="sign_up_store_owner_3_next">NEXT</string>
+    <string name="sign_up_store_owner_3_monday_error_hours">There is a problem with the hours in the monday</string>
+    <string name="sign_up_store_owner_3_tuesday_error_hours">There is a problem with the hours in the tuesday</string>
+    <string name="sign_up_store_owner_3_wednesday_error_hours">There is a problem with the hours in the wednesday</string>
+    <string name="sign_up_store_owner_3_thursday_error_hours">There is a problem with the hours in the thursday</string>
+    <string name="sign_up_store_owner_3_friday_error_hours">There is a problem with the hours in the friday</string>
+    <string name="sign_up_store_owner_3_saturday_error_hours">There is a problem with the hours in the saturday</string>
+    <string name="sign_up_store_owner_3_sunday_error_hours">There is a problem with the hours in the sunday</string>
+    <string name="sign_up_store_owner_3_error_firebase_auth">We were unable to register your user</string>
+    <string name="sign_up_store_owner_3_error_firebase_firestore">We were unable to register your user</string>
+    <string name="sign_up_store_owner_3_register_succesfully">You have been successfully registered</string>
+    <string name="sign_up_store_owner_2_store_category">STORE CATEGORY</string>
+
 </resources>

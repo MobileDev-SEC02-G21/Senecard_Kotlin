@@ -1,18 +1,177 @@
 <resources>
-    <string name="empty_string"></string>
+    <string-array name="time_slots">
+        <item>00</item>
+        <item>01</item>
+        <item>02</item>
+        <item>03</item>
+        <item>04</item>
+        <item>05</item>
+        <item>06</item>
+        <item>07</item>
+        <item>08</item>
+        <item>09</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+        <item>16</item>
+        <item>17</item>
+        <item>18</item>
+        <item>19</item>
+        <item>20</item>
+        <item>21</item>
+        <item>22</item>
+        <item>23</item>
+        <item>24</item>
+    </string-array>
+
+    <string-array name="categories">
+        <item>Restaurante</item>
+        <item>Papeleria</item>
+        <item>Comida</item>
+        <item>Electronicos</item>
+        <item>Otro</item>
+    </string-array>
+
     <string name="app_name">SeneCard</string>
-    <string name="auth_enter">Ingresar</string>
-    <string name="auth_register">Registrarse</string>
-    <string name="auth_document">Documento</string>
-    <string name="auth_password">Contraseña</string>
-    <string name="auth_forgotten_your_password">¿Olvidaste tu contraseña?</string>
-    <string name="auth_remember_me">Recuérdame</string>
-    <string name="auth_new_sign_up_here">¿Nuevo? Regístrate aquí</string>
-    <string name="auth_user">Usuario</string>
-    <string name="auth_name">Nombre</string>
-    <string name="auth_phone">Teléfono</string>
-    <string name="auth_next">Siguiente</string>
-    <string name="auth_already_have_an_account">¿Ya tienes una cuenta? Inicia sesión aquí</string>
-    <string name="auth_confirm_password">Confirmar contraseña</string>
-    <string name="auth_student_code">Código de estudiante</string>
+    <string name="icon_launcher">icono de inicio</string>
+    <string name="icon_back">icono atrás</string>
+    <string name="icon_image">icono de imagen</string>
+
+    <string name="custom_dialog_accept">Aceptar</string>
+    <string name="custom_dialog_message">Mensaje</string>
+    <string name="custom_dialog_type">Tipo</string>
+    <string name="custom_dialog_icon">Icono</string>
+    <string name="custom_dialog_info">Información</string>
+    <string name="custom_dialog_error">Error</string>
+    <string name="custom_dialog_success">Éxito</string>
+
+    <string name="initial_know_more_stores_with_us">¡Conoce más tiendas con nosotros!</string>
+    <string name="initial_sign_in">INICIAR SESIÓN</string>
+    <string name="initial_sign_up">REGISTRARSE</string>
+
+    <string name="sign_in_sign_in">Iniciar Sesión</string>
+    <string name="sign_in_please_sign_in_to_your_existing_account">Por favor inicia sesión en tu cuenta existente</string>
+    <string name="sign_in_email">CORREO ELECTRÓNICO</string>
+    <string name="sign_in_password">CONTRASEÑA</string>
+    <string name="sign_in_did_you_forget_your_password">¿Olvidaste tu contraseña?</string>
+    <string name="sign_in_remember_me">Recuérdame</string>
+    <string name="sign_in_enter">ENTRAR</string>
+    <string name="sing_in_don_t_have_an_account">¿No tienes una cuenta?</string>
+    <string name="sign_in_sing_up">Regístrate</string>
+    <string name="sign_in_email_empty">Por favor ingresa un correo electrónico válido para iniciar sesión</string>
+    <string name="sign_in_password_empty">Por favor ingresa una contraseña válida para iniciar sesión</string>
+    <string name="sign_in_email_invalid">El correo electrónico no es válido</string>
+    <string name="sign_in_error_firebase_auth">El correo/contraseña son incorrectos</string>
+    <string name="sign_in_authenticate_succesfully">Te has autenticado exitosamente</string>
+
+    <string name="sign_in_forgot_password_please_write_your_existing_account">Por favor escribe tu cuenta existente</string>
+    <string name="sign_in_forgot_password_email">CORREO ELECTRÓNICO</string>
+    <string name="sign_in_forgot_password_send_code">ENVIAR CÓDIGO</string>
+
+    <string name="sign_in_verification_verification">Verificación</string>
+    <string name="sign_in_verification_we_have_sent_a_code_to_your_email">Hemos enviado un código a tu correo electrónico</string>
+    <string name="sign_in_verification_email">example@uniandes.edu.co</string>
+    <string name="sign_in_verification_code">CÓDIGO</string>
+    <string name="sign_in_verification_verify">VERIFICAR</string>
+
+    <string name="sign_in_change_password_change_password">Cambiar Contraseña</string>
+    <string name="sign_in_change_password_please_enter_a_new_password_for">Por favor ingresa una nueva contraseña para</string>
+    <string name="sign_in_change_password_email">example@uniandes.edu.co</string>
+    <string name="sign_in_change_password_new_password">NUEVA CONTRASEÑA</string>
+    <string name="sign_in_change_password_change">CAMBIAR</string>
+    <string name="sign_in_change_password_confirm_new_password">CONFIRMAR NUEVA CONTRASEÑA</string>
+
+    <string name="sign_up_sign_up">Registrarse</string>
+    <string name="sign_up_please_select_if_you_are_member_of_the_uniandes_community_or_a_store_owner">Por favor selecciona si eres miembro de la comunidad Uniandes o dueño de una tienda</string>
+    <string name="sign_up_uniandes_community">COMUNIDAD UNIANDES</string>
+    <string name="sign_up_store_owner">DUEÑO DE TIENDA</string>
+    <string name="sign_up_already_you_have_an_account">¿Ya tienes una cuenta?</string>
+    <string name="sign_up_sign_in">Iniciar sesión</string>
+
+    <string name="sing_up_uniandes_member_uniandes_member">Miembro Uniandes</string>
+    <string name="sign_up_uniandes_member_enter_the_information_to_get_started">Ingresa la información para comenzar</string>
+    <string name="sign_up_uniandes_member_name">NOMBRE</string>
+    <string name="sign_up_uniandes_member_email">CORREO ELECTRÓNICO</string>
+    <string name="sign_up_uniandes_member_phone">TELÉFONO</string>
+    <string name="sign_up_uniandes_member_password">CONTRASEÑA</string>
+    <string name="sign_up_uniandes_member_confirm_password">CONFIRMAR CONTRASEÑA</string>
+    <string name="sign_up_uniandes_member_already_you_have_an_account">¿Ya tienes una cuenta?</string>
+    <string name="sign_up_uniandes_member_register">REGISTRARSE</string>
+    <string name="sign_up_uniandes_member_sign_in">Iniciar sesión</string>
+    <string name="sign_up_uniandes_member_name_empty">Por favor ingresa un nombre válido para registrarte</string>
+    <string name="sign_up_uniandes_member_email_empty">Por favor ingresa un correo electrónico válido para registrarte</string>
+    <string name="sign_up_uniandes_member_phone_empty">Por favor ingresa un teléfono válido para registrarte</string>
+    <string name="sign_up_uniandes_member_password_empty">Por favor ingresa una contraseña válida para registrarte</string>
+    <string name="sign_up_uniandes_member_confirm_password_empty">Por favor ingresa una confirmación de contraseña válida para registrarte</string>
+    <string name="sign_up_uniandes_member_email_invalid">El correo electrónico no es válido</string>
+    <string name="sign_up_uniandes_member_password_short">Por favor ingresa una contraseña más larga para registrarte</string>
+    <string name="sign_up_uniandes_member_passwords_not_equals">Las contraseñas no coinciden</string>
+    <string name="sign_up_uniandes_member_user_exists">El correo ya está siendo usado por otro usuario</string>
+    <string name="sign_up_uniandes_member_error_firebase_auth">No pudimos registrar tu usuario</string>
+    <string name="sign_up_uniandes_member_error_firebase_firestore">No pudimos registrar tu usuario</string>
+    <string name="sign_up_uniandes_member_register_succesfully">Te has registrado exitosamente</string>
+
+    <string name="sign_up_store_owner_1_store_owner">Dueño de Tienda</string>
+    <string name="sign_up_store_owner_1_enter_the_information_to_get_started">Ingresa la información para comenzar</string>
+    <string name="sign_up_store_owner_1_name">NOMBRE</string>
+    <string name="sign_up_store_owner_1_email">CORREO ELECTRÓNICO</string>
+    <string name="sign_up_store_owner_1_phone">TELÉFONO</string>
+    <string name="sign_up_store_owner_1_password">CONTRASEÑA</string>
+    <string name="sign_up_store_owner_1_confirm_password">CONFIRMAR CONTRASEÑA</string>
+    <string name="sign_up_store_owner_1_next">SIGUIENTE</string>
+    <string name="sign_up_store_owner_1_already_you_have_an_account">¿Ya tienes una cuenta?</string>
+    <string name="sign_up_store_owner_1_sign_in">Iniciar sesión</string>
+    <string name="sign_up_store_owner_1_name_empty">Por favor ingresa un nombre válido para registrarte</string>
+    <string name="sign_up_store_owner_1_email_empty">Por favor ingresa un correo electrónico válido para registrarte</string>
+    <string name="sign_up_store_owner_1_phone_empty">Por favor ingresa un teléfono válido para registrarte</string>
+    <string name="sign_up_store_owner_1_password_empty">Por favor ingresa una contraseña válida para registrarte</string>
+    <string name="sign_up_store_owner_1_confirm_password_empty">Por favor ingresa una confirmación de contraseña válida para registrarte</string>
+    <string name="sign_up_store_owner_1_email_invalid">El correo electrónico no es válido</string>
+    <string name="sign_up_store_owner_1_password_short">Por favor ingresa una contraseña más larga para registrarte</string>
+    <string name="sign_up_store_owner_1_passwords_not_equals">Las contraseñas no coinciden</string>
+    <string name="sign_up_store_owner_1_user_exists">El correo ya está siendo usado por otro usuario</string>
+
+    <string name="sign_up_store_owner_2_store_owner">Dueño de Tienda</string>
+    <string name="sign_up_store_owner_2_enter_the_information_to_get_started">Ingresa la información para comenzar</string>
+    <string name="sign_up_store_owner_2_store_name">NOMBRE DE LA TIENDA</string>
+    <string name="sign_up_store_owner_2_store_address">DIRECCIÓN DE LA TIENDA</string>
+    <string name="sign_up_store_owner_2_store_image">IMAGEN DE LA TIENDA</string>
+    <string name="sign_up_store_owner_2_register">REGISTRARSE</string>
+    <string name="sign_up_store_owner_2_already_you_have_an_account">¿Ya tienes una cuenta?</string>
+    <string name="sign_up_store_owner_2_sign_in">Iniciar sesión</string>
+    <string name="sign_up_store_owner_2_store_name_empty">Por favor ingresa un nombre de tienda válido para continuar</string>
+    <string name="sign_up_store_owner_2_store_address_empty">Por favor ingresa una dirección de tienda válida para continuar</string>
+    <string name="sign_up_store_owner_2_store_category_empty">Por favor ingresa una categoría de tienda válida para continuar</string>
+    <string name="sign_up_store_owner_2_store_image_empty">Por favor ingresa una imagen de tienda para continuar</string>
+    <string name="sign_up_store_owner_2_permission_denied_to_access_images">No tienes permisos para acceder a la galería</string>
+
+    <string name="sign_up_store_owner_3_enter_the_schedule_of_the_store">Ingresa el horario de la tienda</string>
+    <string name="sign_up_store_owner_3_register">REGISTRARSE</string>
+    <string name="sign_up_store_owner_3_already_you_have_an_account">¿Ya tienes una cuenta?</string>
+    <string name="sign_up_store_owner_3_sign_in">Iniciar sesión</string>
+    <string name="sign_up_store_owner_3_monday">LUNES</string>
+    <string name="sign_up_store_owner_3_line">-</string>
+    <string name="sign_up_store_owner_3_tuesday">MARTES</string>
+    <string name="sign_up_store_owner_3_wednesday">MIÉRCOLES</string>
+    <string name="sign_up_store_owner_3_thursday">JUEVES</string>
+    <string name="sign_up_store_owner_3_friday">VIERNES</string>
+    <string name="sign_up_store_owner_3_saturday">SÁBADO</string>
+    <string name="sign_up_store_owner_3_sunday">DOMINGO</string>
+    <string name="sign_up_store_owner_3_next">SIGUIENTE</string>
+    <string name="sign_up_store_owner_3_monday_error_hours">Hay un problema con las horas el lunes</string>
+    <string name="sign_up_store_owner_3_tuesday_error_hours">Hay un problema con las horas el martes</string>
+    <string name="sign_up_store_owner_3_wednesday_error_hours">Hay un problema con las horas el miércoles</string>
+    <string name="sign_up_store_owner_3_thursday_error_hours">Hay un problema con las horas el jueves</string>
+    <string name="sign_up_store_owner_3_friday_error_hours">Hay un problema con las horas el viernes</string>
+    <string name="sign_up_store_owner_3_saturday_error_hours">Hay un problema con las horas el sábado</string>
+    <string name="sign_up_store_owner_3_sunday_error_hours">Hay un problema con las horas el domingo</string>
+    <string name="sign_up_store_owner_3_error_firebase_auth">No pudimos registrar tu usuario</string>
+    <string name="sign_up_store_owner_3_error_firebase_firestore">No pudimos registrar tu usuario</string>
+    <string name="sign_up_store_owner_3_register_succesfully">Te has registrado exitosamente</string>
+    <string name="sign_up_store_owner_2_store_category">CATEGORÍA DE LA TIENDA</string>
+
 </resources>
+

@@ -30,20 +30,20 @@ class CustomDialog(
         when (type) {
             "info" -> {
                 typeTextView.text = getString(R.string.custom_dialog_info)
-                typeTextView.setTextColor(resources.getColor(R.color.black, null))
-                iconImageView.setImageResource(R.drawable.custom_dialog_icon_info)
+                typeTextView.setTextColor(resources.getColor(R.color.primary, null))
+                iconImageView.setImageResource(R.mipmap.icon_custom_dialog_info)
                 iconImageView.contentDescription = getString(R.string.custom_dialog_info)
             }
             "error" -> {
                 typeTextView.text = getString(R.string.custom_dialog_error)
-                typeTextView.setTextColor(resources.getColor(R.color.red, null))
-                iconImageView.setImageResource(R.drawable.custom_dialog_icon_error)
+                typeTextView.setTextColor(resources.getColor(R.color.red_highlight, null))
+                iconImageView.setImageResource(R.mipmap.icon_custom_dialog_error)
                 iconImageView.contentDescription = getString(R.string.custom_dialog_error)
             }
             "success" -> {
                 typeTextView.text = getString(R.string.custom_dialog_success)
-                typeTextView.setTextColor(resources.getColor(R.color.green, null))
-                iconImageView.setImageResource(R.drawable.custom_dialog_icon_success)
+                typeTextView.setTextColor(resources.getColor(R.color.green_highlight, null))
+                iconImageView.setImageResource(R.mipmap.icon_custom_dialog_success)
                 iconImageView.contentDescription = getString(R.string.custom_dialog_success)
             }
         }
