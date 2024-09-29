@@ -14,19 +14,19 @@
     <ImageView
         android:id="@+id/dialog_icon"
         android:contentDescription="@string/custom_dialog_icon"
-        android:src="@drawable/custom_dialog_icon_info"
+        android:src="@mipmap/icon_custom_dialog_info"
         android:layout_gravity="center"
 
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:layout_marginBottom="15dp"/>
+        android:layout_marginBottom="20dp"/>
 
     <TextView
         android:id="@+id/dialog_type"
-        android:fontFamily="@font/montserratmedium"
+        android:fontFamily="@font/sen_bold"
         android:text="@string/custom_dialog_type"
         android:textColor="@color/black"
-        android:textSize="18sp"
+        android:textSize="16sp"
         android:layout_gravity="center"
         android:gravity="center"
 
@@ -35,26 +35,28 @@
 
     <TextView
         android:id="@+id/dialog_message"
-        android:fontFamily="@font/montserratmedium"
+        android:fontFamily="@font/sen_regular"
         android:text="@string/custom_dialog_message"
-        android:textColor="@color/gray_text"
-        android:textSize="18sp"
+        android:textColor="@color/text"
+        android:textSize="16sp"
         android:layout_gravity="center"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
         android:gravity="center"
 
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
     <Button
         android:id="@+id/dialog_button"
         android:background="@drawable/custom_dialog_button_background"
         android:text="@string/custom_dialog_accept"
-        android:fontFamily="@font/montserratsemibold"
+        android:fontFamily="@font/sen_bold"
         android:textAllCaps="false"
         android:textColor="@color/white"
-        android:textSize="20sp"
+        android:textSize="16sp"
 
         android:layout_width="230dp"
-        android:layout_height="60dp"
+        android:layout_height="50dp"
         android:layout_marginTop="20dp"/>
 </LinearLayout>

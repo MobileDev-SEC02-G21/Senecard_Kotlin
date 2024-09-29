@@ -1,0 +1,403 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white"
+    tools:context=".activitiesSignUp.activitySignUpStoreOwner3.ActivitySignUpStoreOwner3"
+
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/back_image_view"
+        android:src="@mipmap/icon_back"
+        android:contentDescription="@string/icon_back"
+
+        android:layout_gravity="start"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginStart="30dp"
+        tools:ignore="ImageContrastCheck" />
+
+    <TextView
+        android:text="@string/sign_up_store_owner_2_store_owner"
+        android:fontFamily="@font/sen_bold"
+        android:textColor="@color/black"
+        android:textSize="30sp"
+
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:text="@string/sign_up_store_owner_3_enter_the_schedule_of_the_store"
+        android:fontFamily="@font/sen_regular"
+        android:textColor="@color/text"
+        android:textSize="16sp"
+
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp" >
+
+        <TextView
+            android:text="@string/sign_up_store_owner_3_monday"
+            android:fontFamily="@font/sen_regular"
+            android:textColor="@color/text"
+            android:textSize="14sp"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"/>
+
+        <Spinner
+            android:id="@+id/monday_start_time_spinner"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:entries="@array/time_slots"
+            android:spinnerMode="dropdown"
+            android:padding="10dp"
+            android:background="@drawable/auth_spinner_background" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sign_up_store_owner_3_line"
+            android:layout_marginHorizontal="8dp"
+            android:textSize="16sp"
+            android:textColor="@color/black" />
+
+        <Spinner
+            android:id="@+id/monday_end_time_spinner"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:entries="@array/time_slots"
+            android:spinnerMode="dropdown"
+            android:padding="10dp"
+            android:background="@drawable/auth_spinner_background" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp" >
+
+        <TextView
+            android:text="@string/sign_up_store_owner_3_tuesday"
+            android:fontFamily="@font/sen_regular"
+            android:textColor="@color/text"
+            android:textSize="14sp"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"/>
+
+        <Spinner
+            android:id="@+id/tuesday_start_time_spinner"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:entries="@array/time_slots"
+            android:spinnerMode="dropdown"
+            android:padding="10dp"
+            android:background="@drawable/auth_spinner_background" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sign_up_store_owner_3_line"
+            android:layout_marginHorizontal="8dp"
+            android:textSize="16sp"
+            android:textColor="@color/black" />
+
+        <Spinner
+            android:id="@+id/tuesday_end_time_spinner"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:entries="@array/time_slots"
+            android:spinnerMode="dropdown"
+            android:padding="10dp"
+            android:background="@drawable/auth_spinner_background" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp" >
+
+        <TextView
+            android:text="@string/sign_up_store_owner_3_wednesday"
+            android:fontFamily="@font/sen_regular"
+            android:textColor="@color/text"
+            android:textSize="14sp"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"/>
+
+        <Spinner
+            android:id="@+id/wednesday_start_time_spinner"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:entries="@array/time_slots"
+            android:spinnerMode="dropdown"
+            android:padding="10dp"
+            android:background="@drawable/auth_spinner_background" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sign_up_store_owner_3_line"
+            android:layout_marginHorizontal="8dp"
+            android:textSize="16sp"
+            android:textColor="@color/black" />
+
+        <Spinner
+            android:id="@+id/wednesday_end_time_spinner"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:entries="@array/time_slots"
+            android:spinnerMode="dropdown"
+            android:padding="10dp"
+            android:background="@drawable/auth_spinner_background" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:layout_marginBottom="15dp" >
+
+        <TextView
+            android:text="@string/sign_up_store_owner_3_thursday"
+            android:fontFamily="@font/sen_regular"
+            android:textColor="@color/text"
+            android:textSize="14sp"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"/>
+
+        <Spinner
+            android:id="@+id/thursday_start_time_spinner"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:entries="@array/time_slots"
+            android:spinnerMode="dropdown"
+            android:padding="10dp"
+            android:background="@drawable/auth_spinner_background" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sign_up_store_owner_3_line"
+            android:layout_marginHorizontal="8dp"
+            android:textSize="16sp"
+            android:textColor="@color/black" />
+
+        <Spinner
+            android:id="@+id/thursday_end_time_spinner"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:entries="@array/time_slots"
+            android:spinnerMode="dropdown"
+            android:padding="10dp"
+            android:background="@drawable/auth_spinner_background" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp" >
+
+        <TextView
+            android:text="@string/sign_up_store_owner_3_friday"
+            android:fontFamily="@font/sen_regular"
+            android:textColor="@color/text"
+            android:textSize="14sp"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"/>
+
+        <Spinner
+            android:id="@+id/friday_start_time_spinner"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:entries="@array/time_slots"
+            android:spinnerMode="dropdown"
+            android:padding="10dp"
+            android:background="@drawable/auth_spinner_background" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sign_up_store_owner_3_line"
+            android:layout_marginHorizontal="8dp"
+            android:textSize="16sp"
+            android:textColor="@color/black" />
+
+        <Spinner
+            android:id="@+id/friday_end_time_spinner"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:entries="@array/time_slots"
+            android:spinnerMode="dropdown"
+            android:padding="10dp"
+            android:background="@drawable/auth_spinner_background" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp" >
+
+        <TextView
+            android:text="@string/sign_up_store_owner_3_saturday"
+            android:fontFamily="@font/sen_regular"
+            android:textColor="@color/text"
+            android:textSize="14sp"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"/>
+
+        <Spinner
+            android:id="@+id/saturday_start_time_spinner"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:entries="@array/time_slots"
+            android:spinnerMode="dropdown"
+            android:padding="10dp"
+            android:background="@drawable/auth_spinner_background" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sign_up_store_owner_3_line"
+            android:layout_marginHorizontal="8dp"
+            android:textSize="16sp"
+            android:textColor="@color/black" />
+
+        <Spinner
+            android:id="@+id/saturday_end_time_spinner"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:entries="@array/time_slots"
+            android:spinnerMode="dropdown"
+            android:padding="10dp"
+            android:background="@drawable/auth_spinner_background" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp" >
+
+        <TextView
+            android:text="@string/sign_up_store_owner_3_sunday"
+            android:fontFamily="@font/sen_regular"
+            android:textColor="@color/text"
+            android:textSize="14sp"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"/>
+
+        <Spinner
+            android:id="@+id/sunday_start_time_spinner"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:entries="@array/time_slots"
+            android:spinnerMode="dropdown"
+            android:padding="10dp"
+            android:background="@drawable/auth_spinner_background" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sign_up_store_owner_3_line"
+            android:layout_marginHorizontal="8dp"
+            android:textSize="16sp"
+            android:textColor="@color/black" />
+
+        <Spinner
+            android:id="@+id/sunday_end_time_spinner"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:entries="@array/time_slots"
+            android:spinnerMode="dropdown"
+            android:padding="10dp"
+            android:background="@drawable/auth_spinner_background" />
+    </LinearLayout>
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/loading_animation"
+        android:visibility="gone"
+        app:lottie_rawRes="@raw/loading"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+
+        android:layout_gravity="center"
+        android:layout_width="100dp"
+        android:layout_height="100dp" />
+
+    <Button
+        android:id="@+id/register_button"
+        android:text="@string/sign_up_store_owner_3_register"
+        android:fontFamily="@font/sen_bold"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        android:background="@drawable/auth_button_background"
+
+        android:layout_gravity="center"
+        android:layout_width="330dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="20dp"
+        tools:ignore="TextContrastCheck" />
+
+</LinearLayout>

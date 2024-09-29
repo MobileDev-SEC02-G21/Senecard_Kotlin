@@ -1,78 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
-    android:background="@color/white"
-    tools:context=".ActivityInitial"
-
+    android:id="@+id/initial_main_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+    android:background="@color/white"
+    android:orientation="vertical"
+    tools:context=".activitiesInitial.activityInitial.ActivityInitial">
 
-        <ImageView
-            android:id="@+id/myImageView"
-            android:src="@drawable/icon_senecard"
-            android:contentDescription="@string/icon_senecard"
+    <ImageView
+        android:layout_width="170dp"
+        android:layout_height="170dp"
 
-            android:layout_gravity="center"
-            android:layout_width="170dp"
-            android:layout_height="170dp"
-            android:layout_marginTop="120dp"
-            android:layout_marginBottom="15dp"/>
+        android:layout_gravity="center"
+        android:layout_marginTop="80dp"
+        android:contentDescription="@string/icon_launcher"
+        android:src="@mipmap/ic_launcher" />
 
-        <TextView
-            android:text="@string/app_name"
-            android:fontFamily="@font/sen_extrabold"
-            android:textColor="@color/primary"
-            android:textSize="26sp"
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="70dp"
 
-            android:layout_gravity="center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="100dp"/>
+        android:fontFamily="@font/sen_extrabold"
+        android:text="@string/app_name"
+        android:textColor="@color/primary"
+        android:textSize="24sp" />
 
-        <TextView
-            android:text="@string/know_more_stores_with_us"
-            android:fontFamily="@font/sen_regular"
-            android:textColor="@color/text"
-            android:textSize="22sp"
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="80dp"
 
-            android:layout_gravity="center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="100dp" />
+        android:fontFamily="@font/sen_regular"
+        android:text="@string/initial_know_more_stores_with_us"
+        android:textColor="@color/text"
+        android:textSize="20sp" />
 
-        <Button
-            android:id="@+id/auth_auxiliary_button_enter"
-            android:text="@string/sing_in"
-            android:fontFamily="@font/sen_bold"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            android:background="@drawable/auth_auxiliary_button_background"
+    <Button
+        android:id="@+id/initial_button_sing_in"
+        android:layout_width="330dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="25dp"
+        android:background="@drawable/auth_button_background"
 
-            android:layout_gravity="center"
-            android:layout_width="320dp"
-            android:layout_height="70dp"
-            android:layout_marginBottom="25dp"/>
+        android:fontFamily="@font/sen_bold"
+        android:text="@string/initial_sign_in"
+        android:textColor="@color/white"
+        android:textSize="14sp" />
 
-        <Button
-            android:id="@+id/auth_auxiliary_button_register"
-            android:text="@string/sign_up"
-            android:fontFamily="@font/sen_bold"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            android:background="@drawable/auth_auxiliary_button_background"
+    <Button
+        android:id="@+id/initial_button_sing_up"
+        android:layout_width="330dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:background="@drawable/auth_button_background"
+        android:fontFamily="@font/sen_bold"
 
-            android:layout_gravity="center"
-            android:layout_width="320dp"
-            android:layout_height="70dp" />
+        android:text="@string/initial_sign_up"
+        android:textColor="@color/white"
+        android:textSize="14sp" />
 
-    </LinearLayout>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
-
+</LinearLayout>
