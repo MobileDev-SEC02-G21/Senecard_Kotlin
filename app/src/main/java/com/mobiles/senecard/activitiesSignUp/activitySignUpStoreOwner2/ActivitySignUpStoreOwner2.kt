@@ -6,7 +6,6 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.view.View
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -20,7 +19,6 @@ import com.mobiles.senecard.R
 import com.mobiles.senecard.activitiesSignUp.activitySignUpStoreOwner1.ActivitySignUpStoreOwner1
 import com.mobiles.senecard.activitiesSignUp.activitySignUpStoreOwner3.ActivitySignUpStoreOwner3
 import com.mobiles.senecard.databinding.ActivitySignUpStoreOwner2Binding
-
 
 class ActivitySignUpStoreOwner2 : AppCompatActivity() {
 
@@ -74,10 +72,7 @@ class ActivitySignUpStoreOwner2 : AppCompatActivity() {
             }
         }
         binding.nextButton.setOnClickListener {
-            binding.loadingAnimation.visibility = View.VISIBLE
-            binding.nextButton.visibility = View.GONE
-            binding.loadingAnimation.playAnimation()
-
+            showMessage("Please wait one moment while processing the information", "loading")
             viewModelSignUpStoreOwner2.nextButtonClicked(
                 storeName = binding.storeNameEditText.text.toString(),
                 storeAddress = binding.storeAddressEditText.text.toString(),
@@ -121,12 +116,10 @@ class ActivitySignUpStoreOwner2 : AppCompatActivity() {
                 "store_category_empty" -> showMessage(getString(R.string.sign_up_store_owner_2_store_category_empty))
                 "store_image_empty" -> showMessage(getString(R.string.sign_up_store_owner_2_store_image_empty))
             }
-            binding.loadingAnimation.visibility = View.GONE
-            binding.nextButton.visibility = View.VISIBLE
         }
     }
 
     private fun showMessage(message: String, type: String = "info") {
-        CustomDialog(message, type).show(supportFragmentManager, "customDialog")
+        CustomDialog.showCustomDialog(supportFragmentManager, message, type)
     }
 }

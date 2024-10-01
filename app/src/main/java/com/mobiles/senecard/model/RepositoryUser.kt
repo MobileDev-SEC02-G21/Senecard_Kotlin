@@ -11,12 +11,13 @@ class RepositoryUser private constructor() {
         val instance: RepositoryUser by lazy { RepositoryUser() }
     }
 
-    suspend fun addUser(name: String, email: String, phone: String): Boolean {
+    suspend fun addUser(name: String, email: String, phone: String, role: String): Boolean {
         try {
             val user = hashMapOf(
                 "name" to name,
                 "email" to email,
-                "phone" to phone
+                "phone" to phone,
+                "role" to role
             )
 
             firebase.firestore.collection("users").add(user).await()
@@ -36,7 +37,8 @@ class RepositoryUser private constructor() {
                     id = document.id,
                     email = document.getString("email")!!,
                     name = document.getString("name")!!,
-                    phone = document.getString("phone")!!
+                    phone = document.getString("phone")!!,
+                    role = document.getString("role")!!
                 )
                 return user
             } else {

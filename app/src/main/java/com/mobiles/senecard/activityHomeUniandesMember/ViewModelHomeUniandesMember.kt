@@ -1,4 +1,4 @@
-package com.mobiles.senecard.activityHome
+package com.mobiles.senecard.activityHomeUniandesMember
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -8,7 +8,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.mobiles.senecard.model.RepositoryAuthentication
 import kotlinx.coroutines.launch
 
-class ViewModelHome: ViewModel() {
+class ViewModelHomeUniandesMember: ViewModel() {
 
     private val repositoryAuthentication = RepositoryAuthentication.instance
     private var user: FirebaseUser? = null

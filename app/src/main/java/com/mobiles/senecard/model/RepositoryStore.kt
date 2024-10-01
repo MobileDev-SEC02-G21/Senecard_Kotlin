@@ -14,11 +14,11 @@ class RepositoryStore private constructor() {
     }
 
     suspend fun addStore(
-        userId: String,
+        businessOwnerId: String,
+        name: String,
         address: String,
         category: String,
         image: Uri,
-        name: String,
         schedule: Map<String, List<Int>>
     ): Boolean {
         try {
@@ -31,12 +31,13 @@ class RepositoryStore private constructor() {
             val downloadUrl = uploadTaskSnapshot.storage.downloadUrl.await()
 
             val store = hashMapOf(
+                "businessOwnerId" to businessOwnerId,
                 "address" to address,
                 "category" to category,
                 "image" to downloadUrl.toString(),
                 "name" to name,
                 "schedule" to schedule,
-                "userId" to userId
+                "rating" to null
             )
 
             firebase.firestore.collection("stores").add(store).await()

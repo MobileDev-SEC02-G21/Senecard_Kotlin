@@ -2,7 +2,6 @@ package com.mobiles.senecard.activitiesSignUp.activitySignUpUniandesMember
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -10,7 +9,7 @@ import androidx.core.app.ActivityOptionsCompat
 import com.mobiles.senecard.CustomDialog
 import com.mobiles.senecard.R
 import com.mobiles.senecard.activitiesSignUp.activitySignUp.ActivitySignUp
-import com.mobiles.senecard.activityHome.ActivityHome
+import com.mobiles.senecard.activityHomeUniandesMember.ActivityHomeUniandesMember
 import com.mobiles.senecard.databinding.ActivitySignUpUniandesMemberBinding
 
 class ActivitySignUpUniandesMember : AppCompatActivity() {
@@ -33,11 +32,7 @@ class ActivitySignUpUniandesMember : AppCompatActivity() {
             viewModelSignUpUniandesMember.backImageViewClicked()
         }
         binding.registerButton.setOnClickListener {
-
-            binding.loadingAnimation.visibility = View.VISIBLE
-            binding.registerButton.visibility = View.GONE
-            binding.loadingAnimation.playAnimation()
-
+            showMessage("Please wait one moment while processing the information", "loading")
             viewModelSignUpUniandesMember.registerButtonClicked(
                 name = binding.nameEditText.text.toString(),
                 email = binding.emailEditText.text.toString(),
@@ -64,7 +59,7 @@ class ActivitySignUpUniandesMember : AppCompatActivity() {
         viewModelSignUpUniandesMember.navigateToActivityHome.observe(this) { navigate ->
             if (navigate) {
                 Toast.makeText(this, getString(R.string.sign_up_uniandes_member_register_succesfully), Toast.LENGTH_SHORT).show()
-                val intent = Intent(this, ActivityHome::class.java).apply {
+                val intent = Intent(this, ActivityHomeUniandesMember::class.java).apply {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 }
                 startActivity(intent)
@@ -85,12 +80,10 @@ class ActivitySignUpUniandesMember : AppCompatActivity() {
                 "error_firebase_auth" -> showMessage(getString(R.string.sign_up_uniandes_member_error_firebase_auth))
                 "error_firebase_firestore" -> showMessage(getString(R.string.sign_up_uniandes_member_error_firebase_firestore))
             }
-            binding.loadingAnimation.visibility = View.GONE
-            binding.registerButton.visibility = View.VISIBLE
         }
     }
 
     private fun showMessage(message: String, type: String = "info") {
-        CustomDialog(message, type).show(supportFragmentManager, "customDialog")
+        CustomDialog.showCustomDialog(supportFragmentManager, message, type)
     }
 }
