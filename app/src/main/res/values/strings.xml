@@ -40,6 +40,7 @@
     <string name="icon_launcher">icon launcher</string>
     <string name="icon_back">icon back</string>
     <string name="icon_image">icon_image</string>
+    <string name="icon_options">icon_options</string>
     <!-- Custom Dialog Strings -->
     <string name="custom_dialog_accept">Accept</string>
     <string name="custom_dialog_message">Message</string>
@@ -48,6 +49,7 @@
     <string name="custom_dialog_info">Info</string>
     <string name="custom_dialog_error">Error</string>
     <string name="custom_dialog_success">Success</string>
+    <string name="custom_dialog_loading">Loading</string>
     <!-- Initial Activity Strings -->
     <string name="initial_know_more_stores_with_us">¡Know more stores with us!</string>
     <string name="initial_sign_in">SIGN IN</string>

@@ -43,7 +43,7 @@ class ViewModelSignUpUniandesMember: ViewModel() {
             else if (repositoryUser.existsUser(email) == true) { _message.value = "user_exists" }
             else {
                 if (repositoryAuthentication.createUser(email = email, password = password)) {
-                    if (repositoryUser.addUser(name = name, email = email, phone = phone)) {
+                    if (repositoryUser.addUser(name = name, email = email, phone = phone, role = "uniandesMember")) {
                         _navigateToActivityHome.value = true
                     } else {
                         _message.value = "error_firebase_firestore"

@@ -10,5 +10,6 @@ class ActivitySplash : AppCompatActivity() {
         setTheme(R.style.AppTheme)
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
     }
 }

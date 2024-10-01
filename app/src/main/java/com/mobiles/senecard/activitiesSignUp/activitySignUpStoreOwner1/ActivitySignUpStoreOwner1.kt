@@ -2,7 +2,6 @@ package com.mobiles.senecard.activitiesSignUp.activitySignUpStoreOwner1
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
@@ -32,11 +31,7 @@ class ActivitySignUpStoreOwner1 : AppCompatActivity() {
             viewModelSignUpStoreOwner1.backImageViewClicked()
         }
         binding.nextButton.setOnClickListener {
-
-            binding.loadingAnimation.visibility = View.VISIBLE
-            binding.nextButton.visibility = View.GONE
-            binding.loadingAnimation.playAnimation()
-
+            showMessage("Please wait one moment while processing the information", "loading")
             viewModelSignUpStoreOwner1.nextButtonClicked(
                 name = binding.nameEditText.text.toString(),
                 email = binding.emailEditText.text.toString(),
@@ -86,11 +81,10 @@ class ActivitySignUpStoreOwner1 : AppCompatActivity() {
                 "passwords_not_equals" -> showMessage(getString(R.string.sign_up_store_owner_1_passwords_not_equals))
                 "user_exists" -> showMessage(getString(R.string.sign_up_store_owner_1_user_exists))
             }
-            binding.loadingAnimation.visibility = View.GONE
-            binding.nextButton.visibility = View.VISIBLE
         }
     }
+
     private fun showMessage(message: String, type: String = "info") {
-        CustomDialog(message, type).show(supportFragmentManager, "customDialog")
+        CustomDialog.showCustomDialog(supportFragmentManager, message, type)
     }
 }

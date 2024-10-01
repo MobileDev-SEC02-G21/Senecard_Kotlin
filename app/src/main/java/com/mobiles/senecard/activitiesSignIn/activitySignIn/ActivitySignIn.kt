@@ -2,14 +2,13 @@ package com.mobiles.senecard.activitiesSignIn.activitySignIn
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
 import com.mobiles.senecard.CustomDialog
 import com.mobiles.senecard.R
-import com.mobiles.senecard.activityHome.ActivityHome
+import com.mobiles.senecard.activityHomeUniandesMember.ActivityHomeUniandesMember
 import com.mobiles.senecard.activitiesInitial.activityInitial.ActivityInitial
 import com.mobiles.senecard.activitiesSignUp.activitySignUp.ActivitySignUp
 import com.mobiles.senecard.activitiesSignIn.activitySignInForgotPassword.ActivitySignInForgotPassword
@@ -38,11 +37,7 @@ class ActivitySignIn : AppCompatActivity() {
             viewModelSignIn.forgotPasswordTextViewClicked()
         }
         binding.enterButton.setOnClickListener {
-
-            binding.loadingAnimation.visibility = View.VISIBLE
-            binding.enterButton.visibility = View.GONE
-            binding.loadingAnimation.playAnimation()
-
+            showMessage("Please wait one moment while processing the information", "loading")
             viewModelSignIn.enterButtonClicked(
                 email = binding.emailEditText.text.toString(),
                 password = binding.passwordEditText.text.toString()
@@ -82,7 +77,7 @@ class ActivitySignIn : AppCompatActivity() {
         }
         viewModelSignIn.navigateToActivityHome.observe(this) { navigate -> if (navigate) {
                 Toast.makeText(this, getString(R.string.sign_in_authenticate_succesfully), Toast.LENGTH_SHORT).show()
-                startActivity(Intent(this, ActivityHome::class.java).apply {
+                startActivity(Intent(this, ActivityHomeUniandesMember::class.java).apply {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 })
                 viewModelSignIn.onNavigated()
@@ -108,12 +103,10 @@ class ActivitySignIn : AppCompatActivity() {
                 "email_invalid" -> showMessage(getString(R.string.sign_in_email_invalid))
                 "error_firebase_auth" -> showMessage(getString(R.string.sign_in_error_firebase_auth), "error")
             }
-            binding.loadingAnimation.visibility = View.GONE
-            binding.enterButton.visibility = View.VISIBLE
         }
     }
 
     private fun showMessage(message: String, type: String = "info") {
-        CustomDialog(message, type).show(supportFragmentManager, "customDialog")
+        CustomDialog.showCustomDialog(supportFragmentManager, message, type)
     }
 }

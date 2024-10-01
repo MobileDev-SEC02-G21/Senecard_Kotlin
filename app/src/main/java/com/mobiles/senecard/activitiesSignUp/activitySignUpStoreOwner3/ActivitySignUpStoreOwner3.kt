@@ -2,7 +2,6 @@ package com.mobiles.senecard.activitiesSignUp.activitySignUpStoreOwner3
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -10,7 +9,7 @@ import androidx.core.app.ActivityOptionsCompat
 import com.mobiles.senecard.CustomDialog
 import com.mobiles.senecard.R
 import com.mobiles.senecard.activitiesSignUp.activitySignUpStoreOwner2.ActivitySignUpStoreOwner2
-import com.mobiles.senecard.activityHome.ActivityHome
+import com.mobiles.senecard.activityHomeUniandesMember.ActivityHomeUniandesMember
 import com.mobiles.senecard.databinding.ActivitySignUpStoreOwner3Binding
 
 class ActivitySignUpStoreOwner3 : AppCompatActivity() {
@@ -33,11 +32,7 @@ class ActivitySignUpStoreOwner3 : AppCompatActivity() {
             viewModelSignUpStoreOwner3.backImageViewClicked()
         }
         binding.registerButton.setOnClickListener {
-
-            binding.loadingAnimation.visibility = View.VISIBLE
-            binding.registerButton.visibility = View.GONE
-            binding.loadingAnimation.playAnimation()
-
+            showMessage("Please wait one moment while processing the information", "loading")
             val schedule = mapOf(
                 "monday" to listOf(
                     binding.mondayStartTimeSpinner.selectedItem.toString().toInt(),
@@ -89,7 +84,7 @@ class ActivitySignUpStoreOwner3 : AppCompatActivity() {
         viewModelSignUpStoreOwner3.navigateToActivityHome.observe(this) { navigate ->
             if (navigate) {
                 Toast.makeText(this, getString(R.string.sign_up_store_owner_3_register_succesfully), Toast.LENGTH_SHORT).show()
-                val homeIntent = Intent(this, ActivityHome::class.java).apply {
+                val homeIntent = Intent(this, ActivityHomeUniandesMember::class.java).apply {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 }
                 startActivity(homeIntent)
@@ -108,11 +103,10 @@ class ActivitySignUpStoreOwner3 : AppCompatActivity() {
                 "error_firebase_auth" -> showMessage(getString(R.string.sign_up_store_owner_3_error_firebase_auth))
                 "error_firebase_firestore" -> showMessage(getString(R.string.sign_up_store_owner_3_error_firebase_firestore))
             }
-            binding.loadingAnimation.visibility = View.GONE
-            binding.registerButton.visibility = View.VISIBLE
         }
     }
+
     private fun showMessage(message: String, type: String = "info") {
-        CustomDialog(message, type).show(supportFragmentManager, "customDialog")
+        CustomDialog.showCustomDialog(supportFragmentManager, message, type)
     }
 }
