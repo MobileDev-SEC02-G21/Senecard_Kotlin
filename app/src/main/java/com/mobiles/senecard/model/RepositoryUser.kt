@@ -4,25 +4,34 @@ import com.mobiles.senecard.model.entities.User
 import kotlinx.coroutines.tasks.await
 
 class RepositoryUser private constructor() {
-
     private val firebase = FirebaseClient.instance
 
     companion object {
         val instance: RepositoryUser by lazy { RepositoryUser() }
     }
 
-    suspend fun addUser(name: String, email: String, phone: String): Boolean {
+    suspend fun addUser(userId: String, name: String, email: String, phone: String, qrCode: String, role: String): Boolean {
         try {
             val user = hashMapOf(
                 "name" to name,
                 "email" to email,
-                "phone" to phone
+                "phone" to phone,
+                "qr_code" to qrCode,
+                "role" to role
             )
-
-            firebase.firestore.collection("users").add(user).await()
+            firebase.firestore.collection("users").document(userId).set(user).await()
             return true
         } catch (e: Exception) {
             return false
+        }
+    }
+
+    suspend fun getUserById(userId: String): User? {
+        try {
+            val documentSnapshot = firebase.firestore.collection("users").document(userId).get().await()
+            return documentSnapshot.toObject(User::class.java)
+        } catch (e: Exception) {
+            return null
         }
     }
 
@@ -33,10 +42,11 @@ class RepositoryUser private constructor() {
             if (querySnapshot.documents.isNotEmpty()) {
                 val document = querySnapshot.documents[0]
                 val user = User(
-                    id = document.id,
+                    userId = document.id,
                     email = document.getString("email")!!,
                     name = document.getString("name")!!,
-                    phone = document.getString("phone")!!
+                    phone = document.getString("phone")!!,
+                    role = document.getString("role")!!
                 )
                 return user
             } else {
@@ -44,6 +54,15 @@ class RepositoryUser private constructor() {
             }
         } catch (e: Exception) {
             return null
+        }
+    }
+
+    suspend fun updateUser(userId: String, updatedFields: Map<String, Any>): Boolean {
+        return try {
+            firebase.firestore.collection("users").document(userId).update(updatedFields).await()
+            true
+        } catch (e: Exception) {
+            false
         }
     }
 
