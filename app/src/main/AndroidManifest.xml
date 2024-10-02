@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
+        android:hardwareAccelerated="true"
         android:name=".MyAPP"
         android:requestLegacyExternalStorage="true"
         android:allowBackup="true"
@@ -103,6 +104,8 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+        <activity android:name=".QRgenerator" />
+
 
 
     </application>

@@ -51,6 +51,8 @@ android {
     }
 }
 
+
+
 dependencies {
     // Dependencies of Androidx
     implementation(libs.androidx.fragment.ktx)
@@ -84,6 +86,11 @@ dependencies {
     implementation(libs.firebase.storage)
     implementation("com.google.firebase:firebase-messaging")
     implementation ("com.google.firebase:firebase-messaging-ktx")
+
+
+
+    // Librería ZXING
+    implementation ("com.journeyapps:zxing-android-embedded:4.3.0")
 
     implementation(libs.lottie)
 

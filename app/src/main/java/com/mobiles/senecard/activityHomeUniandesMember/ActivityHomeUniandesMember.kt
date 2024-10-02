@@ -2,10 +2,13 @@ package com.mobiles.senecard.activityHomeUniandesMember
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Button
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
+import com.mobiles.senecard.QRgenerator
+import com.mobiles.senecard.R
 import com.mobiles.senecard.activitiesInitial.activityInitial.ActivityInitial
 import com.mobiles.senecard.databinding.ActivityHomeUniandesMemberBinding
 
@@ -25,6 +28,21 @@ class ActivityHomeUniandesMember : AppCompatActivity() {
         setElementsMenu()
         setObserversMenu()
         viewModelHomeUniandesMember.validateSession()
+
+        // Para boton de qr
+
+        // Encuentra el botón en el layout
+        val qrCodeButton: Button = findViewById(R.id.qr_code_button)
+
+        // Configura un listener para el botón
+        qrCodeButton.setOnClickListener {
+            // Inicia la actividad QRgenerator
+            val intent = Intent(this, QRgenerator::class.java)
+            startActivity(intent)
+        }
+        //Fin de para boton de QR
+
+
     }
 
     private fun setElements() {
