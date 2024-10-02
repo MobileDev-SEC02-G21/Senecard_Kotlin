@@ -10,7 +10,13 @@ class RepositoryUser private constructor() {
         val instance: RepositoryUser by lazy { RepositoryUser() }
     }
 
-    suspend fun addUser(userId: String, name: String, email: String, phone: String, qrCode: String, role: String): Boolean {
+    suspend fun addUser(
+        name: String,
+        email: String,
+        phone: String,
+        qrCode: String,
+        role: String
+    ): Boolean {
         try {
             val user = hashMapOf(
                 "name" to name,
@@ -19,12 +25,15 @@ class RepositoryUser private constructor() {
                 "qr_code" to qrCode,
                 "role" to role
             )
-            firebase.firestore.collection("users").document(userId).set(user).await()
+
+            // Let Firestore generate the ID
+            firebase.firestore.collection("users").add(user).await()
             return true
         } catch (e: Exception) {
             return false
         }
     }
+
 
     suspend fun getUserById(userId: String): User? {
         try {

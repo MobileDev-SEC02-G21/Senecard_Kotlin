@@ -1,4 +1,4 @@
-package com.mobiles.senecard.activitiesBusinessOwner
+package com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerQRScanner
 
 import android.Manifest
 import android.content.Intent
@@ -16,6 +16,9 @@ import androidx.core.content.ContextCompat
 import com.google.zxing.*
 import com.google.zxing.common.HybridBinarizer
 import com.mobiles.senecard.R
+import com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerQRFailure.ActivityBusinessOwnerQRFailure
+import com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerQRSuccess.ActivityBusinessOwnerQRSuccess
+import com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerLandingPage.ActivityBusinessOwnerLandingPage
 
 class ActivityBusinessOwnerQRScanner : AppCompatActivity() {
 

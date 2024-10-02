@@ -1,4 +1,4 @@
-package com.mobiles.senecard.activitiesBusinessOwner
+package com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerLandingPage
 
 import android.content.Intent
 import android.os.Bundle
@@ -10,6 +10,8 @@ import android.widget.Button
 import android.widget.ImageButton
 import android.widget.RatingBar
 import android.widget.TextView
+import com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerQRScanner.ActivityBusinessOwnerQRScanner
+import com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerAdvertisements.ActivityBusinessOwnerAdvertisements
 import org.json.JSONObject
 import java.io.IOException
 

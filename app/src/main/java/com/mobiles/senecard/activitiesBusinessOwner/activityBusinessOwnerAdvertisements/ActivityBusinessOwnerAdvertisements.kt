@@ -1,4 +1,4 @@
-package com.mobiles.senecard.activitiesBusinessOwner
+package com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerAdvertisements
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

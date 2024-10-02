@@ -99,7 +99,7 @@
         </activity>
 
         <activity
-            android:name=".activitiesBusinessOwner.ActivityBusinessOwnerLandingPage"
+            android:name=".activitiesBusinessOwner.activityBusinessOwnerLandingPage.ActivityBusinessOwnerLandingPage"
             android:exported="true"
             android:screenOrientation="portrait"
             tools:ignore="DiscouragedApi,LockedOrientationActivity">
@@ -110,15 +110,15 @@
         </activity>
 
         <!-- Activity for QR Success -->
-        <activity android:name=".activitiesBusinessOwner.ActivityBusinessOwnerQRSuccess"
+        <activity android:name=".activitiesBusinessOwner.activityBusinessOwnerQRSuccess.ActivityBusinessOwnerQRSuccess"
             android:label="Success Transaction" />
 
         <!-- Activity for QR Failure -->
-        <activity android:name=".activitiesBusinessOwner.ActivityBusinessOwnerQRFailure"
+        <activity android:name=".activitiesBusinessOwner.activityBusinessOwnerQRFailure.ActivityBusinessOwnerQRFailure"
             android:label="Failed Transaction" />
 
         <!-- Activity for QR Scanner -->
-        <activity android:name=".activitiesBusinessOwner.ActivityBusinessOwnerQRScanner"
+        <activity android:name=".activitiesBusinessOwner.activityBusinessOwnerQRScanner.ActivityBusinessOwnerQRScanner"
             android:label="QR Scanner" />
 
     </application>

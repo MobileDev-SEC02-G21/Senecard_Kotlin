@@ -13,29 +13,39 @@ class RepositoryStore private constructor() {
         val instance: RepositoryStore by lazy { RepositoryStore() }
     }
 
-    suspend fun addStore(storeId: String, address: String, category: String, image: Uri, name: String, rating: Double, schedule: Map<String, List<Int>>, businessOwnerId: String): Boolean {
+    suspend fun addStore(
+        userId: String,
+        address: String,
+        category: String,
+        image: Uri,
+        name: String,
+        schedule: Map<String, List<Int>>
+    ): Boolean {
         try {
             val imageName = UUID.randomUUID().toString() + ".jpg"
             val imageRef = firebase.storage.child("stores_images/$imageName")
-            val uploadTaskSnapshot = imageRef.putFile(image).await()
-            val downloadUrl = uploadTaskSnapshot.storage.downloadUrl.await()
+
+            val uploadTask = imageRef.putFile(image).await()
+            val downloadUrl = uploadTask.storage.downloadUrl.await()
 
             val store = hashMapOf(
                 "address" to address,
                 "category" to category,
                 "image" to downloadUrl.toString(),
                 "name" to name,
-                "rating" to rating,
                 "schedule" to schedule,
-                "businessOwnerId" to businessOwnerId
+                "userId" to userId
             )
 
-            firebase.firestore.collection("stores").document(storeId).set(store).await()
+            // Let Firestore generate the ID
+            firebase.firestore.collection("stores").add(store).await()
             return true
         } catch (e: Exception) {
             return false
         }
     }
+
+
 
     suspend fun getStoreById(storeId: String): Store? {
         try {

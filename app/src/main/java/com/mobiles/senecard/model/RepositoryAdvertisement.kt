@@ -12,14 +12,34 @@ class RepositoryAdvertisement private constructor() {
         val instance: RepositoryAdvertisement by lazy { RepositoryAdvertisement() }
     }
 
-    suspend fun addAdvertisement(advertisement: Advertisement): Boolean {
+    suspend fun addAdvertisement(
+        available: Boolean,
+        description: String,
+        endDate: String,
+        imageUrl: String,
+        startDate: String,
+        storeId: String,
+        title: String
+    ): Boolean {
         try {
+            val advertisement = hashMapOf(
+                "available" to available,
+                "description" to description,
+                "endDate" to endDate,
+                "image" to imageUrl,
+                "startDate" to startDate,
+                "storeId" to storeId,
+                "title" to title
+            )
+
+            // Let Firestore generate the ID
             firebase.firestore.collection("advertisements").add(advertisement).await()
             return true
         } catch (e: Exception) {
             return false
         }
     }
+
 
     suspend fun getAdvertisementById(id: String): Advertisement? {
         try {

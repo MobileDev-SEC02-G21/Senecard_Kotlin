@@ -12,14 +12,32 @@ class RepositoryPurchase private constructor() {
         val instance: RepositoryPurchase by lazy { RepositoryPurchase() }
     }
 
-    suspend fun addPurchase(purchase: Purchase): Boolean {
+    suspend fun addPurchase(
+        date: String,
+        eligible: Boolean,
+        purchase: String,
+        rating: Int,
+        storeId: String,
+        uniandesMemberId: String
+    ): Boolean {
         try {
-            firebase.firestore.collection("purchases").add(purchase).await()
+            val purchaseData = hashMapOf(
+                "date" to date,
+                "eligible" to eligible,
+                "purchase" to purchase,
+                "rating" to rating,
+                "storeId" to storeId,
+                "uniandesMemberId" to uniandesMemberId
+            )
+
+            // Let Firestore generate the ID
+            firebase.firestore.collection("purchases").add(purchaseData).await()
             return true
         } catch (e: Exception) {
             return false
         }
     }
+
 
     suspend fun getPurchaseById(id: String): Purchase? {
         try {
