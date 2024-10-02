@@ -1,11 +1,13 @@
 package com.mobiles.senecard.activitiesBusinessOwner
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import com.mobiles.senecard.R
 import android.view.View
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.RatingBar
 import android.widget.TextView
 import org.json.JSONObject
@@ -18,6 +20,25 @@ class ActivityBusinessOwnerLandingPage : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_business_owner_landing)
+
+        findViewById<Button>(R.id.advertisementsButton).setOnClickListener {
+            val intent = Intent(this, ActivityBusinessOwnerAdvertisements::class.java)
+            startActivity(intent)
+        }
+
+        findViewById<ImageButton>(R.id.qrButton).setOnClickListener {
+            val intent = Intent(this, ActivityBusinessOwnerQRScanner::class.java)
+            startActivity(intent)
+        }
+
+        // Loyalty Button functionality
+        val loyaltyButton = findViewById<Button>(R.id.loyaltyButton)
+        loyaltyButton.setOnClickListener {
+            // Redirect to QR scanner activity
+            val intent = Intent(this, ActivityBusinessOwnerQRScanner::class.java)
+            startActivity(intent)
+        }
+
 
         drawerLayout = findViewById(R.id.drawer_layout)
 
@@ -75,4 +96,5 @@ class ActivityBusinessOwnerLandingPage : AppCompatActivity() {
             ""
         }
     }
+
 }

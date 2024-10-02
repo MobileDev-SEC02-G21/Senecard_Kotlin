@@ -4,6 +4,8 @@
 
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" />
 
     <application
         android:requestLegacyExternalStorage="true"
@@ -106,6 +108,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Activity for QR Success -->
+        <activity android:name=".activitiesBusinessOwner.ActivityBusinessOwnerQRSuccess"
+            android:label="Success Transaction" />
+
+        <!-- Activity for QR Failure -->
+        <activity android:name=".activitiesBusinessOwner.ActivityBusinessOwnerQRFailure"
+            android:label="Failed Transaction" />
+
+        <!-- Activity for QR Scanner -->
+        <activity android:name=".activitiesBusinessOwner.ActivityBusinessOwnerQRScanner"
+            android:label="QR Scanner" />
 
     </application>
 
