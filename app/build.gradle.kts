@@ -82,6 +82,8 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.storage)
+    implementation("com.google.firebase:firebase-messaging")
+    implementation ("com.google.firebase:firebase-messaging-ktx")
 
     implementation(libs.lottie)
 
