@@ -7,7 +7,7 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
-import com.mobiles.senecard.QRgenerator
+import com.mobiles.senecard.QRgenerator.QRgenerator
 import com.mobiles.senecard.R
 import com.mobiles.senecard.activitiesInitial.activityInitial.ActivityInitial
 import com.mobiles.senecard.databinding.ActivityHomeUniandesMemberBinding
