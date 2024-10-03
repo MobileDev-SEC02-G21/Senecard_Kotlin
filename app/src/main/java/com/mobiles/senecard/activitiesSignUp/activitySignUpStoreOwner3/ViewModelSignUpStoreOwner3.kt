@@ -50,10 +50,10 @@ class ViewModelSignUpStoreOwner3: ViewModel() {
 
             if (isScheduleValid) {
                 if (repositoryAuthentication.createUser(signUpUser.email!!, signUpUser.password!!)) {
-                    if (repositoryUser.addUser(name = signUpUser.name!!, email = signUpUser.email!!, phone = signUpUser.phone!!, role = "businessOwner")) {
+                    if (repositoryUser.addUser(name = signUpUser.name!!, email = signUpUser.email!!, phone = signUpUser.phone!!, role = "businessOwner", qrCode = "", role = "businessOwner") ) {
                         val user = repositoryUser.getUser(signUpUser.email!!)
                         if (user != null) {
-                            if (repositoryStore.addStore(businessOwnerId = user.id, name = signUpStore.name!!, category = signUpStore.category!!, address = signUpStore.address!!, image = signUpStore.image!!, schedule = storeSchedule)) {
+                            if (repositoryStore.addStore(businessOwnerId = user.userId, name = signUpStore.name!!, category = signUpStore.category!!, address = signUpStore.address!!, image = signUpStore.image!!, schedule = storeSchedule)) {
                                 signUpUser.reset()
                                 signUpStore.reset()
                                 _navigateToActivityHome.value = true

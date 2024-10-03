@@ -4,6 +4,8 @@
 
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" />
 
     <application
         android:requestLegacyExternalStorage="true"
@@ -88,12 +90,37 @@
             android:exported="true"
             android:screenOrientation="portrait"
             tools:ignore="DiscouragedApi,LockedOrientationActivity" >
+            <!--
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            -->
+        </activity>
 
+        <activity
+            android:name=".activitiesBusinessOwner.activityBusinessOwnerLandingPage.ActivityBusinessOwnerLandingPage"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            tools:ignore="DiscouragedApi,LockedOrientationActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Activity for QR Success -->
+        <activity android:name=".activitiesBusinessOwner.activityBusinessOwnerQRSuccess.ActivityBusinessOwnerQRSuccess"
+            android:label="Success Transaction" />
+
+        <!-- Activity for QR Failure -->
+        <activity android:name=".activitiesBusinessOwner.activityBusinessOwnerQRFailure.ActivityBusinessOwnerQRFailure"
+            android:label="Failed Transaction" />
+
+        <!-- Activity for QR Scanner -->
+        <activity android:name=".activitiesBusinessOwner.activityBusinessOwnerQRScanner.ActivityBusinessOwnerQRScanner"
+            android:label="QR Scanner" />
+
     </application>
 
 </manifest>
