@@ -29,10 +29,13 @@
     </string-array>
     <!-- Array for Categories -->
     <string-array name="categories">
+        <item>Bakeries</item>
+        <item>Bar</item>
+        <item>Coffee</item>
+        <item>Electronic</item>
+        <item>Pizzeria</item>
         <item>Restaurant</item>
         <item>Stationery</item>
-        <item>Food</item>
-        <item>Electronics</item>
         <item>Other</item>
     </string-array>
     <!-- Global Strings -->

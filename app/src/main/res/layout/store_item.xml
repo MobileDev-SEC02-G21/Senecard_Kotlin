@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" >
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp" >
+
+        <ImageView
+            android:id="@+id/store_image_view"
+            android:src="@mipmap/icon_image_landscape"
+            android:contentDescription="@string/icon_image"
+            android:foreground="@drawable/auth_image_foreground"
+            android:scaleType="centerCrop"
+
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_gravity="center_vertical" />
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_gravity="center"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp" >
+
+            <TextView
+                android:id="@+id/store_name_text_view"
+                android:text="Store Name"
+                android:fontFamily="@font/sen_regular"
+                android:textSize="16sp"
+                android:textColor="@color/text"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp" >
+
+                <ImageView
+                    android:id="@+id/star_image_view"
+                    android:src="@mipmap/icon_star"
+                    android:contentDescription="@string/icon_image"
+                    android:foreground="@drawable/auth_image_foreground"
+                    android:scaleType="centerCrop"
+
+                    android:layout_marginTop="2dp"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp" />
+
+                <TextView
+                    android:id="@+id/store_rating_text_view"
+                    android:text="4.7"
+                    android:fontFamily="@font/sen_regular"
+                    android:textSize="16sp"
+                    android:textColor="@color/text"
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"/>
+
+                <TextView
+                    android:visibility="gone"
+                    android:id="@+id/closed_text_view"
+                    android:text="Closed"
+                    android:fontFamily="@font/sen_semibold"
+                    android:textSize="16sp"
+                    android:textColor="@color/secondary"
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/tertiary" />
+
+</LinearLayout>

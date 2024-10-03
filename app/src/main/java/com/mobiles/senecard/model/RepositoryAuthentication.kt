@@ -1,11 +1,12 @@
 package com.mobiles.senecard.model
 
-import com.google.firebase.auth.FirebaseUser
+import com.mobiles.senecard.model.entities.User
 import kotlinx.coroutines.tasks.await
 
 class RepositoryAuthentication private constructor() {
 
     private val firebase = FirebaseClient.instance
+    private val repositoryUser = RepositoryUser.instance
 
     companion object {
         val instance: RepositoryAuthentication by lazy { RepositoryAuthentication() }
@@ -29,8 +30,12 @@ class RepositoryAuthentication private constructor() {
         }
     }
 
-    fun getCurrentUser(): FirebaseUser? {
-        return firebase.auth.currentUser
+    suspend fun getCurrentUser(): User? {
+        val firebaseUser = firebase.auth.currentUser
+        if (firebaseUser != null) {
+            return repositoryUser.getUser(firebaseUser.email!!)
+        }
+        return null
     }
 
     fun logOut() {

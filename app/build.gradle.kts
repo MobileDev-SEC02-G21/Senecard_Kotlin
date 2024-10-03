@@ -84,5 +84,6 @@ dependencies {
     implementation(libs.firebase.storage)
 
     implementation(libs.lottie)
+    implementation(libs.glide)
 
 }
