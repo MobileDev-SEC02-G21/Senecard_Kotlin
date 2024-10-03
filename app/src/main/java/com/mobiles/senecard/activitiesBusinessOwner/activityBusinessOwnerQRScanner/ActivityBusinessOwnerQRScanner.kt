@@ -13,16 +13,23 @@ import androidx.camera.core.ImageProxy
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.google.zxing.*
 import com.google.zxing.common.HybridBinarizer
 import com.mobiles.senecard.R
 import com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerQRFailure.ActivityBusinessOwnerQRFailure
 import com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerQRSuccess.ActivityBusinessOwnerQRSuccess
 import com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerLandingPage.ActivityBusinessOwnerLandingPage
+import com.mobiles.senecard.model.RepositoryPurchase
+import com.mobiles.senecard.model.RepositoryStore
+import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 class ActivityBusinessOwnerQRScanner : AppCompatActivity() {
 
     private val cameraPermissionCode = 101
+    private val repositoryPurchase = RepositoryPurchase.instance // Assuming the repository is already set up
+    private val repositoryStore = RepositoryStore.instance // Assuming store repository if needed
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,6 +40,7 @@ class ActivityBusinessOwnerQRScanner : AppCompatActivity() {
         } else {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), cameraPermissionCode)
         }
+
         // Back button functionality
         val backButton = findViewById<ImageButton>(R.id.backButton)
         backButton.setOnClickListener {
@@ -41,11 +49,33 @@ class ActivityBusinessOwnerQRScanner : AppCompatActivity() {
             startActivity(intent)
             finish() // Close current activity
         }
+
         // Test Success Button
         val testSuccessButton = findViewById<Button>(R.id.testSuccessButton)
         testSuccessButton.setOnClickListener {
             val intent = Intent(this, ActivityBusinessOwnerQRSuccess::class.java)
             startActivity(intent)
+
+            // Simulate saving a purchase in the database for testing
+            lifecycleScope.launch {
+                val storeId = "QuQWLPcClpc7b3AMm33CX" // Example store ID
+                val purchaseData = "Burrito: 1 meat" // Example purchase data
+                val rating = 5
+                val uniandesMemberId = "CVlThQw5R3MklwATAJlV" // Example member ID
+
+                val success = repositoryPurchase.addPurchase(
+                    storeId = storeId,
+                    purchase = purchaseData,
+                    rating = rating,
+                    uniandesMemberId = uniandesMemberId,
+                    eligible = true,
+                    date= LocalDate.now().toString()
+                )
+
+                if (success) {
+                    // Notify that the purchase was saved successfully (optional)
+                }
+            }
         }
 
         // Test Failure Button

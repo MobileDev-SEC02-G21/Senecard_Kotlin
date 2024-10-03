@@ -50,6 +50,35 @@ class RepositoryPurchase private constructor() {
         }
     }
 
+
+    // Fetch purchases by storeId (new method)
+    suspend fun getPurchasesByStore(storeId: String): List<Purchase> {
+        try {
+            val querySnapshot = firebase.firestore.collection("purchases")
+                .whereEqualTo("storeId", storeId).get().await()
+
+            val purchases = mutableListOf<Purchase>()
+
+            for (document in querySnapshot.documents) {
+                val purchase = Purchase(
+                    purchaseId = document.id,
+                    date = document.getString("date")!!,
+                    eligible = document.getBoolean("eligible") ?: false,
+                    purchaseDescription = document.getString("purchase")!!,
+                    rating = document.getDouble("rating")?.toInt() ?: 0,
+                    storeId = storeId,
+                    userId = document.getString("uniandesMemberId")!!
+                )
+                purchases.add(purchase)
+            }
+
+            return purchases
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return emptyList()
+        }
+    }
+
     suspend fun updatePurchase(id: String, updatedFields: Map<String, Any>): Boolean {
         try {
             firebase.firestore.collection("purchases").document(id).update(updatedFields).await()

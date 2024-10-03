@@ -44,6 +44,33 @@ class RepositoryUser private constructor() {
         }
     }
 
+    suspend fun getUserByQRCode(qrCode: String): User? {
+        try {
+            val querySnapshot = firebase.firestore
+                .collection("users")
+                .whereEqualTo("qr_code", qrCode)
+                .get()
+                .await()
+
+            if (querySnapshot.documents.isNotEmpty()) {
+                val document = querySnapshot.documents[0]
+                return User(
+                    userId = document.id,
+                    email = document.getString("email")!!,
+                    name = document.getString("name")!!,
+                    phone = document.getString("phone")!!,
+                    qrCode = document.getString("qr_code")!!,
+                    role = document.getString("role")!!
+                )
+            } else {
+                return null
+            }
+        } catch (e: Exception) {
+            return null
+        }
+    }
+
+
     suspend fun getUser(email: String): User? {
         try {
             val querySnapshot = firebase.firestore.collection("users").whereEqualTo("email", email).get().await()
