@@ -56,7 +56,7 @@ class RepositoryUser private constructor() {
             if (querySnapshot.documents.isNotEmpty()) {
                 val document = querySnapshot.documents[0]
                 return User(
-                    userId = document.id,
+                    id = document.id,
                     email = document.getString("email")!!,
                     name = document.getString("name")!!,
                     phone = document.getString("phone")!!,

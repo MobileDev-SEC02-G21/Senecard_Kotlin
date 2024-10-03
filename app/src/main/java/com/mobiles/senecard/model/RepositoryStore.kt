@@ -98,10 +98,10 @@ class RepositoryStore private constructor() {
             if (querySnapshot.documents.isNotEmpty()) {
                 val document = querySnapshot.documents[0]
                 return Store(
-                    storeId = document.id,
+                    id = document.id,
                     name = document.getString("name")!!,
                     address = document.getString("address")!!,
-                    imageUrl = document.getString("image")!!,
+                    image = document.getString("image")!!,
                     rating = document.getDouble("rating") ?: 0.0,
                     category = document.getString("category")!!,
                     businessOwnerId = userId

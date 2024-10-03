@@ -51,14 +51,14 @@ class ViewModelBusinessOwnerLandingPage : ViewModel() {
                 val store = repositoryStore.getStoreByUserId(businessOwnerId)
                 if (store != null) {
                     _storeName.value = store.name
-                    _rating.value = store.rating.toFloat()
+                    _rating.value = store.rating!!.toFloat()
 
                     // Fetch the number of transactions (purchases) by the store ID
-                    val purchases = repositoryPurchase.getPurchasesByStore(store.storeId)
-                    _transactionCount.value = purchases.size
+                    val purchases = store.id?.let { repositoryPurchase.getPurchasesByStore(it) }
+                    _transactionCount.value = purchases!!.size
 
                     // Fetch the number of advertisements by the store ID
-                    val advertisements = repositoryAdvertisement.getAdvertisementsByStoreId(store.storeId)
+                    val advertisements = repositoryAdvertisement.getAdvertisementsByStoreId(store.id!!)
                     _advertisementCount.value = advertisements.size
                 } else {
                     _errorMessage.value = "Store not found."
