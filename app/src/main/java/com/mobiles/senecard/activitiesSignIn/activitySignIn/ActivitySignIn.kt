@@ -8,8 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
 import com.mobiles.senecard.CustomDialog
 import com.mobiles.senecard.R
-import com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerLandingPage.ActivityBusinessOwnerLandingPage
-import com.mobiles.senecard.activityHomeUniandesMember.ActivityHomeUniandesMember
+import com.mobiles.senecard.activitiesHomeUniandesMember.activityHomeUniandesMember.ActivityHomeUniandesMember
 import com.mobiles.senecard.activitiesInitial.activityInitial.ActivityInitial
 import com.mobiles.senecard.activitiesSignUp.activitySignUp.ActivitySignUp
 import com.mobiles.senecard.activitiesSignIn.activitySignInForgotPassword.ActivitySignInForgotPassword

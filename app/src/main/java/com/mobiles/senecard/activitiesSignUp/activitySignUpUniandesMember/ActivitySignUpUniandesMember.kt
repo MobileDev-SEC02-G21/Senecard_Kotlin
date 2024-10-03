@@ -9,7 +9,7 @@ import androidx.core.app.ActivityOptionsCompat
 import com.mobiles.senecard.CustomDialog
 import com.mobiles.senecard.R
 import com.mobiles.senecard.activitiesSignUp.activitySignUp.ActivitySignUp
-import com.mobiles.senecard.activityHomeUniandesMember.ActivityHomeUniandesMember
+import com.mobiles.senecard.activitiesHomeUniandesMember.activityHomeUniandesMember.ActivityHomeUniandesMember
 import com.mobiles.senecard.databinding.ActivitySignUpUniandesMemberBinding
 
 class ActivitySignUpUniandesMember : AppCompatActivity() {

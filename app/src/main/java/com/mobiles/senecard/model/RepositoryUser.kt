@@ -1,5 +1,6 @@
 package com.mobiles.senecard.model
 
+import com.google.firebase.firestore.toObject
 import com.mobiles.senecard.model.entities.User
 import kotlinx.coroutines.tasks.await
 
@@ -76,14 +77,9 @@ class RepositoryUser private constructor() {
             val querySnapshot = firebase.firestore.collection("users").whereEqualTo("email", email).get().await()
 
             if (querySnapshot.documents.isNotEmpty()) {
+
                 val document = querySnapshot.documents[0]
-                val user = User(
-                    userId = document.id,
-                    email = document.getString("email")!!,
-                    name = document.getString("name")!!,
-                    phone = document.getString("phone")!!,
-                    role = document.getString("role")!!
-                )
+                val user = document.toObject<User>()?.copy(id = document.id)
                 return user
             } else {
                 return null
