@@ -58,10 +58,10 @@ class ActivityBusinessOwnerQRScanner : AppCompatActivity() {
 
             // Simulate saving a purchase in the database for testing
             lifecycleScope.launch {
-                val storeId = "QuQWLPcClpc7b3AMm33CX" // Example store ID
-                val purchaseData = "Burrito: 1 meat" // Example purchase data
+                val storeId = "QuQWLPcClpc7b3AMm33CX"
+                val purchaseData = "Very good food"
                 val rating = 5
-                val uniandesMemberId = "CVlThQw5R3MklwATAJlV" // Example member ID
+                val uniandesMemberId = "CVlThQw5R3MklwATAJlV"
 
                 val success = repositoryPurchase.addPurchase(
                     storeId = storeId,

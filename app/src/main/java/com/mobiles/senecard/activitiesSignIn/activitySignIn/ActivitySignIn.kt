@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
 import com.mobiles.senecard.CustomDialog
 import com.mobiles.senecard.R
+import com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerLandingPage.ActivityBusinessOwnerLandingPage
 import com.mobiles.senecard.activityHomeUniandesMember.ActivityHomeUniandesMember
 import com.mobiles.senecard.activitiesInitial.activityInitial.ActivityInitial
 import com.mobiles.senecard.activitiesSignUp.activitySignUp.ActivitySignUp
@@ -59,6 +60,16 @@ class ActivitySignIn : AppCompatActivity() {
                     R.anim.slide_out_right
                 )
                 startActivity(intent, options.toBundle())
+                viewModelSignIn.onNavigated()
+            }
+        }
+        // Add a new observer for navigating to the Business Owner page
+        viewModelSignIn.navigateToActivityBusinessOwner.observe(this) { navigate ->
+            if (navigate) {
+                Toast.makeText(this, "Redirecting to Business Owner page", Toast.LENGTH_SHORT).show()
+                startActivity(Intent(this, ActivityBusinessOwnerLandingPage::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                })
                 viewModelSignIn.onNavigated()
             }
         }

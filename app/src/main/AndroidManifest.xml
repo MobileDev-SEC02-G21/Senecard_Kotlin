@@ -29,9 +29,15 @@
             android:name=".activitiesInitial.activityInitial.ActivityInitial"
             android:exported="true"
             android:screenOrientation="portrait"
-            tools:ignore="DiscouragedApi,LockedOrientationActivity" />
+            tools:ignore="DiscouragedApi,LockedOrientationActivity">
 
-        <activity
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+    <activity
             android:name=".activitiesSignIn.activitySignIn.ActivitySignIn"
             android:exported="true"
             android:screenOrientation="portrait"
@@ -90,12 +96,6 @@
             android:exported="true"
             android:screenOrientation="portrait"
             tools:ignore="DiscouragedApi,LockedOrientationActivity" >
-            <!--
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-            -->
         </activity>
 
         <activity
@@ -103,21 +103,14 @@
             android:exported="true"
             android:screenOrientation="portrait"
             tools:ignore="DiscouragedApi,LockedOrientationActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
-        <!-- Activity for QR Success -->
         <activity android:name=".activitiesBusinessOwner.activityBusinessOwnerQRSuccess.ActivityBusinessOwnerQRSuccess"
             android:label="Success Transaction" />
 
-        <!-- Activity for QR Failure -->
         <activity android:name=".activitiesBusinessOwner.activityBusinessOwnerQRFailure.ActivityBusinessOwnerQRFailure"
             android:label="Failed Transaction" />
 
-        <!-- Activity for QR Scanner -->
         <activity android:name=".activitiesBusinessOwner.activityBusinessOwnerQRScanner.ActivityBusinessOwnerQRScanner"
             android:label="QR Scanner" />
 
