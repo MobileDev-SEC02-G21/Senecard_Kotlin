@@ -30,6 +30,12 @@ materialVersion = "1.7.2"
 ui = "1.7.2"
 uiTooling = "1.7.2"
 uiToolingPreview = "1.7.2"
+cameraCore = "1.5.0-alpha01"
+cameraCamera2 = "1.5.0-alpha01"
+cameraLifecycle = "1.5.0-alpha01"
+cameraView = "1.5.0-alpha01"
+zxingAndroidEmbedded = "4.3.0"
+core = "3.5.3"
 
 [libraries]
 androidx-activity-activity-compose-v180-x5 = { module = "androidx.activity:activity-compose", version.ref = "androidxActivityActivityCompose4" }
@@ -71,6 +77,12 @@ material3 = { module = "androidx.compose.material3:material3", version.ref = "ma
 ui = { module = "androidx.compose.ui:ui", version.ref = "ui" }
 ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "uiTooling" }
 ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "uiToolingPreview" }
+androidx-camera-core = { group = "androidx.camera", name = "camera-core", version.ref = "cameraCore" }
+androidx-camera-camera2 = { group = "androidx.camera", name = "camera-camera2", version.ref = "cameraCamera2" }
+androidx-camera-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "cameraLifecycle" }
+androidx-camera-view = { group = "androidx.camera", name = "camera-view", version.ref = "cameraView" }
+zxing-android-embedded = { group = "com.journeyapps", name = "zxing-android-embedded", version.ref = "zxingAndroidEmbedded" }
+core = { group = "com.google.zxing", name = "core", version.ref = "core" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

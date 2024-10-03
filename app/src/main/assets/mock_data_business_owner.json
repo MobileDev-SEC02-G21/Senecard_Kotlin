@@ -1,0 +1,60 @@
+{
+  "store": {
+    "id": "store_123",
+    "address": "Cra 3 #16-55",
+    "category": "Fast Food",
+    "image": "https://example.com/store_image.png",
+    "name": "One Burrito",
+    "schedule": {
+      "Monday": [9, 18],
+      "Tuesday": [9, 18],
+      "Wednesday": [9, 18],
+      "Thursday": [9, 18],
+      "Friday": [9, 22],
+      "Saturday": [10, 22],
+      "Sunday": [10, 20]
+    },
+    "userId": "user_123",
+    "rating": 4.5,
+    "loyalty": {
+      "qr_code_url": "https://example.com/qr_code.png",
+      "loyalty_cards_redeemed": 13,
+      "stamps_awarded": 20
+    },
+    "transactions": [
+      {
+        "customer_name": "Javier Rivas",
+        "email": "hello@halallab.co",
+        "purchase": "Burrito: 1 meat",
+        "status": "success"
+      },
+      {
+        "customer_name": "Javier Rivas",
+        "email": "hello@halallab.co",
+        "purchase": "Burrito: 1 meat",
+        "status": "declined"
+      }
+    ],
+    "advertisements": [
+      {
+        "id": 1,
+        "image_url": "https://example.com/burritos.png",
+        "description": "20% OFF ALL BURRITOS"
+      },
+      {
+        "id": 2,
+        "image_url": "https://example.com/drinks.png",
+        "description": "2X1 DRINKS"
+      }
+    ]
+  },
+  "users": [
+    {
+      "id": "user_123",
+      "email": "hello@halallab.co",
+      "name": "Andres Escobar",
+      "phone": "408-841-0926",
+      "role": "business_owner"
+    }
+  ]
+}
