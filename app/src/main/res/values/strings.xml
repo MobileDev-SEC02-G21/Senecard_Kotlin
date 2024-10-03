@@ -176,5 +176,9 @@
     <string name="sign_up_store_owner_3_error_firebase_firestore">We were unable to register your user</string>
     <string name="sign_up_store_owner_3_register_succesfully">You have been successfully registered</string>
     <string name="sign_up_store_owner_2_store_category">STORE CATEGORY</string>
+    <string name="icon_example">Description of the example</string>
+    <string name="reward_image_desc">Description of the example</string>
+    <string name="back_button_desc">Back botton</string>
+    <string name="harvest_text">Cosechas</string>
 
 </resources>

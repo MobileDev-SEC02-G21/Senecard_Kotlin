@@ -6,7 +6,9 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.GravityCompat
+import com.mobiles.senecard.LoyaltyCardsActivity.ActivityLoyaltyCards
 import com.mobiles.senecard.QRgenerator.QRgenerator
 import com.mobiles.senecard.R
 import com.mobiles.senecard.activitiesInitial.activityInitial.ActivityInitial
@@ -29,18 +31,15 @@ class ActivityHomeUniandesMember : AppCompatActivity() {
         setObserversMenu()
         viewModelHomeUniandesMember.validateSession()
 
-        // Para boton de qr
-
-        // Encuentra el botón en el layout
-        val qrCodeButton: Button = findViewById(R.id.qr_code_button)
-
-        // Configura un listener para el botón
-        qrCodeButton.setOnClickListener {
-            // Inicia la actividad QRgenerator
-            val intent = Intent(this, QRgenerator::class.java)
-            startActivity(intent)
+        // Configura el listener para el botón de QR
+        binding.qrCodeButton.setOnClickListener {
+            startActivity(Intent(this, QRgenerator::class.java))
         }
-        //Fin de para boton de QR
+
+        // Configura el listener para las tarjetas de fidelización
+        binding.loyaltyCardsButton.setOnClickListener {
+            startActivity(Intent(this, ActivityLoyaltyCards::class.java))
+        }
 
 
     }
@@ -62,7 +61,7 @@ class ActivityHomeUniandesMember : AppCompatActivity() {
         }
 
     }
-    
+
     private fun setElementsMenu() {
         binding.backImageView.setOnClickListener {
             binding.drawerLayout.closeDrawer(GravityCompat.START)

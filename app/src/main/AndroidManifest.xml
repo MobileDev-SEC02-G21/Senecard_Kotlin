@@ -105,6 +105,8 @@
             </intent-filter>
         </service>
         <activity android:name=".QRgenerator.QRgenerator" />
+        <activity android:name=".LoyaltyCardsActivity.ActivityLoyaltyCards" />
+        <activity android:name=".LoyaltyCardsActivity.LoyaltyBusinessCardActivity.LoyaltyBusinessCardActivity" />
 
 
 
