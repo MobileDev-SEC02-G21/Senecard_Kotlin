@@ -63,16 +63,6 @@ class ActivitySignIn : AppCompatActivity() {
                 viewModelSignIn.onNavigated()
             }
         }
-        // Add a new observer for navigating to the Business Owner page
-        viewModelSignIn.navigateToActivityBusinessOwner.observe(this) { navigate ->
-            if (navigate) {
-                Toast.makeText(this, "Redirecting to Business Owner page", Toast.LENGTH_SHORT).show()
-                startActivity(Intent(this, ActivityBusinessOwnerLandingPage::class.java).apply {
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                })
-                viewModelSignIn.onNavigated()
-            }
-        }
         viewModelSignIn.navigateToActivitySignInForgotPassword.observe(this) { navigate ->
             if (navigate) {
                 val intent = Intent(this, ActivitySignInForgotPassword::class.java)
@@ -86,7 +76,17 @@ class ActivitySignIn : AppCompatActivity() {
                 viewModelSignIn.onNavigated()
             }
         }
-        viewModelSignIn.navigateToActivityHome.observe(this) { navigate -> if (navigate) {
+        viewModelSignIn.navigateToActivityBusinessOwner.observe(this) { navigate ->
+            if (navigate) {
+                Toast.makeText(this, getString(R.string.sign_in_authenticate_succesfully), Toast.LENGTH_SHORT).show()
+                startActivity(Intent(this, ActivityBusinessOwnerLandingPage::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                })
+                viewModelSignIn.onNavigated()
+            }
+        }
+        viewModelSignIn.navigateToActivityHomeUniandesMember.observe(this) { navigate ->
+            if (navigate) {
                 Toast.makeText(this, getString(R.string.sign_in_authenticate_succesfully), Toast.LENGTH_SHORT).show()
                 startActivity(Intent(this, ActivityHomeUniandesMember::class.java).apply {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

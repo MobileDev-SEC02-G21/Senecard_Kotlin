@@ -13,6 +13,7 @@ import android.widget.TextView
 import com.mobiles.senecard.R
 import com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerQRScanner.ActivityBusinessOwnerQRScanner
 import com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerAdvertisements.ActivityBusinessOwnerAdvertisements
+import com.mobiles.senecard.activitiesInitial.activityInitial.ActivityInitial
 
 class ActivityBusinessOwnerLandingPage : AppCompatActivity() {
 
@@ -58,6 +59,10 @@ class ActivityBusinessOwnerLandingPage : AppCompatActivity() {
         findViewById<View>(R.id.backButton).setOnClickListener {
             drawerLayout.closeDrawer(findViewById(R.id.options_menu))
         }
+
+        findViewById<View>(R.id.logoutButton).setOnClickListener {
+            viewModel.logOut()
+        }
     }
 
     // Set up LiveData observers to update the UI when data changes
@@ -81,6 +86,15 @@ class ActivityBusinessOwnerLandingPage : AppCompatActivity() {
         // Observe the store rating LiveData
         viewModel.rating.observe(this) { rating ->
             findViewById<RatingBar>(R.id.ratingBar).rating = rating
+        }
+
+        viewModel.isLoggedOut.observe(this) { isLoggedOut ->
+            if (isLoggedOut) {
+                val initialIntent = Intent(this, ActivityInitial::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                }
+                startActivity(initialIntent)
+            }
         }
     }
 }

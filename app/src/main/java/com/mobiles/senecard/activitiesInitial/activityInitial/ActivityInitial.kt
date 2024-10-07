@@ -6,6 +6,8 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
 import com.mobiles.senecard.R
+import com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerLandingPage.ActivityBusinessOwnerLandingPage
+import com.mobiles.senecard.activitiesHomeUniandesMember.activityHomeUniandesMember.ActivityHomeUniandesMember
 import com.mobiles.senecard.activitiesSignUp.activitySignUp.ActivitySignUp
 import com.mobiles.senecard.databinding.ActivityInitialBinding
 import com.mobiles.senecard.activitiesSignIn.activitySignIn.ActivitySignIn
@@ -23,6 +25,7 @@ class ActivityInitial : AppCompatActivity() {
 
         setElements()
         setObservers()
+        viewModelInitial.validateSession()
     }
 
     private fun setElements() {
@@ -59,6 +62,22 @@ class ActivityInitial : AppCompatActivity() {
                 )
                 startActivity(intent, options.toBundle())
                 viewModelInitial.onNavigated()
+            }
+        }
+        viewModelInitial.isLoggedRole.observe(this) { role ->
+            if (role != null) {
+                if (role == "uniandesMember") {
+                    val initialIntent =
+                        Intent(this, ActivityHomeUniandesMember::class.java).apply {
+                            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        }
+                    startActivity(initialIntent)
+                } else if (role == "businessOwner") {
+                    val initialIntent = Intent(this, ActivityBusinessOwnerLandingPage::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    }
+                    startActivity(initialIntent)
+                }
             }
         }
     }
