@@ -22,9 +22,9 @@ class ViewModelSignIn : ViewModel() {
     val navigateToActivitySignInForgotPassword: LiveData<Boolean>
         get() = _navigateToActivitySignInForgotPassword
 
-    private val _navigateToActivityHome = MutableLiveData<Boolean>()
-    val navigateToActivityHome: LiveData<Boolean>
-        get() = _navigateToActivityHome
+    private val _navigateToActivityHomeUniandesMember = MutableLiveData<Boolean>()
+    val navigateToActivityHomeUniandesMember: LiveData<Boolean>
+        get() = _navigateToActivityHomeUniandesMember
 
     private val _navigateToActivitySignUp = MutableLiveData<Boolean>()
     val navigateToActivitySignUp: LiveData<Boolean>
@@ -56,14 +56,12 @@ class ViewModelSignIn : ViewModel() {
                 _message.value = "email_invalid"
             } else {
                 if (repositoryAuthentication.authenticateUser(email, password)) {
-                    // Fetch user details after successful authentication
                     val user = repositoryUser.getUser(email)
                     if (user != null) {
-                        // Check if the user is a business owner
                         if (user.role == "businessOwner") {
                             _navigateToActivityBusinessOwner.value = true
                         } else {
-                            _navigateToActivityHome.value = true
+                            _navigateToActivityHomeUniandesMember.value = true
                         }
                     } else {
                         _message.value = "error_firebase_auth"
@@ -83,7 +81,7 @@ class ViewModelSignIn : ViewModel() {
     fun onNavigated() {
         _navigateToActivityInitial.value = false
         _navigateToActivitySignInForgotPassword.value = false
-        _navigateToActivityHome.value = false
+        _navigateToActivityHomeUniandesMember.value = false
         _navigateToActivitySignUp.value = false
     }
 }

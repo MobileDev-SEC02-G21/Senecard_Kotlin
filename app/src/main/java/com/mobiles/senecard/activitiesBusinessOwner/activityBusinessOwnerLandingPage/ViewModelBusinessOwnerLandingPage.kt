@@ -7,9 +7,16 @@ import androidx.lifecycle.viewModelScope
 import com.mobiles.senecard.model.RepositoryStore
 import com.mobiles.senecard.model.RepositoryPurchase
 import com.mobiles.senecard.model.RepositoryAdvertisement
+import com.mobiles.senecard.model.RepositoryAuthentication
 import kotlinx.coroutines.launch
 
 class ViewModelBusinessOwnerLandingPage : ViewModel() {
+
+    private val repositoryAuthentication = RepositoryAuthentication.instance
+
+    private val _isLoggedOut = MutableLiveData<Boolean>()
+    val isLoggedOut: LiveData<Boolean>
+        get() = _isLoggedOut
 
     // Constant user ID for the business owner (Delete with integration)
     private val businessOwnerId = "1Lp1RRd1uo11fgfIsFMU"
@@ -65,6 +72,15 @@ class ViewModelBusinessOwnerLandingPage : ViewModel() {
                 }
             } catch (e: Exception) {
                 _errorMessage.value = "Error fetching business owner data: ${e.message}"
+            }
+        }
+    }
+
+    fun logOut() {
+        viewModelScope.launch {
+            repositoryAuthentication.logOut()
+            if (repositoryAuthentication.getCurrentUser() == null) {
+                _isLoggedOut.value = true
             }
         }
     }
