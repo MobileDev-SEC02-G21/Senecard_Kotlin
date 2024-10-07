@@ -3,6 +3,7 @@ package com.mobiles.senecard.model
 import com.google.firebase.firestore.toObject
 import com.google.firebase.firestore.FirebaseFirestore
 import com.mobiles.senecard.model.entities.Advertisement
+import com.mobiles.senecard.model.entities.Advertisement2
 import kotlinx.coroutines.tasks.await
 
 class RepositoryAdvertisement private constructor() {
@@ -79,22 +80,22 @@ class RepositoryAdvertisement private constructor() {
     }
 
     // Fetch advertisements by storeId (new method)
-    suspend fun getAdvertisementsByStoreId(storeId: String): List<Advertisement> {
+    suspend fun getAdvertisementsByStoreId(storeId: String): List<Advertisement2> {
         try {
             val querySnapshot = firebase.firestore.collection("advertisements")
                 .whereEqualTo("storeId", storeId).get().await()
 
-            val advertisements = mutableListOf<Advertisement>()
+            val advertisements = mutableListOf<Advertisement2>()
 
             for (document in querySnapshot.documents) {
-                val advertisement = Advertisement(
-                    advertisementId = document.id,
+                val advertisement = Advertisement2(
+                    id = document.id,
                     available = document.getBoolean("available") ?: false,
                     description = document.getString("description")!!,
                     endDate = document.getString("endDate")!!,
-                    imageUrl = document.getString("image")!!,
+                    image = document.getString("image")!!,
                     startDate = document.getString("startDate")!!,
-                    storeId = storeId,
+                    store = storeId,
                     title = document.getString("title")!!
                 )
                 advertisements.add(advertisement)
