@@ -8,6 +8,8 @@
     <uses-feature android:name="android.hardware.camera" />
 
     <application
+        android:hardwareAccelerated="true"
+        android:name=".MyAPP"
         android:requestLegacyExternalStorage="true"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -127,6 +129,19 @@
         <activity android:name=".activitiesBusinessOwner.activityBusinessOwnerQRScanner.ActivityBusinessOwnerQRScanner"
             android:label="QR Scanner" />
 
-  </application>
+        <!-- Servicio de Firebase Cloud Messaging -->
+        <service
+            android:name="MyFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        <activity android:name=".QRgenerator.QRgenerator" />
+        <activity android:name=".LoyaltyCardsActivity.ActivityLoyaltyCards" />
+        <activity android:name=".LoyaltyCardsActivity.LoyaltyBusinessCardActivity.LoyaltyBusinessCardActivity" />
+
+
+    </application>
 
 </manifest>
