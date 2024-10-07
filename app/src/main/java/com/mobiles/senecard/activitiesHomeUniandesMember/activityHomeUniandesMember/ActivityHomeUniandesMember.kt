@@ -14,6 +14,8 @@ import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.mobiles.senecard.LoyaltyCardsActivity.ActivityLoyaltyCards
+import com.mobiles.senecard.QRgenerator.QRgenerator
 import com.mobiles.senecard.R
 import com.mobiles.senecard.activitiesHomeUniandesMember.activityHomeUniandesMemberAdvertisementList.ActivityHomeUniandesMemberAdvertisementList
 import com.mobiles.senecard.activitiesHomeUniandesMember.activityHomeUniandesMemberStoreList.ActivityHomeUniandesMemberStoreList
@@ -42,6 +44,16 @@ class ActivityHomeUniandesMember : AppCompatActivity() {
         viewModelHomeUniandesMember.validateSession()
         viewModelHomeUniandesMember.getStoresRecommended()
         viewModelHomeUniandesMember.getAdvertisementRecommended()
+
+        // Configura el listener para el botón de QR
+        binding.qrCodeButton.setOnClickListener {
+            startActivity(Intent(this, QRgenerator::class.java))
+        }
+
+        // Configura el listener para las tarjetas de fidelización
+        binding.loyaltyCardsButton.setOnClickListener {
+            startActivity(Intent(this, ActivityLoyaltyCards::class.java))
+        }
     }
 
     private fun setElements() {

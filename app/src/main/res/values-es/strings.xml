@@ -172,6 +172,10 @@
     <string name="sign_up_store_owner_3_error_firebase_firestore">No pudimos registrar tu usuario</string>
     <string name="sign_up_store_owner_3_register_succesfully">Te has registrado exitosamente</string>
     <string name="sign_up_store_owner_2_store_category">CATEGORÍA DE LA TIENDA</string>
+    <string name="icon_example">Description of the example</string>
+    <string name="reward_image_desc">Description of the example</string>
+    <string name="back_button_desc">Back botton</string>
+    <string name="harvest_text">Cosechas</string>
 
 </resources>
 

@@ -88,6 +88,11 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.storage)
+    implementation("com.google.firebase:firebase-messaging")
+    implementation ("com.google.firebase:firebase-messaging-ktx")
+
+    // Librería ZXING
+    implementation ("com.journeyapps:zxing-android-embedded:4.3.0")
 
     implementation(libs.lottie)
     implementation(libs.glide)
