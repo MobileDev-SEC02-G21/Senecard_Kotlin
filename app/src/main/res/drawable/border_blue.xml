@@ -1,0 +1,14 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:shape="rectangle"
+    tools:ignore="ExtraText">
+    <solid android:color="@android:color/transparent"/> <!-- Color de fondo transparente -->
+    <stroke
+        android:width="2dp"
+    android:color="@android:color/holo_blue_dark"/> <!-- Color azul -->
+    <padding
+        android:left="4dp"
+        android:top="4dp"
+        android:right="4dp"
+        android:bottom="4dp"/>
+</shape>

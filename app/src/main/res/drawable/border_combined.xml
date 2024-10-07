@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Capa del borde naranja -->
+    <item>
+        <shape xmlns:android="http://schemas.android.com/apk/res/android"
+            android:shape="rectangle">
+            <solid android:color="@android:color/transparent"/> <!-- Fondo transparente -->
+            <stroke
+                android:width="4dp"
+            android:color="@android:color/holo_orange_dark"/> <!-- Color naranja -->
+            <padding
+                android:left="2dp"
+                android:top="2dp"
+                android:right="2dp"
+                android:bottom="2dp"/>
+        </shape>
+    </item>
+
+    <!-- Capa del borde azul -->
+    <item>
+        <shape xmlns:android="http://schemas.android.com/apk/res/android"
+            android:shape="rectangle">
+            <solid android:color="@android:color/transparent"/> <!-- Fondo transparente -->
+            <stroke
+                android:width="2dp"
+            android:color="@android:color/holo_blue_dark"/> <!-- Color azul -->
+            <padding
+                android:left="4dp"
+                android:top="4dp"
+                android:right="4dp"
+                android:bottom="4dp"/>
+        </shape>
+    </item>
+</layer-list>
