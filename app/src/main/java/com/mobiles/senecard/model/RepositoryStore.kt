@@ -68,7 +68,6 @@ class RepositoryStore private constructor() {
                 "rating" to null
             )
 
-            // Let Firestore generate the ID
             firebase.firestore.collection("stores").add(store).await()
             return true
         } catch (e: Exception) {

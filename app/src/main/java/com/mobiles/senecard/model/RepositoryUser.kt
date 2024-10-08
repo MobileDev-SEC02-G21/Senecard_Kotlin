@@ -23,18 +23,15 @@ class RepositoryUser private constructor() {
                 "name" to name,
                 "email" to email,
                 "phone" to phone,
-                "qr_code" to qrCode,
                 "role" to role
             )
 
-            // Let Firestore generate the ID
             firebase.firestore.collection("users").add(user).await()
             return true
         } catch (e: Exception) {
             return false
         }
     }
-
 
     suspend fun getUserById(userId: String): User? {
         try {

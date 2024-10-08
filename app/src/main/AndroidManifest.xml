@@ -2,8 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-feature android:name="android.hardware.camera" />
 
@@ -39,7 +37,7 @@
             </intent-filter>
         </activity>
 
-    <activity
+        <activity
             android:name=".activitiesSignIn.activitySignIn.ActivitySignIn"
             android:exported="true"
             android:screenOrientation="portrait"
@@ -140,7 +138,6 @@
         <activity android:name=".QRgenerator.QRgenerator" />
         <activity android:name=".LoyaltyCardsActivity.ActivityLoyaltyCards" />
         <activity android:name=".LoyaltyCardsActivity.LoyaltyBusinessCardActivity.LoyaltyBusinessCardActivity" />
-
 
     </application>
 

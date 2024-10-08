@@ -18,9 +18,9 @@ class ViewModelSignUpUniandesMember: ViewModel() {
     val navigateToActivitySignUp: LiveData<Boolean>
         get() = _navigateToActivitySignUp
 
-    private val _navigateToActivityHome = MutableLiveData<Boolean>()
-    val navigateToActivityHome: LiveData<Boolean>
-        get() = _navigateToActivityHome
+    private val _navigateToActivityHomeUniandesMember = MutableLiveData<Boolean>()
+    val navigateToActivityHomeUniandesMember: LiveData<Boolean>
+        get() = _navigateToActivityHomeUniandesMember
 
     private val _message = MutableLiveData<String>()
     val message: LiveData<String>
@@ -44,7 +44,7 @@ class ViewModelSignUpUniandesMember: ViewModel() {
             else {
                 if (repositoryAuthentication.createUser(email = email, password = password)) {
                     if (repositoryUser.addUser(name = name, email = email, phone = phone, role = "uniandesMember", qrCode = "")) {
-                        _navigateToActivityHome.value = true
+                        _navigateToActivityHomeUniandesMember.value = true
                     } else {
                         _message.value = "error_firebase_firestore"
                     }
@@ -57,6 +57,6 @@ class ViewModelSignUpUniandesMember: ViewModel() {
 
     fun onNavigated() {
         _navigateToActivitySignUp.value = false
-        _navigateToActivityHome.value = false
+        _navigateToActivityHomeUniandesMember.value = false
     }
 }
