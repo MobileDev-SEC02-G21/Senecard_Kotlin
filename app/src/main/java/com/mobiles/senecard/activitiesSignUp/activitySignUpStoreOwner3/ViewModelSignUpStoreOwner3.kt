@@ -24,9 +24,9 @@ class ViewModelSignUpStoreOwner3: ViewModel() {
     val navigateToActivitySignUpStoreOwner2: LiveData<Boolean>
         get() = _navigateToActivitySignUpStoreOwner2
 
-    private val _navigateToActivityHome = MutableLiveData<Boolean>()
-    val navigateToActivityHome: LiveData<Boolean>
-        get() = _navigateToActivityHome
+    private val _navigateToActivityBusinessOwner = MutableLiveData<Boolean>()
+    val navigateToActivityBusinessOwner: LiveData<Boolean>
+        get() = _navigateToActivityBusinessOwner
 
     private val _message = MutableLiveData<String>()
     val message: LiveData<String>
@@ -48,6 +48,8 @@ class ViewModelSignUpStoreOwner3: ViewModel() {
                 }
             }
 
+            println(signUpUser)
+
             if (isScheduleValid) {
                 if (repositoryAuthentication.createUser(signUpUser.email!!, signUpUser.password!!)) {
                     if (repositoryUser.addUser(name = signUpUser.name!!, email = signUpUser.email!!, phone = signUpUser.phone!!, role = "businessOwner", qrCode = "") ) {
@@ -56,7 +58,7 @@ class ViewModelSignUpStoreOwner3: ViewModel() {
                             if (repositoryStore.addStore(businessOwnerId = user.id!!, name = signUpStore.name!!, category = signUpStore.category!!, address = signUpStore.address!!, image = signUpStore.image!!, schedule = storeSchedule)) {
                                 signUpUser.reset()
                                 signUpStore.reset()
-                                _navigateToActivityHome.value = true
+                                _navigateToActivityBusinessOwner.value = true
                             } else { _message.value = "error_firebase_firestore" }
                         }
                     } else { _message.value = "error_firebase_firestore" }
@@ -67,6 +69,6 @@ class ViewModelSignUpStoreOwner3: ViewModel() {
 
     fun onNavigated() {
         _navigateToActivitySignUpStoreOwner2.value = false
-        _navigateToActivityHome.value = false
+        _navigateToActivityBusinessOwner.value = false
     }
 }

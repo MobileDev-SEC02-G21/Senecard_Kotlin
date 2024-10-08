@@ -1,19 +1,15 @@
 package com.mobiles.senecard.activitiesSignUp.activitySignUpStoreOwner2
 
-import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityOptionsCompat
-import androidx.core.content.ContextCompat
+import com.github.dhaval2404.imagepicker.ImagePicker
 import com.mobiles.senecard.CustomDialog
 import com.mobiles.senecard.R
 import com.mobiles.senecard.activitiesSignUp.activitySignUpStoreOwner1.ActivitySignUpStoreOwner1
@@ -38,25 +34,21 @@ class ActivitySignUpStoreOwner2 : AppCompatActivity() {
         setObservers()
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == 101) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-                getImageLauncher.launch(intent)
-            } else {
-                Toast.makeText(this, getString(R.string.sign_up_store_owner_2_permission_denied_to_access_images), Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
     private fun setElements() {
         getImageLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == RESULT_OK) {
-                val data = result.data
-                data?.data?.let { uri ->
-                    storeImageUri = uri
-                    binding.storeImageImageView.setImageURI(uri)
+            when (result.resultCode) {
+                RESULT_OK -> {
+                    val data = result.data
+                    data?.data?.let { uri ->
+                        storeImageUri = uri
+                        binding.storeImageImageView.setImageURI(uri)
+                    }
+                }
+                ImagePicker.RESULT_ERROR -> {
+                    Toast.makeText(this, ImagePicker.getError(result.data), Toast.LENGTH_SHORT).show()
+                }
+                else -> {
+                    Toast.makeText(this, "Task Cancelled", Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -64,12 +56,14 @@ class ActivitySignUpStoreOwner2 : AppCompatActivity() {
             viewModelSignUpStoreOwner2.backImageViewClicked()
         }
         binding.storeImageImageView.setOnClickListener {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_MEDIA_IMAGES), 101)
-            } else {
-                val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-                getImageLauncher.launch(intent)
-            }
+            ImagePicker.with(this)
+                .galleryOnly()
+                .cropSquare()
+                .compress(1024)
+                .maxResultSize(1080, 1080)
+                .createIntent { intent ->
+                    getImageLauncher.launch(intent)
+                }
         }
         binding.nextButton.setOnClickListener {
             showMessage("Please wait one moment while processing the information", "loading")

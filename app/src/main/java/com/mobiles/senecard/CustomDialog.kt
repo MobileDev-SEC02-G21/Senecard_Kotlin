@@ -26,7 +26,7 @@ class CustomDialog : DialogFragment() {
             message: String,
             type: String,
         ) {
-            currentDialog?.dismiss()
+            currentDialog?.dismissAllowingStateLoss()
 
             val dialog = CustomDialog().apply {
                 this.message = message
@@ -50,7 +50,6 @@ class CustomDialog : DialogFragment() {
 
         return dialog
     }
-
 
     @SuppressLint("ResourceAsColor")
     override fun onCreateView(
@@ -86,7 +85,7 @@ class CustomDialog : DialogFragment() {
         }
 
         binding.dialogButton.setOnClickListener {
-            dismiss()
+            dismissAllowingStateLoss()
         }
 
         return binding.root

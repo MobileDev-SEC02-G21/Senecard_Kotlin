@@ -97,4 +97,5 @@ dependencies {
     implementation(libs.lottie)
     implementation(libs.glide)
 
+    implementation(libs.imagepicker)
 }

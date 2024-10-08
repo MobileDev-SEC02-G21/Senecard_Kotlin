@@ -56,7 +56,7 @@ class ActivitySignUpUniandesMember : AppCompatActivity() {
                 viewModelSignUpUniandesMember.onNavigated()
             }
         }
-        viewModelSignUpUniandesMember.navigateToActivityHome.observe(this) { navigate ->
+        viewModelSignUpUniandesMember.navigateToActivityHomeUniandesMember.observe(this) { navigate ->
             if (navigate) {
                 Toast.makeText(this, getString(R.string.sign_up_uniandes_member_register_succesfully), Toast.LENGTH_SHORT).show()
                 val intent = Intent(this, ActivityHomeUniandesMember::class.java).apply {
