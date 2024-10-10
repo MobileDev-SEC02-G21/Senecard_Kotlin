@@ -58,6 +58,7 @@ class ActivitySignUpStoreOwner1 : AppCompatActivity() {
         }
         viewModelSignUpStoreOwner1.navigateToActivitySignUpStoreOwner2.observe(this) { navigate ->
             if (navigate) {
+                CustomDialog.hideCustomDialog()
                 val intent = Intent(this, ActivitySignUpStoreOwner2::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
                 val options = ActivityOptionsCompat.makeCustomAnimation(

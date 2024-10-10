@@ -2,9 +2,10 @@ package com.mobiles.senecard.model
 
 import android.net.Uri
 import com.google.firebase.firestore.toObject
-import com.google.firebase.storage.UploadTask
 import com.mobiles.senecard.model.entities.Store
 import kotlinx.coroutines.tasks.await
+import java.util.Calendar
+import java.util.Locale
 import java.util.UUID
 
 class RepositoryStore private constructor() {
@@ -15,7 +16,7 @@ class RepositoryStore private constructor() {
     }
 
     suspend fun getAllStores(): List<Store> {
-        val storesList = mutableListOf<Store>()
+        var storesList = mutableListOf<Store>()
         try {
             val querySnapshot = firebase.firestore.collection("stores").get().await()
 
@@ -30,6 +31,11 @@ class RepositoryStore private constructor() {
         } catch (e: Exception) {
             e.printStackTrace()
         }
+
+        storesList = storesList.sortedBy { store ->
+            if (isStoreClosed(store)) 1 else 0
+        }.toMutableList()
+
         return storesList
     }
 
@@ -75,8 +81,6 @@ class RepositoryStore private constructor() {
         }
     }
 
-
-
     suspend fun getStoreById(storeId: String): Store? {
         try {
             val documentSnapshot = firebase.firestore.collection("stores").document(storeId).get().await()
@@ -119,6 +123,25 @@ class RepositoryStore private constructor() {
         } catch (e: Exception) {
             false
         }
+    }
+
+    fun isStoreClosed(store: Store) : Boolean {
+        val calendar = Calendar.getInstance()
+        val currentDayOfWeek = calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.ENGLISH)?.lowercase()
+        val currentHour = calendar.get(Calendar.HOUR_OF_DAY)
+
+        val schedule = store.schedule
+
+        if (schedule != null && currentDayOfWeek != null && schedule.containsKey(currentDayOfWeek)) {
+            val hours = schedule[currentDayOfWeek] ?: return true
+
+            val openingHour = hours[0]
+            val closingHour = hours[1]
+
+            return currentHour < openingHour || currentHour > closingHour
+        }
+
+        return true
     }
 }
 

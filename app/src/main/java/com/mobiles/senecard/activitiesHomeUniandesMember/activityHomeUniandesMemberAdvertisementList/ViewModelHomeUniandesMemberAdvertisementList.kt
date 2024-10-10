@@ -7,8 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.mobiles.senecard.model.RepositoryAdvertisement
 import com.mobiles.senecard.model.entities.Advertisement
 import kotlinx.coroutines.launch
-import java.util.Calendar
-import java.util.Locale
 
 class ViewModelHomeUniandesMemberAdvertisementList : ViewModel() {
 
@@ -18,46 +16,30 @@ class ViewModelHomeUniandesMemberAdvertisementList : ViewModel() {
     val navigateToActivityHomeUniandesMember: LiveData<Boolean>
         get() = _navigateToActivityHomeUniandesMember
 
+    private val _navigateToActivityHomeUniandesMemberAdvertisementDetail = MutableLiveData<Advertisement?>()
+    val navigateToActivityHomeUniandesMemberAdvertisementDetail: LiveData<Advertisement?>
+        get() = _navigateToActivityHomeUniandesMemberAdvertisementDetail
+
     private val _advertisementList = MutableLiveData<List<Advertisement>>()
     val advertisementList: LiveData<List<Advertisement>>
         get() = _advertisementList
-
-    fun getAllAdvertisements() {
-        viewModelScope.launch {
-            val advertisements = repositoryAdvertisement.getAllAdvertisement()
-
-            _advertisementList.value = advertisements.sortedBy { advertisement ->
-                if (isAdvertisementStoreClosed(advertisement)) 1 else 0
-            }
-        }
-    }
-
-    fun isAdvertisementStoreClosed(advertisement: Advertisement): Boolean {
-        val store = advertisement.store
-
-        val calendar = Calendar.getInstance()
-        val currentDayOfWeek = calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.ENGLISH)?.lowercase()
-        val currentHour = calendar.get(Calendar.HOUR_OF_DAY)
-
-        val schedule = store?.schedule
-
-        if (schedule != null && currentDayOfWeek != null && schedule.containsKey(currentDayOfWeek)) {
-            val hours = schedule[currentDayOfWeek] ?: return true
-
-            val openingHour = hours[0]
-            val closingHour = hours[1]
-
-            return currentHour < openingHour || currentHour > closingHour
-        }
-
-        return true
-    }
 
     fun backImageViewClicked() {
         _navigateToActivityHomeUniandesMember.value = true
     }
 
+    fun getAllAdvertisements() {
+        viewModelScope.launch {
+            _advertisementList.value = repositoryAdvertisement.getAllAdvertisement()
+        }
+    }
+
+    fun onClickedItemAdvertisement(advertisement: Advertisement) {
+        _navigateToActivityHomeUniandesMemberAdvertisementDetail.value = advertisement
+    }
+
     fun onNavigated() {
         _navigateToActivityHomeUniandesMember.value = false
+        _navigateToActivityHomeUniandesMemberAdvertisementDetail.value = null
     }
 }

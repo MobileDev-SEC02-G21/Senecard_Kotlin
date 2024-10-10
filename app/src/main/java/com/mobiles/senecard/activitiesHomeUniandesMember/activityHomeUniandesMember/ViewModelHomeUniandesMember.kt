@@ -12,17 +12,12 @@ import com.mobiles.senecard.model.entities.Store
 import com.mobiles.senecard.model.entities.User
 import kotlinx.coroutines.launch
 import java.util.Calendar
-import java.util.Locale
 
 class ViewModelHomeUniandesMember: ViewModel() {
 
     private val repositoryAuthentication = RepositoryAuthentication.instance
     private val repositoryStore = RepositoryStore.instance
     private val repositoryAdvertisement = RepositoryAdvertisement.instance
-
-    private val _isLoggedOut = MutableLiveData<Boolean>()
-    val isLoggedOut: LiveData<Boolean>
-        get() = _isLoggedOut
 
     private val _navigateToActivityHomeUniandesMemberStoreList = MutableLiveData<Boolean>()
     val navigateToActivityHomeUniandesMemberStoreList: LiveData<Boolean>
@@ -32,9 +27,33 @@ class ViewModelHomeUniandesMember: ViewModel() {
     val navigateToActivityHomeUniandesMemberAdvertisementList: LiveData<Boolean>
         get() = _navigateToActivityHomeUniandesMemberAdvertisementList
 
-    private val _isUserLogged = MutableLiveData<User?>()
-    val isUserLogged: LiveData<User?>
-        get() = _isUserLogged
+    private val _navigateToActivityHomeUniandesMemberStoreDetail = MutableLiveData<Store?>()
+    val navigateToActivityHomeUniandesMemberStoreDetail: LiveData<Store?>
+        get() = _navigateToActivityHomeUniandesMemberStoreDetail
+
+    private val _navigateToActivityHomeUniandesMemberAdvertisementDetail = MutableLiveData<Advertisement?>()
+    val navigateToActivityHomeUniandesMemberAdvertisementDetail: LiveData<Advertisement?>
+        get() = _navigateToActivityHomeUniandesMemberAdvertisementDetail
+
+    private val _navigateToActivityQrCodeUniandesMemberImageView = MutableLiveData<Boolean>()
+    val navigateToActivityQrCodeUniandesMemberImageView: LiveData<Boolean>
+        get() = _navigateToActivityQrCodeUniandesMemberImageView
+
+    private val _navigateToActivityQrCodeUniandesMemberButton = MutableLiveData<Boolean>()
+    val navigateToActivityQrCodeUniandesMemberButton: LiveData<Boolean>
+        get() = _navigateToActivityQrCodeUniandesMemberButton
+
+    private val _navigateToActivityLoyaltyCardsUniandesMember = MutableLiveData<Boolean>()
+    val navigateToActivityLoyaltyCardsUniandesMember: LiveData<Boolean>
+        get() = _navigateToActivityLoyaltyCardsUniandesMember
+
+    private val _navigateToActivityInitial = MutableLiveData<Boolean>()
+    val navigateToActivityInitial: LiveData<Boolean>
+        get() = _navigateToActivityInitial
+
+    private val _isUser= MutableLiveData<User?>()
+    val isUser: LiveData<User?>
+        get() = _isUser
 
     private val _storeListRecommended = MutableLiveData<List<Store>>()
     val storeListRecommended: LiveData<List<Store>>
@@ -43,73 +62,6 @@ class ViewModelHomeUniandesMember: ViewModel() {
     private val _advertisementListRecommended = MutableLiveData<List<Advertisement>>()
     val advertisementListRecommended: LiveData<List<Advertisement>>
         get() = _advertisementListRecommended
-
-    fun validateSession() {
-        viewModelScope.launch {
-            _isUserLogged.value = repositoryAuthentication.getCurrentUser()
-        }
-    }
-
-    fun getStoresRecommended() {
-        viewModelScope.launch {
-            val stores = repositoryStore.getAllStores().take(2)
-
-            _storeListRecommended.value = stores.sortedBy { store ->
-                if (isStoreClosed(store)) 1 else 0
-            }
-        }
-    }
-
-    fun getAdvertisementRecommended() {
-        viewModelScope.launch {
-            val advertisements = repositoryAdvertisement.getAllAdvertisement().take(2)
-
-            _advertisementListRecommended.value = advertisements.sortedBy { advertisement ->
-                if (isAdvertisementStoreClosed(advertisement)) 1 else 0
-            }
-        }
-    }
-
-    fun isStoreClosed(store: Store): Boolean {
-        val calendar = Calendar.getInstance()
-        val currentDayOfWeek = calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.ENGLISH)?.lowercase()
-        val currentHour = calendar.get(Calendar.HOUR_OF_DAY)
-
-        val schedule = store.schedule
-
-        if (schedule != null && currentDayOfWeek != null && schedule.containsKey(currentDayOfWeek)) {
-            val hours = schedule[currentDayOfWeek] ?: return true
-
-            val openingHour = hours[0]
-            val closingHour = hours[1]
-
-            return currentHour < openingHour || currentHour > closingHour
-        }
-
-        return true
-    }
-
-    fun isAdvertisementStoreClosed(advertisement: Advertisement): Boolean {
-
-        val store = advertisement.store
-
-        val calendar = Calendar.getInstance()
-        val currentDayOfWeek = calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.ENGLISH)?.lowercase()
-        val currentHour = calendar.get(Calendar.HOUR_OF_DAY)
-
-        val schedule = store?.schedule
-
-        if (schedule != null && currentDayOfWeek != null && schedule.containsKey(currentDayOfWeek)) {
-            val hours = schedule[currentDayOfWeek] ?: return true
-
-            val openingHour = hours[0]
-            val closingHour = hours[1]
-
-            return currentHour < openingHour || currentHour > closingHour
-        }
-
-        return true
-    }
 
     fun getGreeting(): String {
         val calendar = Calendar.getInstance()
@@ -122,6 +74,24 @@ class ViewModelHomeUniandesMember: ViewModel() {
         }
     }
 
+    fun getUser() {
+        viewModelScope.launch {
+            _isUser.value = repositoryAuthentication.getCurrentUser()
+        }
+    }
+
+    fun getStoresRecommended() {
+        viewModelScope.launch {
+            _storeListRecommended.value = repositoryStore.getAllStores().take(2)
+        }
+    }
+
+    fun getAdvertisementRecommended() {
+        viewModelScope.launch {
+            _advertisementListRecommended.value = repositoryAdvertisement.getAllAdvertisement().take(2)
+        }
+    }
+
     fun storesEditTextClicked() {
         _navigateToActivityHomeUniandesMemberStoreList.value = true
     }
@@ -130,11 +100,31 @@ class ViewModelHomeUniandesMember: ViewModel() {
         _navigateToActivityHomeUniandesMemberAdvertisementList.value = true
     }
 
-    fun logOut() {
+    fun storeItemClicked(store: Store) {
+        _navigateToActivityHomeUniandesMemberStoreDetail.value = store
+    }
+
+    fun advertisementItemClicked(advertisement: Advertisement) {
+        _navigateToActivityHomeUniandesMemberAdvertisementDetail.value = advertisement
+    }
+
+    fun qrCodeImageViewClicked() {
+        _navigateToActivityQrCodeUniandesMemberImageView.value = true
+    }
+
+    fun qrCodeButtonClicked() {
+        _navigateToActivityQrCodeUniandesMemberButton.value = true
+    }
+
+    fun loyaltyCardsButtonClicked() {
+        _navigateToActivityLoyaltyCardsUniandesMember.value = true
+    }
+
+    fun logOutButtonClicked() {
         viewModelScope.launch {
             repositoryAuthentication.logOut()
             if (repositoryAuthentication.getCurrentUser() == null) {
-                _isLoggedOut.value = true
+                _navigateToActivityInitial.value = true
             }
         }
     }
@@ -142,6 +132,12 @@ class ViewModelHomeUniandesMember: ViewModel() {
     fun onNavigated() {
         _navigateToActivityHomeUniandesMemberStoreList.value = false
         _navigateToActivityHomeUniandesMemberAdvertisementList.value = false
-    }
+        _navigateToActivityHomeUniandesMemberStoreDetail.value = null
+        _navigateToActivityHomeUniandesMemberAdvertisementDetail.value = null
 
+        _navigateToActivityQrCodeUniandesMemberImageView.value = false
+        _navigateToActivityQrCodeUniandesMemberButton.value = false
+        _navigateToActivityLoyaltyCardsUniandesMember.value = false
+        _navigateToActivityInitial.value = false
+    }
 }

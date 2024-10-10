@@ -5,6 +5,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.mobiles.senecard.model.entities.Advertisement
 import com.mobiles.senecard.model.entities.Advertisement2
 import kotlinx.coroutines.tasks.await
+import java.util.Calendar
+import java.util.Locale
 
 class RepositoryAdvertisement private constructor() {
 
@@ -16,7 +18,7 @@ class RepositoryAdvertisement private constructor() {
     }
 
     suspend fun getAllAdvertisement(): List<Advertisement> {
-        val advertisementsList = mutableListOf<Advertisement>()
+        var advertisementsList = mutableListOf<Advertisement>()
         try {
             val querySnapshot = firebase.firestore.collection("advertisements").get().await()
 
@@ -36,6 +38,11 @@ class RepositoryAdvertisement private constructor() {
         } catch (e: Exception) {
             e.printStackTrace()
         }
+
+        advertisementsList = advertisementsList.sortedBy { advertisement ->
+            if (isAdvertisementStoreClosed(advertisement)) 1 else 0
+        }.toMutableList()
+
         return advertisementsList
     }
 
@@ -67,6 +74,27 @@ class RepositoryAdvertisement private constructor() {
         }
     }
 
+    suspend fun getAdvertisementByIdJeff(advertisementId: String): Advertisement? {
+        var advertisement: Advertisement? = null
+        try {
+            val documentSnapshot = firebase.firestore.collection("advertisements").document(advertisementId).get().await()
+
+            documentSnapshot.toObject<Advertisement>()?.let { adv ->
+                advertisement = adv.copy(id = documentSnapshot.id)
+
+                val storeId = documentSnapshot.getString("storeId")
+
+                storeId?.let { id ->
+                    val store = repositoryStore.getStore(id)
+                    advertisement = advertisement?.copy(store = store)
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+        return advertisement
+    }
 
     suspend fun getAdvertisementById(id: String): Advertisement? {
         try {
@@ -115,5 +143,27 @@ class RepositoryAdvertisement private constructor() {
         } catch (e: Exception) {
             return false
         }
+    }
+
+    fun isAdvertisementStoreClosed(advertisement: Advertisement): Boolean {
+
+        val store = advertisement.store
+
+        val calendar = Calendar.getInstance()
+        val currentDayOfWeek = calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.ENGLISH)?.lowercase()
+        val currentHour = calendar.get(Calendar.HOUR_OF_DAY)
+
+        val schedule = store?.schedule
+
+        if (schedule != null && currentDayOfWeek != null && schedule.containsKey(currentDayOfWeek)) {
+            val hours = schedule[currentDayOfWeek] ?: return true
+
+            val openingHour = hours[0]
+            val closingHour = hours[1]
+
+            return currentHour < openingHour || currentHour > closingHour
+        }
+
+        return true
     }
 }

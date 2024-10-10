@@ -8,5 +8,5 @@ data class Advertisement (
     val image: String? = null,
     val startDate: String? = null,
     val endDate: String? = null,
-    val available: Boolean? = null
+    val available: Boolean? = null,
 )

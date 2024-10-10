@@ -26,7 +26,7 @@ class CustomDialog : DialogFragment() {
             message: String,
             type: String,
         ) {
-            currentDialog?.dismissAllowingStateLoss()
+            hideCustomDialog()
 
             val dialog = CustomDialog().apply {
                 this.message = message
@@ -35,6 +35,10 @@ class CustomDialog : DialogFragment() {
 
             currentDialog = dialog
             dialog.show(fragmentManager, "CustomDialog")
+        }
+
+        fun hideCustomDialog() {
+            currentDialog?.dismissAllowingStateLoss()
         }
     }
 
@@ -85,7 +89,7 @@ class CustomDialog : DialogFragment() {
         }
 
         binding.dialogButton.setOnClickListener {
-            dismissAllowingStateLoss()
+            hideCustomDialog()
         }
 
         return binding.root

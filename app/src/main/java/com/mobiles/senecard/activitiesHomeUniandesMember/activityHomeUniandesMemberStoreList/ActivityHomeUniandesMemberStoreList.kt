@@ -3,19 +3,15 @@ package com.mobiles.senecard.activitiesHomeUniandesMember.activityHomeUniandesMe
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.view.ViewGroup
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.mobiles.senecard.R
+import com.mobiles.senecard.StoreAdapter
 import com.mobiles.senecard.activitiesHomeUniandesMember.activityHomeUniandesMember.ActivityHomeUniandesMember
+import com.mobiles.senecard.activitiesHomeUniandesMember.activityHomeUniandesMemberStoreDetail.ActivityHomeUniandesMemberStoreDetail
 import com.mobiles.senecard.databinding.ActivityHomeUniandesMemberStoreListBinding
-import com.mobiles.senecard.databinding.StoreItemBinding
-import com.mobiles.senecard.model.entities.Store
 
 class ActivityHomeUniandesMemberStoreList : AppCompatActivity() {
 
@@ -57,39 +53,22 @@ class ActivityHomeUniandesMemberStoreList : AppCompatActivity() {
         }
         viewModelHomeUniandesMemberStoreList.storeList.observe(this) { stores ->
             binding.loadingAnimation.visibility = View.GONE
-            binding.storeRecyclerView.adapter = StoreAdapter(stores)
-        }
-    }
-
-    inner class StoreAdapter(private val stores: List<Store>) : RecyclerView.Adapter<StoreAdapter.StoreViewHolder>() {
-        inner class StoreViewHolder(val binding: StoreItemBinding) : RecyclerView.ViewHolder(binding.root)
-
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StoreViewHolder {
-            val binding = StoreItemBinding.inflate(layoutInflater, parent, false)
-            return StoreViewHolder(binding)
-        }
-
-        override fun onBindViewHolder(holder: StoreViewHolder, position: Int) {
-            val store = stores[position]
-
-            val closed = viewModelHomeUniandesMemberStoreList.isStoreClosed(store)
-
-            if (closed) {
-                holder.binding.closedTextView.visibility = View.VISIBLE
-                holder.binding.storeNameTextView.setTextColor(ContextCompat.getColor(holder.binding.root.context, R.color.secondary))
-                holder.binding.storeRatingTextView.setTextColor(ContextCompat.getColor(holder.binding.root.context, R.color.secondary))
-                holder.binding.starImageView.setImageResource(R.mipmap.icon_star_closed)
+            binding.storeRecyclerView.adapter = StoreAdapter(stores) { store ->
+                viewModelHomeUniandesMemberStoreList.onClickedItemStore(store)
             }
-
-            holder.binding.storeNameTextView.text = store.name
-            holder.binding.storeRatingTextView.text = store.rating.toString()
-
-            Glide.with(holder.binding.storeImageView.context)
-                .load(store.image)
-                .placeholder(R.mipmap.icon_image_landscape)
-                .into(holder.binding.storeImageView)
         }
-
-        override fun getItemCount(): Int = stores.size
+        viewModelHomeUniandesMemberStoreList.navigateToActivityHomeUniandesMemberStoreDetail.observe(this) { store ->
+            if (store != null) {
+                val intent = Intent(this, ActivityHomeUniandesMemberStoreDetail::class.java)
+                intent.putExtra("storeId", store.id)
+                val options = ActivityOptionsCompat.makeCustomAnimation(
+                    this,
+                    R.anim.slide_in_right,
+                    R.anim.slide_out_left
+                )
+                startActivity(intent, options.toBundle())
+                viewModelHomeUniandesMemberStoreList.onNavigated()
+            }
+        }
     }
 }

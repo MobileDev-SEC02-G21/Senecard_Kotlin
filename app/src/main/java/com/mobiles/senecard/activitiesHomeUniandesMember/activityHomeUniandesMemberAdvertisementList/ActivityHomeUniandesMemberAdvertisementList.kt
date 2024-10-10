@@ -3,18 +3,16 @@ package com.mobiles.senecard.activitiesHomeUniandesMember.activityHomeUniandesMe
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.view.ViewGroup
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
+import com.mobiles.senecard.AdvertisementAdapter
 import com.mobiles.senecard.R
 import com.mobiles.senecard.activitiesHomeUniandesMember.activityHomeUniandesMember.ActivityHomeUniandesMember
+import com.mobiles.senecard.activitiesHomeUniandesMember.activityHomeUniandesMemberAdvertisementDetail.ActivityHomeUniandesMemberAdvertisementDetail
+import com.mobiles.senecard.activitiesHomeUniandesMember.activityHomeUniandesMemberStoreDetail.ActivityHomeUniandesMemberStoreDetail
 import com.mobiles.senecard.databinding.ActivityHomeUniandesMemberAdvertisementListBinding
-import com.mobiles.senecard.databinding.AdvertisementItemBinding
-import com.mobiles.senecard.model.entities.Advertisement
 
 class ActivityHomeUniandesMemberAdvertisementList : AppCompatActivity() {
 
@@ -56,35 +54,22 @@ class ActivityHomeUniandesMemberAdvertisementList : AppCompatActivity() {
         }
         viewModelHomeUniandesMemberAdvertisementList.advertisementList.observe(this) { advertisements ->
             binding.loadingAnimation.visibility = View.GONE
-            binding.advertisementRecyclerView.adapter = AdvertisementAdapter(advertisements)
-
-        }
-    }
-
-    inner class AdvertisementAdapter(private val advertisements: List<Advertisement>) : RecyclerView.Adapter<AdvertisementAdapter.AdvertisementViewHolder>() {
-        inner class AdvertisementViewHolder(val binding: AdvertisementItemBinding) : RecyclerView.ViewHolder(binding.root)
-
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AdvertisementViewHolder {
-            val binding = AdvertisementItemBinding.inflate(layoutInflater, parent, false)
-            return AdvertisementViewHolder(binding)
-        }
-
-        override  fun onBindViewHolder(holder: AdvertisementViewHolder, position: Int) {
-            val advertisement = advertisements[position]
-
-            val closed = viewModelHomeUniandesMemberAdvertisementList.isAdvertisementStoreClosed(advertisement)
-
-            if (closed) {
-                holder.binding.overlayView.visibility = View.VISIBLE
-                holder.binding.closedTextView.visibility = View.VISIBLE
+            binding.advertisementRecyclerView.adapter = AdvertisementAdapter(advertisements) { advertisement ->
+                viewModelHomeUniandesMemberAdvertisementList.onClickedItemAdvertisement(advertisement)
             }
-
-            Glide.with(holder.binding.advertisementImageView.context)
-                .load(advertisement.image)
-                .placeholder(R.mipmap.icon_image_landscape)
-                .into(holder.binding.advertisementImageView)
         }
-
-        override fun getItemCount(): Int = advertisements.size
+        viewModelHomeUniandesMemberAdvertisementList.navigateToActivityHomeUniandesMemberAdvertisementDetail.observe(this) { advertisement ->
+            if (advertisement != null) {
+                val intent = Intent(this, ActivityHomeUniandesMemberAdvertisementDetail::class.java)
+                intent.putExtra("advertisementId", advertisement.id)
+                val options = ActivityOptionsCompat.makeCustomAnimation(
+                    this,
+                    R.anim.slide_in_right,
+                    R.anim.slide_out_left
+                )
+                startActivity(intent, options.toBundle())
+                viewModelHomeUniandesMemberAdvertisementList.onNavigated()
+            }
+        }
     }
 }
