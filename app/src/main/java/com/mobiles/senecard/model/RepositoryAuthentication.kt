@@ -33,7 +33,7 @@ class RepositoryAuthentication private constructor() {
     suspend fun getCurrentUser(): User? {
         val firebaseUser = firebase.auth.currentUser
         if (firebaseUser != null) {
-            return repositoryUser.getUser(firebaseUser.email!!)
+            return repositoryUser.getUserByEmail(firebaseUser.email!!)
         }
         return null
     }

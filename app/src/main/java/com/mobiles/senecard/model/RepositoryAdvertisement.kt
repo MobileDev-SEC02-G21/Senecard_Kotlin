@@ -1,12 +1,12 @@
 package com.mobiles.senecard.model
 
+import android.net.Uri
 import com.google.firebase.firestore.toObject
-import com.google.firebase.firestore.FirebaseFirestore
 import com.mobiles.senecard.model.entities.Advertisement
-import com.mobiles.senecard.model.entities.Advertisement2
 import kotlinx.coroutines.tasks.await
 import java.util.Calendar
 import java.util.Locale
+import java.util.UUID
 
 class RepositoryAdvertisement private constructor() {
 
@@ -17,56 +17,24 @@ class RepositoryAdvertisement private constructor() {
         val instance: RepositoryAdvertisement by lazy { RepositoryAdvertisement() }
     }
 
-    suspend fun getAllAdvertisement(): List<Advertisement> {
-        var advertisementsList = mutableListOf<Advertisement>()
+    suspend fun addAdvertisement(storeId: String, title: String, description: String, image: Uri, startDate: String, endDate: String, available: Boolean): Boolean {
         try {
-            val querySnapshot = firebase.firestore.collection("advertisements").get().await()
+            val imageName = UUID.randomUUID().toString() + ".jpg"
+            val imageRef = firebase.storage.child("advertisements_images/$imageName")
 
-            for (document in querySnapshot.documents) {
-                val advertisement = document.toObject<Advertisement>()?.copy(id = document.id)
+            val uploadTask = imageRef.putFile(image).await()
+            val downloadUrl = uploadTask.storage.downloadUrl.await()
 
-                advertisement?.let {
-                    val storeId = document.getString("storeId")
-                    storeId?.let { id ->
-                        val store = repositoryStore.getStore(id)
-                        advertisementsList.add(it.copy(store = store))
-                    } ?: run {
-                        advertisementsList.add(it)
-                    }
-                }
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-
-        advertisementsList = advertisementsList.sortedBy { advertisement ->
-            if (isAdvertisementStoreClosed(advertisement)) 1 else 0
-        }.toMutableList()
-
-        return advertisementsList
-    }
-
-    suspend fun addAdvertisement(
-        available: Boolean,
-        description: String,
-        endDate: String,
-        imageUrl: String,
-        startDate: String,
-        storeId: String,
-        title: String
-    ): Boolean {
-        try {
             val advertisement = hashMapOf(
-                "available" to available,
-                "description" to description,
-                "endDate" to endDate,
-                "image" to imageUrl,
-                "startDate" to startDate,
                 "storeId" to storeId,
-                "title" to title
+                "title" to title,
+                "description" to description,
+                "image" to downloadUrl.toString(),
+                "startDate" to startDate,
+                "endDate" to endDate,
+                "available" to available
             )
 
-            // Let Firestore generate the ID
             firebase.firestore.collection("advertisements").add(advertisement).await()
             return true
         } catch (e: Exception) {
@@ -74,80 +42,72 @@ class RepositoryAdvertisement private constructor() {
         }
     }
 
-    suspend fun getAdvertisementByIdJeff(advertisementId: String): Advertisement? {
-        var advertisement: Advertisement? = null
+    suspend fun getAllAdvertisements(): List<Advertisement> {
+        val advertisementsList = mutableListOf<Advertisement>()
         try {
-            val documentSnapshot = firebase.firestore.collection("advertisements").document(advertisementId).get().await()
+            val querySnapshot = firebase.firestore.collection("advertisements").get().await()
 
-            documentSnapshot.toObject<Advertisement>()?.let { adv ->
-                advertisement = adv.copy(id = documentSnapshot.id)
-
-                val storeId = documentSnapshot.getString("storeId")
-
-                storeId?.let { id ->
-                    val store = repositoryStore.getStore(id)
-                    advertisement = advertisement?.copy(store = store)
+            for (documentSnapshot in querySnapshot.documents) {
+                val advertisement = documentSnapshot.toObject<Advertisement>()?.copy(id = documentSnapshot.id)
+                if (advertisement != null) {
+                    advertisementsList.add(advertisement)
                 }
             }
         } catch (e: Exception) {
             e.printStackTrace()
         }
 
-        return advertisement
+        val advertisementsWithStatus = advertisementsList.map { advertisement ->
+            val isClosed = isAdvertisementStoreClosed(advertisement)
+            Pair(advertisement, isClosed)
+        }
+
+        val sortedAdvertisements = advertisementsWithStatus
+            .sortedBy { pair -> if (pair.second) 1 else 0 }
+            .map { it.first }
+
+        return sortedAdvertisements
     }
 
     suspend fun getAdvertisementById(id: String): Advertisement? {
         try {
-            val document = firebase.firestore.collection("advertisements").document(id).get().await()
-            return if (document.exists()) {
-                document.toObject(Advertisement::class.java)
-            } else null
+            val documentSnapshot = firebase.firestore.collection("advertisements").document(id).get().await()
+            return documentSnapshot.toObject<Advertisement>()?.copy(id = documentSnapshot.id)
         } catch (e: Exception) {
             return null
         }
     }
 
-    // Fetch advertisements by storeId (new method)
-    suspend fun getAdvertisementsByStoreId(storeId: String): List<Advertisement2> {
+    suspend fun getAdvertisementsByStoreId(storeId: String): List<Advertisement> {
+        val advertisementsList = mutableListOf<Advertisement>()
         try {
-            val querySnapshot = firebase.firestore.collection("advertisements")
-                .whereEqualTo("storeId", storeId).get().await()
+            val querySnapshot = firebase.firestore.collection("advertisements").whereEqualTo("storeId", storeId).get().await()
 
-            val advertisements = mutableListOf<Advertisement2>()
-
-            for (document in querySnapshot.documents) {
-                val advertisement = Advertisement2(
-                    id = document.id,
-                    available = document.getBoolean("available") ?: false,
-                    description = document.getString("description")!!,
-                    endDate = document.getString("endDate")!!,
-                    image = document.getString("image")!!,
-                    startDate = document.getString("startDate")!!,
-                    store = storeId,
-                    title = document.getString("title")!!
-                )
-                advertisements.add(advertisement)
+            for (documentSnapshot in querySnapshot.documents) {
+                val advertisement = documentSnapshot.toObject<Advertisement>()?.copy(id = documentSnapshot.id)
+                if (advertisement != null) {
+                    advertisementsList.add(advertisement)
+                }
             }
-
-            return advertisements
         } catch (e: Exception) {
             e.printStackTrace()
-            return emptyList()
         }
+
+        val advertisementsWithStatus = advertisementsList.map { advertisement ->
+            val isClosed = isAdvertisementStoreClosed(advertisement)
+            Pair(advertisement, isClosed)
+        }
+
+        val sortedAdvertisements = advertisementsWithStatus
+            .sortedBy { pair -> if (pair.second) 1 else 0 }
+            .map { it.first }
+
+        return sortedAdvertisements
     }
 
-    suspend fun updateAdvertisement(id: String, updatedFields: Map<String, Any>): Boolean {
-        try {
-            firebase.firestore.collection("advertisements").document(id).update(updatedFields).await()
-            return true
-        } catch (e: Exception) {
-            return false
-        }
-    }
+    suspend fun isAdvertisementStoreClosed(advertisement: Advertisement): Boolean {
 
-    fun isAdvertisementStoreClosed(advertisement: Advertisement): Boolean {
-
-        val store = advertisement.store
+        val store = repositoryStore.getStoreById(advertisement.storeId!!)
 
         val calendar = Calendar.getInstance()
         val currentDayOfWeek = calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.ENGLISH)?.lowercase()

@@ -8,6 +8,9 @@ import com.bumptech.glide.Glide
 import com.mobiles.senecard.databinding.ItemAdvertisementBinding
 import com.mobiles.senecard.model.RepositoryAdvertisement
 import com.mobiles.senecard.model.entities.Advertisement
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class AdvertisementAdapter(private val advertisements: List<Advertisement>, private val onClickedItemAdvertisement:(Advertisement) -> Unit) : RecyclerView.Adapter<AdvertisementViewHolder>() {
 
@@ -34,23 +37,25 @@ class AdvertisementViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     fun render(advertisement: Advertisement, onClickedItemAdvertisement: (Advertisement) -> Unit) {
 
-        val closed = repositoryAdvertisement.isAdvertisementStoreClosed(advertisement)
+        CoroutineScope(Dispatchers.Main).launch {
+            val closed = repositoryAdvertisement.isAdvertisementStoreClosed(advertisement)
 
-        if (closed) {
-            binding.overlayView.visibility = View.VISIBLE
-            binding.closedTextView.visibility = View.VISIBLE
-        } else {
-            binding.overlayView.visibility = View.GONE
-            binding.closedTextView.visibility = View.GONE
-        }
+            if (closed) {
+                binding.overlayView.visibility = View.VISIBLE
+                binding.closedTextView.visibility = View.VISIBLE
+            } else {
+                binding.overlayView.visibility = View.GONE
+                binding.closedTextView.visibility = View.GONE
+            }
 
-        Glide.with(binding.advertisementImageView.context)
-            .load(advertisement.image)
-            .placeholder(R.mipmap.icon_image_landscape)
-            .into(binding.advertisementImageView)
+            Glide.with(binding.advertisementImageView.context)
+                .load(advertisement.image)
+                .placeholder(R.mipmap.icon_image_landscape)
+                .into(binding.advertisementImageView)
 
-        itemView.setOnClickListener {
-            onClickedItemAdvertisement(advertisement)
+            itemView.setOnClickListener {
+                onClickedItemAdvertisement(advertisement)
+            }
         }
     }
 }

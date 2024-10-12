@@ -36,7 +36,6 @@ class ActivityHomeUniandesMemberAdvertisementDetail : AppCompatActivity() {
 
     private fun setObservers() {
         viewModelHomeUniandesMemberAdvertisementDetail.advertisement.observe(this) { advertisement ->
-            println(advertisement)
             if (advertisement != null) {
                 this.advertisement = advertisement
 
@@ -46,7 +45,6 @@ class ActivityHomeUniandesMemberAdvertisementDetail : AppCompatActivity() {
                     .into(binding.advertisementImageView)
 
                 binding.titleAdvertisementTextView.text = advertisement.title
-                binding.storeAdvertisementTextView.text = advertisement.store?.name ?: "null"
                 binding.descriptionAdvertisementTextView.text = advertisement.description
                 binding.startDateAdvertisementTextView.text = advertisement.startDate
                 binding.endDateAdvertisementTextView.text = advertisement.endDate
@@ -55,7 +53,9 @@ class ActivityHomeUniandesMemberAdvertisementDetail : AppCompatActivity() {
                 binding.backgroundLinearLayout.visibility = View.GONE
             }
         }
-
+        viewModelHomeUniandesMemberAdvertisementDetail.storeName.observe(this) { storeName ->
+            binding.storeAdvertisementTextView.text = storeName ?: ""
+        }
         viewModelHomeUniandesMemberAdvertisementDetail.navigateToActivityBack.observe(this) { navigate ->
             if (navigate) {
                 finish()

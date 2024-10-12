@@ -9,10 +9,36 @@ import java.util.Locale
 import java.util.UUID
 
 class RepositoryStore private constructor() {
+
     private val firebase = FirebaseClient.instance
 
     companion object {
         val instance: RepositoryStore by lazy { RepositoryStore() }
+    }
+
+    suspend fun addStore(businessOwnerId: String, name: String, address: String, category: String, image: Uri, schedule: Map<String, List<Int>>): Boolean {
+        try {
+            val imageName = UUID.randomUUID().toString() + ".jpg"
+            val imageRef = firebase.storage.child("stores_images/$imageName")
+
+            val uploadTask = imageRef.putFile(image).await()
+            val downloadUrl = uploadTask.storage.downloadUrl.await()
+
+            val store = hashMapOf(
+                "businessOwnerId" to businessOwnerId,
+                "name" to name,
+                "address" to address,
+                "category" to category,
+                "image" to downloadUrl.toString(),
+                "schedule" to schedule,
+                "rating" to null
+            )
+
+            firebase.firestore.collection("stores").add(store).await()
+            return true
+        } catch (e: Exception) {
+            return false
+        }
     }
 
     suspend fun getAllStores(): List<Store> {
@@ -20,12 +46,10 @@ class RepositoryStore private constructor() {
         try {
             val querySnapshot = firebase.firestore.collection("stores").get().await()
 
-            for (document in querySnapshot.documents) {
-                val store = document.toObject<Store>()?.copy(id = document.id)
-                store.let {
-                    if (it != null) {
-                        storesList.add(it)
-                    }
+            for (documentSnapshot in querySnapshot.documents) {
+                val store = documentSnapshot.toObject<Store>()?.copy(id = documentSnapshot.id)
+                if (store != null) {
+                    storesList.add(store)
                 }
             }
         } catch (e: Exception) {
@@ -39,89 +63,27 @@ class RepositoryStore private constructor() {
         return storesList
     }
 
-    suspend fun getStore(storeId: String): Store? {
-        return try {
-            val document = firebase.firestore.collection("stores").document(storeId).get().await()
-            document.toObject<Store>()
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
-        }
-    }
-
-    suspend fun addStore(
-        businessOwnerId: String,
-        name: String,
-        address: String,
-        category: String,
-        image: Uri,
-        schedule: Map<String, List<Int>>
-    ): Boolean {
-        try {
-            val imageName = UUID.randomUUID().toString() + ".jpg"
-            val imageRef = firebase.storage.child("stores_images/$imageName")
-
-            val uploadTask = imageRef.putFile(image).await()
-            val downloadUrl = uploadTask.storage.downloadUrl.await()
-
-            val store = hashMapOf(
-                "businessOwnerId" to businessOwnerId,
-                "address" to address,
-                "category" to category,
-                "image" to downloadUrl.toString(),
-                "name" to name,
-                "schedule" to schedule,
-                "rating" to null
-            )
-
-            firebase.firestore.collection("stores").add(store).await()
-            return true
-        } catch (e: Exception) {
-            return false
-        }
-    }
-
     suspend fun getStoreById(storeId: String): Store? {
         try {
             val documentSnapshot = firebase.firestore.collection("stores").document(storeId).get().await()
-            return documentSnapshot.toObject(Store::class.java)
+            return documentSnapshot.toObject<Store>()?.copy(id = documentSnapshot.id)
         } catch (e: Exception) {
             return null
         }
     }
 
-    // Fetch store by userId (new method)
-    suspend fun getStoreByUserId(userId: String): Store? {
+    suspend fun getStoreByBusinessOwnerId(businessOwnerId: String): Store? {
         try {
-            // Query Firestore to get the store associated with the userId
-            val querySnapshot = firebase.firestore.collection("stores")
-                .whereEqualTo("businessOwnerId", userId).get().await()
+            val querySnapshot = firebase.firestore.collection("stores").whereEqualTo("businessOwnerId", businessOwnerId).get().await()
 
-            // If we found the store, return it
             if (querySnapshot.documents.isNotEmpty()) {
-                val document = querySnapshot.documents[0]
-                return Store(
-                    id = document.id,
-                    name = document.getString("name")!!,
-                    address = document.getString("address")!!,
-                    image = document.getString("image")!!,
-                    rating = document.getDouble("rating") ?: 0.0,
-                    category = document.getString("category")!!,
-                    businessOwnerId = userId
-                )
+                val documentSnapshot = querySnapshot.documents[0]
+                return documentSnapshot.toObject<Store>()?.copy(id = documentSnapshot.id)
+            } else {
+                return null
             }
         } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        return null
-    }
-
-    suspend fun updateStore(storeId: String, updatedFields: Map<String, Any>): Boolean {
-        return try {
-            firebase.firestore.collection("stores").document(storeId).update(updatedFields).await()
-            true
-        } catch (e: Exception) {
-            false
+            return null
         }
     }
 

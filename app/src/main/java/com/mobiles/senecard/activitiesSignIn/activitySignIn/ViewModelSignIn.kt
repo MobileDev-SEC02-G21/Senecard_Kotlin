@@ -56,7 +56,7 @@ class ViewModelSignIn : ViewModel() {
                 _message.value = "email_invalid"
             } else {
                 if (repositoryAuthentication.authenticateUser(email, password)) {
-                    val user = repositoryUser.getUser(email)
+                    val user = repositoryUser.getUserByEmail(email)
                     if (user != null) {
                         if (user.role == "businessOwner") {
                             _navigateToActivityBusinessOwner.value = true

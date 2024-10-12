@@ -24,13 +24,28 @@ class ViewModelHomeUniandesMemberAdvertisementList : ViewModel() {
     val advertisementList: LiveData<List<Advertisement>>
         get() = _advertisementList
 
+    private val _filteredAdvertisementList = MutableLiveData<List<Advertisement>>()
+    val filteredAdvertisementList: LiveData<List<Advertisement>>
+        get() = _filteredAdvertisementList
+
     fun backImageViewClicked() {
         _navigateToActivityHomeUniandesMember.value = true
     }
 
     fun getAllAdvertisements() {
         viewModelScope.launch {
-            _advertisementList.value = repositoryAdvertisement.getAllAdvertisement()
+            _advertisementList.value = repositoryAdvertisement.getAllAdvertisements()
+        }
+    }
+
+    fun filterAdvertisementsByTitle(query: String) {
+        val allAdvertisements = _advertisementList.value ?: return
+        if (query.isEmpty()) {
+            _filteredAdvertisementList.value = allAdvertisements
+        } else {
+            _filteredAdvertisementList.value = allAdvertisements.filter { advertisement ->
+                advertisement.title!!.contains(query, ignoreCase = true)
+            }
         }
     }
 

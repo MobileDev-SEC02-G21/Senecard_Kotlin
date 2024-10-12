@@ -40,7 +40,7 @@ class ViewModelSignUpStoreOwner1: ViewModel() {
             else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) { _message.value = "email_invalid" }
             else if (password.length < 6) { _message.value = "password_short" }
             else if (password != confirmPassword) { _message.value = "passwords_not_equals" }
-            else if (repositoryUser.existsUser(email) == true) { _message.value = "user_exists" }
+            else if (repositoryUser.existsUserByEmail(email) == true) { _message.value = "user_exists" }
             else {
                 signUpUser.name = name
                 signUpUser.email = email
