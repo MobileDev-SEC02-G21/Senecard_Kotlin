@@ -14,11 +14,14 @@ import com.mobiles.senecard.R
 import com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerQRScanner.ActivityBusinessOwnerQRScanner
 import com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerAdvertisements.ActivityBusinessOwnerAdvertisements
 import com.mobiles.senecard.activitiesInitial.activityInitial.ActivityInitial
+import com.mobiles.senecard.model.entities.Store
 
 class ActivityBusinessOwnerLandingPage : AppCompatActivity() {
 
-    // Initialize ViewModel using Kotlin's 'by viewModels' delegate
     private val viewModel: ViewModelBusinessOwnerLandingPage by viewModels()
+
+    private var businessOwnerId: String = "93AqPXLaN42cT8OxvewX" // Default ID for development purposes
+    private var store: Store? = null
 
     private lateinit var drawerLayout: DrawerLayout
 
@@ -28,34 +31,44 @@ class ActivityBusinessOwnerLandingPage : AppCompatActivity() {
 
         setupObservers() // Set up the observers for LiveData in the ViewModel
 
-        viewModel.fetchBusinessOwnerData() // Fetch the data from Firestore
+        // Check if a businessOwnerId was passed via the Intent
+        val passedId = intent.getStringExtra("businessOwnerId")
+        if (passedId != null) {
+            businessOwnerId = passedId // Use the passed ID
+        }
+
+        // Fetch data from Firestore
+        viewModel.fetchBusinessOwnerData(businessOwnerId)
 
         findViewById<Button>(R.id.advertisementsButton).setOnClickListener {
             val intent = Intent(this, ActivityBusinessOwnerAdvertisements::class.java)
+            intent.putExtra("businessOwnerId", businessOwnerId)
             startActivity(intent)
         }
 
         findViewById<ImageButton>(R.id.qrButton).setOnClickListener {
             val intent = Intent(this, ActivityBusinessOwnerQRScanner::class.java)
+            intent.putExtra("businessOwnerId", businessOwnerId)
+            intent.putExtra("storeId", store?.id) // Pass store ID to the next activity
+            intent.putExtra("storeName", store?.name)
             startActivity(intent)
         }
 
-        // Loyalty Button functionality
         val loyaltyButton = findViewById<Button>(R.id.loyaltyButton)
         loyaltyButton.setOnClickListener {
-            // Redirect to QR scanner activity
             val intent = Intent(this, ActivityBusinessOwnerQRScanner::class.java)
+            intent.putExtra("businessOwnerId", businessOwnerId)
+            intent.putExtra("storeId", store?.id) // Pass store ID to the next activity
+            intent.putExtra("storeName", store?.name)
             startActivity(intent)
         }
 
         drawerLayout = findViewById(R.id.drawer_layout)
 
-        // Set up the menu button to open the drawer
         findViewById<View>(R.id.menuButton).setOnClickListener {
             drawerLayout.openDrawer(findViewById(R.id.options_menu))
         }
 
-        // Set up the back button in the options menu to close the drawer
         findViewById<View>(R.id.backButton).setOnClickListener {
             drawerLayout.closeDrawer(findViewById(R.id.options_menu))
         }
@@ -67,9 +80,13 @@ class ActivityBusinessOwnerLandingPage : AppCompatActivity() {
 
     // Set up LiveData observers to update the UI when data changes
     private fun setupObservers() {
-        // Observe the store name LiveData
-        viewModel.storeName.observe(this) { storeName ->
-            // Update any UI components with the store name (if required)
+        // Observe the store LiveData
+        viewModel.store.observe(this) { storeData ->
+            if (storeData != null) {
+                store = storeData // Update the store object
+
+                findViewById<RatingBar>(R.id.ratingBar).rating = (store?.rating ?: 0f).toFloat()
+            }
         }
 
         // Observe the transaction count LiveData
@@ -81,11 +98,6 @@ class ActivityBusinessOwnerLandingPage : AppCompatActivity() {
         viewModel.advertisementCount.observe(this) { adCount ->
             val advertisementsButton = findViewById<Button>(R.id.advertisementsButton)
             advertisementsButton.text = "YOU HAVE $adCount ADVERTISEMENTS ACTIVE"
-        }
-
-        // Observe the store rating LiveData
-        viewModel.rating.observe(this) { rating ->
-            findViewById<RatingBar>(R.id.ratingBar).rating = rating
         }
 
         viewModel.isLoggedOut.observe(this) { isLoggedOut ->
