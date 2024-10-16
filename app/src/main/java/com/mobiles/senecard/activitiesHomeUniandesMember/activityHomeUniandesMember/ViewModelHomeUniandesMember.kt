@@ -88,7 +88,7 @@ class ViewModelHomeUniandesMember: ViewModel() {
 
     fun getAdvertisementRecommended() {
         viewModelScope.launch {
-            _advertisementListRecommended.value = repositoryAdvertisement.getAllAdvertisement().take(2)
+            _advertisementListRecommended.value = repositoryAdvertisement.getAllAdvertisements().take(2)
         }
     }
 

@@ -2,6 +2,8 @@ package com.mobiles.senecard.activitiesHomeUniandesMember.activityHomeUniandesMe
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -32,12 +34,23 @@ class ActivityHomeUniandesMemberStoreList : AppCompatActivity() {
     private fun setElements() {
         binding.storeRecyclerView.layoutManager = LinearLayoutManager(this)
 
+        binding.searchEditText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                viewModelHomeUniandesMemberStoreList.filterStoresByName(s.toString())
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
         binding.backImageView.setOnClickListener {
             viewModelHomeUniandesMemberStoreList.backImageViewClicked()
         }
     }
 
     private fun setObservers() {
+
         viewModelHomeUniandesMemberStoreList.navigateToActivityHomeUniandesMember.observe(this) { navigate ->
             if (navigate) {
                 val intent = Intent(this, ActivityHomeUniandesMember::class.java)
@@ -54,6 +67,11 @@ class ActivityHomeUniandesMemberStoreList : AppCompatActivity() {
         viewModelHomeUniandesMemberStoreList.storeList.observe(this) { stores ->
             binding.loadingAnimation.visibility = View.GONE
             binding.storeRecyclerView.adapter = StoreAdapter(stores) { store ->
+                viewModelHomeUniandesMemberStoreList.onClickedItemStore(store)
+            }
+        }
+        viewModelHomeUniandesMemberStoreList.filteredStoreList.observe(this) { filteredStores ->
+            binding.storeRecyclerView.adapter = StoreAdapter(filteredStores) { store ->
                 viewModelHomeUniandesMemberStoreList.onClickedItemStore(store)
             }
         }

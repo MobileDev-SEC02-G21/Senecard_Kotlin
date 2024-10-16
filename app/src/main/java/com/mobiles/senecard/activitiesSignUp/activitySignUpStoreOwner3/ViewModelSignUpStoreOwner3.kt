@@ -52,8 +52,8 @@ class ViewModelSignUpStoreOwner3: ViewModel() {
 
             if (isScheduleValid) {
                 if (repositoryAuthentication.createUser(signUpUser.email!!, signUpUser.password!!)) {
-                    if (repositoryUser.addUser(name = signUpUser.name!!, email = signUpUser.email!!, phone = signUpUser.phone!!, role = "businessOwner", qrCode = "") ) {
-                        val user = repositoryUser.getUser(signUpUser.email!!)
+                    if (repositoryUser.addUser(name = signUpUser.name!!, email = signUpUser.email!!, phone = signUpUser.phone!!, role = "businessOwner") ) {
+                        val user = repositoryUser.getUserByEmail(signUpUser.email!!)
                         if (user != null) {
                             if (repositoryStore.addStore(businessOwnerId = user.id!!, name = signUpStore.name!!, category = signUpStore.category!!, address = signUpStore.address!!, image = signUpStore.image!!, schedule = storeSchedule)) {
                                 signUpUser.reset()

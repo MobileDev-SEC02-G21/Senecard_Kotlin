@@ -5,19 +5,14 @@ import com.mobiles.senecard.model.entities.User
 import kotlinx.coroutines.tasks.await
 
 class RepositoryUser private constructor() {
+
     private val firebase = FirebaseClient.instance
 
     companion object {
         val instance: RepositoryUser by lazy { RepositoryUser() }
     }
 
-    suspend fun addUser(
-        name: String,
-        email: String,
-        phone: String,
-        qrCode: String,
-        role: String
-    ): Boolean {
+    suspend fun addUser(name: String, email: String, phone: String, role: String): Boolean {
         try {
             val user = hashMapOf(
                 "name" to name,
@@ -36,48 +31,19 @@ class RepositoryUser private constructor() {
     suspend fun getUserById(userId: String): User? {
         try {
             val documentSnapshot = firebase.firestore.collection("users").document(userId).get().await()
-            return documentSnapshot.toObject(User::class.java)
+            return documentSnapshot.toObject<User>()?.copy(id = documentSnapshot.id)
         } catch (e: Exception) {
             return null
         }
     }
 
-    suspend fun getUserByQRCode(qrCode: String): User? {
-        try {
-            val querySnapshot = firebase.firestore
-                .collection("users")
-                .whereEqualTo("qr_code", qrCode)
-                .get()
-                .await()
-
-            if (querySnapshot.documents.isNotEmpty()) {
-                val document = querySnapshot.documents[0]
-                return User(
-                    id = document.id,
-                    email = document.getString("email")!!,
-                    name = document.getString("name")!!,
-                    phone = document.getString("phone")!!,
-                    qrCode = document.getString("qr_code")!!,
-                    role = document.getString("role")!!
-                )
-            } else {
-                return null
-            }
-        } catch (e: Exception) {
-            return null
-        }
-    }
-
-
-    suspend fun getUser(email: String): User? {
+    suspend fun getUserByEmail(email: String): User? {
         try {
             val querySnapshot = firebase.firestore.collection("users").whereEqualTo("email", email).get().await()
 
             if (querySnapshot.documents.isNotEmpty()) {
-
-                val document = querySnapshot.documents[0]
-                val user = document.toObject<User>()?.copy(id = document.id)
-                return user
+                val documentSnapshot = querySnapshot.documents[0]
+                return documentSnapshot.toObject<User>()?.copy(id = documentSnapshot.id)
             } else {
                 return null
             }
@@ -86,16 +52,7 @@ class RepositoryUser private constructor() {
         }
     }
 
-    suspend fun updateUser(userId: String, updatedFields: Map<String, Any>): Boolean {
-        return try {
-            firebase.firestore.collection("users").document(userId).update(updatedFields).await()
-            true
-        } catch (e: Exception) {
-            false
-        }
-    }
-
-    suspend fun existsUser(email: String): Boolean? {
+    suspend fun existsUserByEmail(email: String): Boolean? {
         try {
             val querySnapshot = firebase.firestore.collection("users").whereEqualTo("email", email).get().await()
             return querySnapshot.documents.isNotEmpty()

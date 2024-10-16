@@ -40,10 +40,10 @@ class ViewModelSignUpUniandesMember: ViewModel() {
             else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) { _message.value = "email_invalid" }
             else if (password.length < 7) { _message.value = "password_short" }
             else if (password != confirmPassword) { _message.value = "passwords_not_equals" }
-            else if (repositoryUser.existsUser(email) == true) { _message.value = "user_exists" }
+            else if (repositoryUser.existsUserByEmail(email) == true) { _message.value = "user_exists" }
             else {
                 if (repositoryAuthentication.createUser(email = email, password = password)) {
-                    if (repositoryUser.addUser(name = name, email = email, phone = phone, role = "uniandesMember", qrCode = "")) {
+                    if (repositoryUser.addUser(name = name, email = email, phone = phone, role = "uniandesMember")) {
                         _navigateToActivityHomeUniandesMember.value = true
                     } else {
                         _message.value = "error_firebase_firestore"

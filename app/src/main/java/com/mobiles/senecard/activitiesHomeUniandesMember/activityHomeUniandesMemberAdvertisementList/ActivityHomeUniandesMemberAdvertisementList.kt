@@ -2,6 +2,8 @@ package com.mobiles.senecard.activitiesHomeUniandesMember.activityHomeUniandesMe
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -11,7 +13,6 @@ import com.mobiles.senecard.AdvertisementAdapter
 import com.mobiles.senecard.R
 import com.mobiles.senecard.activitiesHomeUniandesMember.activityHomeUniandesMember.ActivityHomeUniandesMember
 import com.mobiles.senecard.activitiesHomeUniandesMember.activityHomeUniandesMemberAdvertisementDetail.ActivityHomeUniandesMemberAdvertisementDetail
-import com.mobiles.senecard.activitiesHomeUniandesMember.activityHomeUniandesMemberStoreDetail.ActivityHomeUniandesMemberStoreDetail
 import com.mobiles.senecard.databinding.ActivityHomeUniandesMemberAdvertisementListBinding
 
 class ActivityHomeUniandesMemberAdvertisementList : AppCompatActivity() {
@@ -32,6 +33,16 @@ class ActivityHomeUniandesMemberAdvertisementList : AppCompatActivity() {
 
     private fun setElements() {
         binding.advertisementRecyclerView.layoutManager = LinearLayoutManager(this)
+
+        binding.searchEditText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                viewModelHomeUniandesMemberAdvertisementList.filterAdvertisementsByTitle(s.toString())
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
 
         binding.backImageView.setOnClickListener {
             viewModelHomeUniandesMemberAdvertisementList.backImageViewClicked()
@@ -55,6 +66,11 @@ class ActivityHomeUniandesMemberAdvertisementList : AppCompatActivity() {
         viewModelHomeUniandesMemberAdvertisementList.advertisementList.observe(this) { advertisements ->
             binding.loadingAnimation.visibility = View.GONE
             binding.advertisementRecyclerView.adapter = AdvertisementAdapter(advertisements) { advertisement ->
+                viewModelHomeUniandesMemberAdvertisementList.onClickedItemAdvertisement(advertisement)
+            }
+        }
+        viewModelHomeUniandesMemberAdvertisementList.filteredAdvertisementList.observe(this) { filteredAdvertisements ->
+            binding.advertisementRecyclerView.adapter = AdvertisementAdapter(filteredAdvertisements) { advertisement ->
                 viewModelHomeUniandesMemberAdvertisementList.onClickedItemAdvertisement(advertisement)
             }
         }

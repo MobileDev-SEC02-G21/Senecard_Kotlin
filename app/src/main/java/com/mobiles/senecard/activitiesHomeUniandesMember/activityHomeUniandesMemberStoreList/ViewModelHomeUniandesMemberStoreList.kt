@@ -24,13 +24,30 @@ class ViewModelHomeUniandesMemberStoreList : ViewModel() {
     val storeList: LiveData<List<Store>>
         get() = _storeList
 
+    private val _filteredStoreList = MutableLiveData<List<Store>>()
+    val filteredStoreList: LiveData<List<Store>>
+        get() = _filteredStoreList
+
     fun backImageViewClicked() {
         _navigateToActivityHomeUniandesMember.value = true
     }
 
     fun getAllStores() {
         viewModelScope.launch {
-            _storeList.value = repositoryStore.getAllStores()
+            val stores = repositoryStore.getAllStores()
+            _storeList.value = stores
+            _filteredStoreList.value = stores
+        }
+    }
+
+    fun filterStoresByName(query: String) {
+        val allStores = _storeList.value ?: return
+        if (query.isEmpty()) {
+            _filteredStoreList.value = allStores
+        } else {
+            _filteredStoreList.value = allStores.filter { store ->
+                store.name!!.contains(query, ignoreCase = true)
+            }
         }
     }
 

@@ -31,16 +31,15 @@ class ViewModelBusinessOwnerQRScanner : ViewModel() {
 
         // Launch a coroutine to verify the user by the QR code
         viewModelScope.launch {
-            val user = repositoryUser.getUserByQRCode(qrCode)
+            val user = repositoryUser.getUserById(qrCode)
             if (user != null) {
                 // Simulate adding a purchase or further actions
                 val purchaseSuccessful = repositoryPurchase.addPurchase(
                     storeId = "QuQWLpCIpc7b3AMm33CX", // This should come from the store info
-                    purchase = "somePurchaseDescription", // Could be based on the scanned user's actions
-                    rating = 5, // A rating placeholder
-                    eligible = true, // Eligible for a loyalty program
                     uniandesMemberId = "CVIThQw5R3MklwATaJlv",
-                    date= LocalDate.now().toString()
+                    date= LocalDate.now().toString(),
+                    eligible = true, // Eligible for a loyalty program
+                    rating = 5.0, // A rating placeholder
                 )
                 if (purchaseSuccessful) {
                     _navigateToSuccess.value = true
