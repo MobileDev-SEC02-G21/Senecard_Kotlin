@@ -11,7 +11,7 @@ import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mobiles.senecard.AdvertisementAdapter
 import com.mobiles.senecard.LoyaltyCardsActivity.ActivityLoyaltyCards
-import com.mobiles.senecard.QRgenerator.QRgenerator
+import com.mobiles.senecard.activityQRCodeUniandesMember.ActivityQRCodeUniandesMember
 
 import com.mobiles.senecard.R
 import com.mobiles.senecard.StoreAdapter
@@ -70,7 +70,7 @@ class ActivityHomeUniandesMember : AppCompatActivity() {
         }
         viewModelHomeUniandesMember.navigateToActivityQrCodeUniandesMemberImageView.observe(this) { navigate ->
             if (navigate) {
-                val intent = Intent(this, QRgenerator::class.java)
+                val intent = Intent(this, ActivityQRCodeUniandesMember::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
                 val options = ActivityOptionsCompat.makeCustomAnimation(
                     this,
@@ -176,7 +176,7 @@ class ActivityHomeUniandesMember : AppCompatActivity() {
     private fun setObserversMenu() {
         viewModelHomeUniandesMember.navigateToActivityQrCodeUniandesMemberButton.observe(this) { navigate ->
             if (navigate) {
-                val intent = Intent(this, QRgenerator::class.java)
+                val intent = Intent(this, ActivityQRCodeUniandesMember::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
                 val options = ActivityOptionsCompat.makeCustomAnimation(
                     this,
