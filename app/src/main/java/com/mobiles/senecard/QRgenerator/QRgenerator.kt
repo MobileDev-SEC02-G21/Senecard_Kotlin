@@ -1,5 +1,5 @@
 package com.mobiles.senecard.QRgenerator
-
+import QRViewModel
 import android.os.Bundle
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -36,8 +36,8 @@ class QRgenerator : AppCompatActivity() {
             }
         })
 
-        // Genera el código QR dinámicamente al iniciar la actividad
-        qrViewModel.generateFidelityCardQRCode()
+        // Genera el código QR con el UID del usuario
+        qrViewModel.generateQRCodeWithUID()
 
         // Configurar el botón de "volver"
         val backButton = findViewById<ImageButton>(R.id.options_image_view2)

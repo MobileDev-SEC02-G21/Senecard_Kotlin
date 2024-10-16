@@ -1,9 +1,8 @@
-package com.mobiles.senecard.QRgenerator
-
 import android.graphics.Bitmap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.google.firebase.auth.FirebaseAuth
 import com.google.zxing.BarcodeFormat
 import com.journeyapps.barcodescanner.BarcodeEncoder
 
@@ -35,10 +34,16 @@ class QRViewModel : ViewModel() {
         }
     }
 
-    // Método para generar un QR Code dinámicamente con datos aleatorios
-    fun generateFidelityCardQRCode() {
-        val timestamp = System.currentTimeMillis()
-        val message = "Se ha registrado su tarjeta de fidelidad en $timestamp"
-        generateQRCode(message)
+    // Método para generar un QR Code con el UID del usuario
+    fun generateQRCodeWithUID() {
+        val user = FirebaseAuth.getInstance().currentUser
+        if (user != null) {
+            val uid = user.uid
+            val data = "Tu UID es: $uid"
+            generateQRCode(data) // Genera el QR con el UID del usuario
+        } else {
+            _error.value = "Usuario no autenticado"
+        }
     }
 }
+
