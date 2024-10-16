@@ -8,18 +8,20 @@ import com.mobiles.senecard.model.RepositoryStore
 import com.mobiles.senecard.model.RepositoryPurchase
 import com.mobiles.senecard.model.RepositoryAdvertisement
 import com.mobiles.senecard.model.RepositoryAuthentication
+import com.mobiles.senecard.model.entities.Store
 import kotlinx.coroutines.launch
 
 class ViewModelBusinessOwnerLandingPage : ViewModel() {
+
+    // LiveData for the Store object
+    private val _store = MutableLiveData<Store?>()
+    val store: LiveData<Store?> get() = _store
 
     private val repositoryAuthentication = RepositoryAuthentication.instance
 
     private val _isLoggedOut = MutableLiveData<Boolean>()
     val isLoggedOut: LiveData<Boolean>
         get() = _isLoggedOut
-
-    // Constant user ID for the business owner (Delete with integration)
-    private val businessOwnerId = "1Lp1RRd1uo11fgfIsFMU"
 
     private val repositoryStore = RepositoryStore.instance
     private val repositoryPurchase = RepositoryPurchase.instance
@@ -50,22 +52,22 @@ class ViewModelBusinessOwnerLandingPage : ViewModel() {
     val errorMessage: LiveData<String?>
         get() = _errorMessage
 
-    // Fetch the store data, advertisements, and transactions based on the business owner ID
-    fun fetchBusinessOwnerData() {
+    fun fetchBusinessOwnerData(businessOwnerId: String) {
         viewModelScope.launch {
             try {
-                // Fetch store by the user ID
-                val store = repositoryStore.getStoreByBusinessOwnerId(businessOwnerId)
-                if (store != null) {
-                    _storeName.value = store.name!!
-                    _rating.value = store.rating!!.toFloat()
+                // Fetch the store by business owner ID
+                val storeData = repositoryStore.getStoreByBusinessOwnerId(businessOwnerId)
+                if (storeData != null) {
+                    // Update the LiveData store object
+                    _store.value = storeData
 
-                    // Fetch the number of transactions (purchases) by the store ID
-                    val purchases = store.id?.let { repositoryPurchase.getPurchasesByStoreId(it) }
+                    _storeName.value = storeData.name!!
+                    _rating.value = storeData.rating!!.toFloat()
+
+                    val purchases = storeData.id?.let { repositoryPurchase.getPurchasesByStoreId(it) }
                     _transactionCount.value = purchases!!.size
 
-                    // Fetch the number of advertisements by the store ID
-                    val advertisements = repositoryAdvertisement.getAdvertisementsByStoreId(store.id)
+                    val advertisements = repositoryAdvertisement.getAdvertisementsByStoreId(storeData.id)
                     _advertisementCount.value = advertisements.size
                 } else {
                     _errorMessage.value = "Store not found."
@@ -85,7 +87,6 @@ class ViewModelBusinessOwnerLandingPage : ViewModel() {
         }
     }
 
-    // Handle any clean-up or navigation
     fun onNavigated() {
         _errorMessage.value = null
     }
