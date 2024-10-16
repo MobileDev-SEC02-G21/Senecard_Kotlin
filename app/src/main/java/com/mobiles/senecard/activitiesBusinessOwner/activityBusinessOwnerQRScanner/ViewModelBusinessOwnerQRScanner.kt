@@ -35,10 +35,9 @@ class ViewModelBusinessOwnerQRScanner : ViewModel() {
             if (user != null) {
                 // Simulate adding a purchase or further actions
                 val purchaseSuccessful = repositoryPurchase.addPurchase(
-                    storeId = "QuQWLpCIpc7b3AMm33CX", // This should come from the store info
-                    uniandesMemberId = "CVIThQw5R3MklwATaJlv",
+                    loyaltyCardId = "CVIThQw5R3MklwATaJlv",
                     date= LocalDate.now().toString(),
-                    eligible = true, // Eligible for a loyalty program
+                    isEligible = true, // Eligible for a loyalty program
                     rating = 5.0, // A rating placeholder
                 )
                 if (purchaseSuccessful) {

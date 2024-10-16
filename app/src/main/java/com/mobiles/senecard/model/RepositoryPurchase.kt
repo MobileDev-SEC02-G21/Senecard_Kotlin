@@ -12,13 +12,12 @@ class RepositoryPurchase private constructor() {
         val instance: RepositoryPurchase by lazy { RepositoryPurchase() }
     }
 
-    suspend fun addPurchase(storeId: String, uniandesMemberId: String, date: String, eligible: Boolean, rating: Double): Boolean {
+    suspend fun addPurchase(loyaltyCardId: String, date: String, isEligible: Boolean, rating: Double): Boolean {
         try {
             val purchase = hashMapOf(
-                "storeId" to storeId,
-                "uniandesMemberId" to uniandesMemberId,
+                "loyaltyCardId" to loyaltyCardId,
                 "date" to date,
-                "eligible" to eligible,
+                "isEligible" to isEligible,
                 "rating" to rating
             )
 
@@ -41,14 +40,7 @@ class RepositoryPurchase private constructor() {
     suspend fun getPurchasesByStoreId(storeId: String): List<Purchase> {
         val purchasesList = mutableListOf<Purchase>()
         try {
-            val querySnapshot = firebase.firestore.collection("purchases").whereEqualTo("storeId", storeId).get().await()
-
-            for (documentSnapshot in querySnapshot.documents) {
-                val purchase = documentSnapshot.toObject<Purchase>()?.copy(id = documentSnapshot.id)
-                if (purchase != null) {
-                    purchasesList.add(purchase)
-                }
-            }
+            // TO DO
         } catch (e: Exception) {
             e.printStackTrace()
             return emptyList()
