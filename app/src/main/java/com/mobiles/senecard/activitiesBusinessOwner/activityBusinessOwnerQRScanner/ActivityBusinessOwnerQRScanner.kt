@@ -58,16 +58,14 @@ class ActivityBusinessOwnerQRScanner : AppCompatActivity() {
 
             // Simulate saving a purchase in the database for testing
             lifecycleScope.launch {
-                val storeId = "QuQWLPcClpc7b3AMm33CX"
+                val loyaltyCardId = "QuQWLPcClpc7b3AMm33CX"
                 val rating = 5.0
-                val uniandesMemberId = "CVlThQw5R3MklwATAJlV"
 
                 val success = repositoryPurchase.addPurchase(
-                    storeId = storeId,
-                    rating = rating,
-                    uniandesMemberId = uniandesMemberId,
-                    eligible = true,
-                    date= LocalDate.now().toString()
+                    loyaltyCardId = loyaltyCardId,
+                    date= LocalDate.now().toString(),
+                    isEligible = true,
+                    rating = rating
                 )
 
                 if (success) {
