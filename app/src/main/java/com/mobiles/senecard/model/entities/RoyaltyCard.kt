@@ -1,9 +1,13 @@
 package com.mobiles.senecard.model.entities
 
 data class RoyaltyCard(
-    val id: String? = null,
-    val userId: String, // ID del usuario que posee la tarjeta
-    val storeId: String, // ID de la tienda asociada
-    var points: Int, // Puntos acumulados
-    val maxPoints: Int // Máximo de puntos
-)
+    var id: String? = null,
+    var uniandesMemberId: String? = null,
+    var storeId: String? = null,
+    var points: Int = 0,
+    var maxPoints: Int = 0,
+    var isCurrent: Boolean = true
+) {
+    // Constructor vacío para Firestore
+    constructor() : this(null, null, null, 0, 0, true)
+}
