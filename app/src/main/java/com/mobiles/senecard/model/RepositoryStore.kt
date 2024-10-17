@@ -11,6 +11,7 @@ import java.util.UUID
 class RepositoryStore private constructor() {
 
     private val firebase = FirebaseClient.instance
+    private val repositoryLoyaltyCard = RepositoryLoyaltyCard.instance
 
     companion object {
         val instance: RepositoryStore by lazy { RepositoryStore() }
@@ -44,7 +45,9 @@ class RepositoryStore private constructor() {
     suspend fun getAllStores(): List<Store> {
         var storesList = mutableListOf<Store>()
         try {
-            val querySnapshot = firebase.firestore.collection("stores").get().await()
+            val querySnapshot = firebase.firestore.collection("stores")
+                .get()
+                .await()
 
             for (documentSnapshot in querySnapshot.documents) {
                 val store = documentSnapshot.toObject<Store>()?.copy(id = documentSnapshot.id)
@@ -63,9 +66,26 @@ class RepositoryStore private constructor() {
         return storesList
     }
 
+    suspend fun getRecommendedStoresByUniandesMemberId(uniandesMemberId: String): List<Store> {
+        val storesList = getAllStores()
+        val loyaltyCardList = repositoryLoyaltyCard.getLoyaltyCardsByUniandesMemberId(uniandesMemberId)
+
+        val storeIdsWithPurchases = loyaltyCardList.mapNotNull { it.storeId }
+
+        val recommendedStores = storesList
+            .filter { store -> store.id != null && store.id !in storeIdsWithPurchases && !isStoreClosed(store) }
+            .sortedByDescending { it.rating ?: 0.0 }
+
+        return recommendedStores.take(2)
+    }
+
     suspend fun getStoreById(storeId: String): Store? {
         try {
-            val documentSnapshot = firebase.firestore.collection("stores").document(storeId).get().await()
+            val documentSnapshot = firebase.firestore.collection("stores")
+                .document(storeId)
+                .get()
+                .await()
+
             return documentSnapshot.toObject<Store>()?.copy(id = documentSnapshot.id)
         } catch (e: Exception) {
             return null
@@ -74,7 +94,10 @@ class RepositoryStore private constructor() {
 
     suspend fun getStoreByBusinessOwnerId(businessOwnerId: String): Store? {
         try {
-            val querySnapshot = firebase.firestore.collection("stores").whereEqualTo("businessOwnerId", businessOwnerId).get().await()
+            val querySnapshot = firebase.firestore.collection("stores")
+                .whereEqualTo("businessOwnerId", businessOwnerId)
+                .get()
+                .await()
 
             if (querySnapshot.documents.isNotEmpty()) {
                 val documentSnapshot = querySnapshot.documents[0]
