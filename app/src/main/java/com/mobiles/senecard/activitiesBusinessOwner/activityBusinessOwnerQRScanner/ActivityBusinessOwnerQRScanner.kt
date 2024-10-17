@@ -1,5 +1,6 @@
 package com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerQRScanner
 
+import ActivityBusinessOwnerQRSuccess
 import ViewModelBusinessOwnerQRScanner
 import android.Manifest
 import android.content.Intent
@@ -19,8 +20,6 @@ import androidx.lifecycle.Observer
 import com.google.zxing.*
 import com.google.zxing.common.HybridBinarizer
 import com.mobiles.senecard.R
-import com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerQRSuccess.ActivityBusinessOwnerQRSuccess
-import kotlinx.coroutines.launch
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -64,6 +63,7 @@ class ActivityBusinessOwnerQRScanner : AppCompatActivity() {
                 val intent = Intent(this, ActivityBusinessOwnerQRSuccess::class.java)
                 intent.putExtra("businessOwnerId", businessOwnerId)
                 intent.putExtra("storeId", storeId)
+                intent.putExtra("userId", viewModel.userId.value) // Pass userId to the success activity
                 startActivity(intent)
             }
         })
@@ -78,6 +78,7 @@ class ActivityBusinessOwnerQRScanner : AppCompatActivity() {
             }
         })
     }
+
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
         cameraProviderFuture.addListener({
@@ -106,7 +107,7 @@ class ActivityBusinessOwnerQRScanner : AppCompatActivity() {
 
     private fun handleQRCodeResult(result: String) {
         // Pass the QR code (user ID) to the ViewModel for processing
-        viewModel.processQRCode(result, businessOwnerId!!, storeId!!)
+        viewModel.processQRCode(result)
     }
 
     override fun onDestroy() {

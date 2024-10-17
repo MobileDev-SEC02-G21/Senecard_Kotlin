@@ -16,18 +16,21 @@ class ViewModelBusinessOwnerQRScanner : ViewModel() {
     private val _errorMessage = MutableLiveData<String?>()
     val errorMessage: LiveData<String?> get() = _errorMessage
 
+    private val _userId = MutableLiveData<String?>() // To hold the userId when the user exists
+    val userId: LiveData<String?> get() = _userId
+
     private val repositoryUser = RepositoryUser.instance
 
-    fun processQRCode(qrCode: String, businessOwnerId: String, storeId: String) {
+    fun processQRCode(qrCode: String) {
         viewModelScope.launch {
             try {
                 // Use RepositoryUser to check if the user exists in Firestore
                 val user = repositoryUser.getUserById(qrCode)
                 if (user != null) {
-                    // If user exists, navigate to success
+                    // If user exists, save the userId and navigate to success
+                    _userId.value = user.id // Store the userId
                     _navigateToSuccess.value = true
                 } else {
-                    // If user does not exist, navigate to failure
                     _navigateToFailure.value = true
                 }
             } catch (e: Exception) {

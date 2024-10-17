@@ -5,9 +5,8 @@
     android:layout_height="match_parent"
     android:padding="16dp">
 
-    <!-- Back Button -->
     <ImageButton
-        android:id="@+id/backButtonSuccess"
+        android:id="@+id/backButton"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:src="@drawable/arrow_back"
@@ -15,117 +14,112 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_margin="16dp"
-        app:tint="@android:color/black" />
+        app:tint="@android:color/darker_gray" />
 
-    <!-- Title -->
-    <TextView
-        android:id="@+id/successTitle"
-        android:layout_width="0dp"
+    <!-- Container for everything below the back button -->
+    <LinearLayout
+        android:id="@+id/contentContainer"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="SUCCESSFUL TRANSACTION."
-        android:textSize="16sp"
-        android:textStyle="bold"
+        android:orientation="vertical"
         android:gravity="center"
-        android:background="@color/primary"
-        android:padding="16dp"
-        android:textColor="@android:color/white"
-        app:layout_constraintTop_toBottomOf="@id/backButtonSuccess"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="8dp" />
+        app:layout_constraintTop_toBottomOf="@id/backButton"
+        android:layout_marginTop="16dp">
 
-    <!-- Customer Name -->
-    <TextView
-        android:id="@+id/customerName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="CUSTOMER NAME"
-        android:textSize="14sp"
-        app:layout_constraintTop_toBottomOf="@id/successTitle"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="16dp" />
+        <!-- Customer Info Container with Orange Background -->
+        <LinearLayout
+            android:id="@+id/customerInfoContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="16dp"
+            android:background="@drawable/custom_loyalty_info_background">
 
-    <EditText
-        android:id="@+id/customerNameInput"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Javier Rivas"
-        android:background="@drawable/custom_dialog_rounded_background"
-        android:padding="16dp"
-        android:inputType="none"
-        app:layout_constraintTop_toBottomOf="@id/customerName"
-        app:layout_constraintStart_toStartOf="parent" />
+            <TextView
+                android:id="@+id/customerNameTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Customer: Javier Rivas"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/white" />
+        </LinearLayout>
 
-    <!-- Email -->
-    <TextView
-        android:id="@+id/customerEmail"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="EMAIL"
-        android:textSize="14sp"
-        app:layout_constraintTop_toBottomOf="@id/customerNameInput"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="8dp" />
+        <!-- Loyalty Cards Redeemed and Current Stamps Awarded -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="LOYALTY CARDS REDEEMED"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@color/text"
+            android:layout_marginTop="16dp" />
 
-    <EditText
-        android:id="@+id/customerEmailInput"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="helloa@halallab.co"
-        android:background="@drawable/custom_dialog_rounded_background"
-        android:padding="16dp"
-        android:inputType="none"
-        app:layout_constraintTop_toBottomOf="@id/customerEmail"
-        app:layout_constraintStart_toStartOf="parent" />
+        <TextView
+            android:id="@+id/loyaltyCardsTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="13"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@color/text"
+            android:layout_marginTop="4dp" />
 
-    <!-- Purchase -->
-    <TextView
-        android:id="@+id/purchaseDetails"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="PURCHASE"
-        android:textSize="14sp"
-        app:layout_constraintTop_toBottomOf="@id/customerEmailInput"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="8dp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="CURRENT STAMPS AWARDED"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@color/text"
+            android:layout_marginTop="16dp" />
 
-    <EditText
-        android:id="@+id/purchaseInput"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Burrito: 1 meat"
-        android:background="@drawable/custom_dialog_rounded_background"
-        android:padding="16dp"
-        android:inputType="none"
-        app:layout_constraintTop_toBottomOf="@id/purchaseDetails"
-        app:layout_constraintStart_toStartOf="parent" />
+        <TextView
+            android:id="@+id/stampsAwardedTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="17/20"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@color/text"
+            android:layout_marginTop="4dp" />
 
-    <!-- Logo -->
-    <ImageView
-        android:id="@+id/logoSuccess"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:scaleType="centerInside"
-        android:src="@drawable/senecardlogo"
-        app:layout_constraintTop_toBottomOf="@id/purchaseInput"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="24dp" />
+        <!-- Make Stamp Button -->
+        <Button
+            android:id="@+id/makeStampButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="MAKE STAMP"
+            android:background="@drawable/custom_dialog_button_background"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:padding="16dp"
+            android:layout_marginTop="24dp" />
 
+        <!-- Redeem Loyalty Card Button (Disabled) -->
+        <Button
+            android:id="@+id/redeemLoyaltyCardButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="REDEEMED LOYALTY CARD"
+            android:background="@drawable/custom_disabled_button_background"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:padding="16dp"
+            android:layout_marginTop="16dp"
+            android:enabled="false" />
 
-    <!-- Return to Main Button -->
-    <Button
-        android:id="@+id/returnToMainSuccess"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="RETURN TO MAIN PAGE"
-        android:textStyle="bold"
-        android:padding="16dp"
-        android:textSize="14sp"
-        android:background="@drawable/custom_dialog_button_background"
-        android:textColor="@android:color/white"
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/logoSuccess"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <!-- Info Message for Redeeming -->
+        <TextView
+            android:id="@+id/redeemLoyaltyInfoText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="IS NOT AVAILABLE TO REDEEM A LOYALTY CARD"
+            android:textSize="12sp"
+            android:textColor="@android:color/darker_gray"
+            android:gravity="center"
+            android:layout_marginTop="8dp" />
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
