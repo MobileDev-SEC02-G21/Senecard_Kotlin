@@ -1,6 +1,6 @@
 package com.mobiles.senecard.model
 
-import com.google.firebase.firestore.ktx.toObject
+import com.google.firebase.firestore.toObject
 import com.mobiles.senecard.model.entities.LoyaltyCard
 import kotlinx.coroutines.tasks.await
 
@@ -33,5 +33,25 @@ class RepositoryLoyaltyCard private constructor() {
             e.printStackTrace()
             null
         }
+    }
+
+    suspend fun getLoyaltyCardsByUniandesMemberId(uniandesMemberId: String): List<LoyaltyCard> {
+        val loyaltyCardsList = mutableListOf<LoyaltyCard>()
+        try {
+            val querySnapshot = firebase.firestore.collection("royaltyCards")
+                .whereEqualTo("uniandesMemberId", uniandesMemberId)
+                .get()
+                .await()
+
+            for (documentSnapshot in querySnapshot.documents) {
+                val loyaltyCard = documentSnapshot.toObject<LoyaltyCard>()?.copy(id = documentSnapshot.id)
+                if (loyaltyCard != null) {
+                    loyaltyCardsList.add(loyaltyCard)
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return loyaltyCardsList
     }
 }

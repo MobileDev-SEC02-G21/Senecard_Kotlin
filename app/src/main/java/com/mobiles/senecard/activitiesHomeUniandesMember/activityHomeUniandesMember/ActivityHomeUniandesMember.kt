@@ -38,8 +38,6 @@ class ActivityHomeUniandesMember : AppCompatActivity() {
         setElementsMenu()
         setObserversMenu()
         viewModelHomeUniandesMember.getUser()
-        viewModelHomeUniandesMember.getStoresRecommended()
-        viewModelHomeUniandesMember.getAdvertisementRecommended()
     }
 
     private fun setElements() {
