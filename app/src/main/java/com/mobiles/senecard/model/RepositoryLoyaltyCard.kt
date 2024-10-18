@@ -1,3 +1,5 @@
+package com.mobiles.senecard.model
+
 import com.google.firebase.firestore.ktx.toObject
 import com.mobiles.senecard.model.FirebaseClient
 import com.mobiles.senecard.model.entities.LoyaltyCard
@@ -11,7 +13,6 @@ class RepositoryLoyaltyCard private constructor() {
         val instance: RepositoryLoyaltyCard by lazy { RepositoryLoyaltyCard() }
     }
 
-    // Add loyalty card to Firestore
     suspend fun addLoyaltyCard(loyaltyCard: LoyaltyCard): Boolean {
         return try {
             firebase.firestore.collection("loyaltyCards").add(loyaltyCard).await()
@@ -41,5 +42,64 @@ class RepositoryLoyaltyCard private constructor() {
             null
         }
     }
-}
 
+    suspend fun getLoyaltyCardsByStoreIdAndUniandesMemberId(storeId: String, uniandesMemberId: String): List<LoyaltyCard> {
+        return try {
+            val querySnapshot = firebase.firestore.collection("loyaltyCards")
+                .whereEqualTo("storeId", storeId)
+                .whereEqualTo("uniandesMemberId", uniandesMemberId)
+                .get()
+                .await()
+
+            querySnapshot.documents.mapNotNull { it.toObject<LoyaltyCard>()?.copy(id = it.id) }
+        } catch (e: Exception) {
+            emptyList() // Return empty list on error
+        }
+    }
+
+    // Function to get loyalty card by its ID
+    suspend fun getLoyaltyCardById(loyaltyCardId: String): LoyaltyCard? {
+        return try {
+            val documentSnapshot = firebase.firestore.collection("loyaltyCards")
+                .document(loyaltyCardId).get().await()
+            documentSnapshot.toObject<LoyaltyCard>()?.copy(id = documentSnapshot.id)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+    // **Function to get all loyalty cards related to a store**
+    suspend fun getLoyaltyCardsByStoreId(storeId: String): List<LoyaltyCard> {
+        return try {
+            val loyaltyCardsSnapshot = firebase.firestore.collection("loyaltyCards")
+                .whereEqualTo("storeId", storeId)
+                .get()
+                .await()
+
+            // Map each document to a LoyaltyCard object
+            loyaltyCardsSnapshot.documents.mapNotNull { document ->
+                document.toObject(LoyaltyCard::class.java)?.apply {
+                    id = document.id // Set the document ID
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emptyList() // Return an empty list if there's an error
+        }
+    }
+
+    suspend fun updateLoyaltyCard(loyaltyCard: LoyaltyCard): Boolean {
+        return try {
+            firebase.firestore.collection("loyaltyCards")
+                .document(loyaltyCard.id!!)
+                .set(loyaltyCard)
+                .await()
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+    }
+
+}

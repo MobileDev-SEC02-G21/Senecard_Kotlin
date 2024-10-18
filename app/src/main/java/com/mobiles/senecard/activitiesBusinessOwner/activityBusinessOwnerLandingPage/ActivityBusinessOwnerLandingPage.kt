@@ -37,15 +37,17 @@ class ActivityBusinessOwnerLandingPage : AppCompatActivity() {
             businessOwnerId = passedId // Use the passed ID
         }
 
-        // Fetch data from Firestore
+        // Fetch business owner data
         viewModel.fetchBusinessOwnerData(businessOwnerId)
 
+        // Button to handle navigating to advertisements
         findViewById<Button>(R.id.advertisementsButton).setOnClickListener {
             val intent = Intent(this, ActivityBusinessOwnerAdvertisements::class.java)
             intent.putExtra("businessOwnerId", businessOwnerId)
             startActivity(intent)
         }
 
+        // Button to handle QR scanning
         findViewById<ImageButton>(R.id.qrButton).setOnClickListener {
             val intent = Intent(this, ActivityBusinessOwnerQRScanner::class.java)
             intent.putExtra("businessOwnerId", businessOwnerId)
@@ -54,6 +56,7 @@ class ActivityBusinessOwnerLandingPage : AppCompatActivity() {
             startActivity(intent)
         }
 
+        // Button to handle loyalty programs
         val loyaltyButton = findViewById<Button>(R.id.loyaltyButton)
         loyaltyButton.setOnClickListener {
             val intent = Intent(this, ActivityBusinessOwnerQRScanner::class.java)
@@ -63,6 +66,7 @@ class ActivityBusinessOwnerLandingPage : AppCompatActivity() {
             startActivity(intent)
         }
 
+        // Drawer layout handling
         drawerLayout = findViewById(R.id.drawer_layout)
 
         findViewById<View>(R.id.menuButton).setOnClickListener {
@@ -80,26 +84,26 @@ class ActivityBusinessOwnerLandingPage : AppCompatActivity() {
 
     // Set up LiveData observers to update the UI when data changes
     private fun setupObservers() {
-        // Observe the store LiveData
+        // Observe the store LiveData and update the rating bar
         viewModel.store.observe(this) { storeData ->
             if (storeData != null) {
                 store = storeData // Update the store object
-
                 findViewById<RatingBar>(R.id.ratingBar).rating = (store?.rating ?: 0f).toFloat()
             }
         }
 
-        // Observe the transaction count LiveData
+        // Observe today's transaction count and update the UI
         viewModel.transactionCount.observe(this) { count ->
             findViewById<TextView>(R.id.todayCustomersTextView).text = count.toString()
         }
 
-        // Observe the advertisement count LiveData
+        // Observe the advertisement count and update the UI
         viewModel.advertisementCount.observe(this) { adCount ->
             val advertisementsButton = findViewById<Button>(R.id.advertisementsButton)
             advertisementsButton.text = "YOU HAVE $adCount ADVERTISEMENTS ACTIVE"
         }
 
+        // Observe log out state and redirect if the user is logged out
         viewModel.isLoggedOut.observe(this) { isLoggedOut ->
             if (isLoggedOut) {
                 val initialIntent = Intent(this, ActivityInitial::class.java).apply {

@@ -1,9 +1,16 @@
+package com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerQRSuccess
+
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
+import android.widget.ImageButton
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.mobiles.senecard.R
+import com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerLandingPage.ActivityBusinessOwnerLandingPage
+import com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerRedeemLoyalty.ActivityBusinessOwnerRedeemLoyalty
 
 class ActivityBusinessOwnerQRSuccess : AppCompatActivity() {
 
@@ -22,13 +29,20 @@ class ActivityBusinessOwnerQRSuccess : AppCompatActivity() {
         storeId = intent.getStringExtra("storeId")
         userId = intent.getStringExtra("userId")
 
-        // Set up observer to watch for purchase success or error
+        // Observe ViewModel data and handle navigation when necessary
         observeViewModel()
+
+        // Load the current loyalty card and purchase info
+        if (storeId != null && userId != null) {
+            viewModel.getLoyaltyCardAndPurchases(storeId!!, userId!!)
+        } else {
+            Toast.makeText(this, "Missing required data", Toast.LENGTH_SHORT).show()
+        }
 
         // Button to make the stamp (create purchase and update loyalty card)
         findViewById<Button>(R.id.makeStampButton).setOnClickListener {
-            if (businessOwnerId != null && storeId != null && userId != null) {
-                viewModel.makeStamp(businessOwnerId!!, storeId!!, userId!!)
+            if (storeId != null && userId != null) {
+                viewModel.makeStamp(storeId!!, userId!!)
             } else {
                 Toast.makeText(this, "Missing required data", Toast.LENGTH_SHORT).show()
             }
@@ -36,14 +50,50 @@ class ActivityBusinessOwnerQRSuccess : AppCompatActivity() {
     }
 
     private fun observeViewModel() {
-        viewModel.purchaseSuccess.observe(this) { success ->
-            if (success == true) {
-                Toast.makeText(this, "Purchase registered successfully", Toast.LENGTH_SHORT).show()
+        // Observe loyalty card info and navigate if points meet the requirement
+        viewModel.loyaltyCardInfo.observe(this) { loyaltyCardInfo ->
+            loyaltyCardInfo?.let {
+                // Update the UI
+                findViewById<TextView>(R.id.loyaltyCardsTextView).text = it.loyaltyCardsRedeemed.toString()
+                findViewById<TextView>(R.id.stampsAwardedTextView).text = "${it.currentPoints}/${it.maxPoints}"
+
+                // Navigate to RedeemLoyalty view if points meet the requirement
+                if (it.currentPoints >= it.maxPoints) {
+                    navigateToRedeemLoyaltyCard()
+                }
             }
         }
 
+        // Observe purchase success and check points again after a purchase is registered
+        viewModel.purchaseSuccess.observe(this) { success ->
+            if (success == true) {
+                Toast.makeText(this, "Purchase registered successfully", Toast.LENGTH_SHORT).show()
+                // Reload loyalty card info after purchase
+                viewModel.getLoyaltyCardAndPurchases(storeId!!, userId!!)
+            }
+        }
+
+        // Handle back button functionality
+        findViewById<ImageButton>(R.id.backButton).setOnClickListener {
+            val intent = Intent(this, ActivityBusinessOwnerLandingPage::class.java)
+            intent.putExtra("businessOwnerId", businessOwnerId)
+            startActivity(intent)
+            finish() // Close the current activity
+        }
+
+        // Observe error messages
         viewModel.errorMessage.observe(this) { message ->
             Toast.makeText(this, message, Toast.LENGTH_LONG).show()
         }
+    }
+
+    // Navigate to the RedeemLoyalty view if loyalty card points meet the requirement
+    private fun navigateToRedeemLoyaltyCard() {
+        val intent = Intent(this, ActivityBusinessOwnerRedeemLoyalty::class.java)
+        intent.putExtra("businessOwnerId", businessOwnerId)
+        intent.putExtra("storeId", storeId)
+        intent.putExtra("userId", userId)
+        startActivity(intent)
+        finish() // End current activity to prevent returning to it
     }
 }

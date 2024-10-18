@@ -1,11 +1,10 @@
 package com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerQRScanner
 
-import ActivityBusinessOwnerQRSuccess
-import ViewModelBusinessOwnerQRScanner
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -17,9 +16,12 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import com.google.zxing.*
 import com.google.zxing.common.HybridBinarizer
 import com.mobiles.senecard.R
+import com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerQRSuccess.ActivityBusinessOwnerQRSuccess
+import kotlinx.coroutines.launch
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -28,6 +30,7 @@ class ActivityBusinessOwnerQRScanner : AppCompatActivity() {
     private lateinit var cameraExecutor: ExecutorService
     private var businessOwnerId: String? = null
     private var storeId: String? = null
+    private var isProcessingQR: Boolean = false // New flag to track if a QR code is being processed
 
     private val viewModel: ViewModelBusinessOwnerQRScanner by viewModels()
 
@@ -35,16 +38,13 @@ class ActivityBusinessOwnerQRScanner : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_business_owner_qr_scanner)
 
-        // Retrieve the businessOwnerId and storeId passed from the previous activity
         businessOwnerId = intent.getStringExtra("businessOwnerId")
         storeId = intent.getStringExtra("storeId")
 
-        // Back button functionality
         findViewById<ImageButton>(R.id.backButton).setOnClickListener {
-            finish() // Close current activity
+            finish()
         }
 
-        // Start the camera preview and scanner
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
             startCamera()
         } else {
@@ -53,28 +53,28 @@ class ActivityBusinessOwnerQRScanner : AppCompatActivity() {
 
         cameraExecutor = Executors.newSingleThreadExecutor()
 
-        // Observe ViewModel changes
         observeViewModel()
     }
 
     private fun observeViewModel() {
         viewModel.navigateToSuccess.observe(this, Observer { success ->
+            Log.d("QRScannerActivity", "Navigate to success observer triggered with value: $success")
             if (success == true) {
                 val intent = Intent(this, ActivityBusinessOwnerQRSuccess::class.java)
                 intent.putExtra("businessOwnerId", businessOwnerId)
                 intent.putExtra("storeId", storeId)
-                intent.putExtra("userId", viewModel.userId.value) // Pass userId to the success activity
+                intent.putExtra("userId", viewModel.userId.value)
+                Log.d("QRScannerActivity", "Navigating to success page")
                 startActivity(intent)
+                viewModel.onNavigated()
+                isProcessingQR = true // Re-enable scanning after processing is done
             }
-        })
-
-        viewModel.navigateToFailure.observe(this, Observer {
-            Toast.makeText(this, "User not found", Toast.LENGTH_SHORT).show()
         })
 
         viewModel.errorMessage.observe(this, Observer { errorMessage ->
             errorMessage?.let {
                 Toast.makeText(this, it, Toast.LENGTH_LONG).show()
+                isProcessingQR = false // Re-enable scanning after error
             }
         })
     }
@@ -106,8 +106,15 @@ class ActivityBusinessOwnerQRScanner : AppCompatActivity() {
     }
 
     private fun handleQRCodeResult(result: String) {
-        // Pass the QR code (user ID) to the ViewModel for processing
-        viewModel.processQRCode(result)
+        if (!isProcessingQR) {
+            Log.d("QRScannerActivity", "QR code result: $result")
+            Log.d("QRScannerActivity", "BusinessOwnerID: $businessOwnerId, StoreID: $storeId")
+
+            isProcessingQR = true // Set the flag to prevent further scans until processing is done
+            lifecycleScope.launch {
+                viewModel.processQRCode(result)
+            }
+        }
     }
 
     override fun onDestroy() {
@@ -124,9 +131,10 @@ class ActivityBusinessOwnerQRScanner : AppCompatActivity() {
             val binaryBitmap = BinaryBitmap(HybridBinarizer(source))
             try {
                 val result = MultiFormatReader().decode(binaryBitmap)
+                Log.d("QRCodeAnalyzer", "Scanned QR code: ${result.text}")
                 onQRCodeScanned(result.text)
             } catch (e: NotFoundException) {
-                // No QR code found
+                Log.e("QRCodeAnalyzer", "No QR code found")
             } finally {
                 imageProxy.close()
             }

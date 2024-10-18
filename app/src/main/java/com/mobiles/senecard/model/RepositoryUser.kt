@@ -1,5 +1,6 @@
 package com.mobiles.senecard.model
 
+import android.util.Log
 import com.google.firebase.firestore.toObject
 import com.mobiles.senecard.model.entities.User
 import kotlinx.coroutines.tasks.await
@@ -30,9 +31,18 @@ class RepositoryUser private constructor() {
 
     suspend fun getUserById(userId: String): User? {
         try {
+            Log.d("RepositoryUser", "Fetching user from Firestore with ID: $userId")
             val documentSnapshot = firebase.firestore.collection("users").document(userId).get().await()
-            return documentSnapshot.toObject<User>()?.copy(id = documentSnapshot.id)
+
+            if (documentSnapshot.exists()) {
+                Log.d("RepositoryUser", "User document found: ${documentSnapshot.data}")
+                return documentSnapshot.toObject<User>()?.copy(id = documentSnapshot.id)
+            } else {
+                Log.e("RepositoryUser", "No document found for User ID: $userId")
+                return null
+            }
         } catch (e: Exception) {
+            Log.e("RepositoryUser", "Error fetching user from Firebase: ${e.message}")
             return null
         }
     }

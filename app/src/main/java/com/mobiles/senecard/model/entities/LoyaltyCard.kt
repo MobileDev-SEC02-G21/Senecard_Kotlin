@@ -1,10 +1,10 @@
 package com.mobiles.senecard.model.entities
 
 data class LoyaltyCard(
-    val id: String? = null,
+    var id: String? = null,
     val storeId: String? = null,
     val uniandesMemberId: String? = null,
     val maxPoints: Int? = null,
-    val points: Int? = null,
-    val isCurrent: Boolean? = null
+    var points: Int? = null,
+    var isCurrent: Boolean? = null
 )
