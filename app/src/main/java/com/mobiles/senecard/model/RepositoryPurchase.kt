@@ -47,4 +47,21 @@ class RepositoryPurchase private constructor() {
         }
         return purchasesList
     }
+
+    // New method to get all purchases related to a specific loyalty card ID
+    suspend fun getPurchasesByLoyaltyCardId(loyaltyCardId: String): List<Purchase> {
+        return try {
+            val querySnapshot = firebase.firestore.collection("purchases")
+                .whereEqualTo("loyaltyCardId", loyaltyCardId)
+                .get()
+                .await()
+
+            querySnapshot.documents.mapNotNull { document ->
+                document.toObject<Purchase>()?.copy(id = document.id)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emptyList()
+        }
+    }
 }

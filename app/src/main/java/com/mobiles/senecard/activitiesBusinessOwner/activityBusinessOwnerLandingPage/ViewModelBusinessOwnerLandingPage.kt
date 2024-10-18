@@ -8,8 +8,10 @@ import com.mobiles.senecard.model.RepositoryStore
 import com.mobiles.senecard.model.RepositoryPurchase
 import com.mobiles.senecard.model.RepositoryAdvertisement
 import com.mobiles.senecard.model.RepositoryAuthentication
+import com.mobiles.senecard.model.RepositoryLoyaltyCard
 import com.mobiles.senecard.model.entities.Store
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 class ViewModelBusinessOwnerLandingPage : ViewModel() {
 
@@ -18,55 +20,62 @@ class ViewModelBusinessOwnerLandingPage : ViewModel() {
     val store: LiveData<Store?> get() = _store
 
     private val repositoryAuthentication = RepositoryAuthentication.instance
-
-    private val _isLoggedOut = MutableLiveData<Boolean>()
-    val isLoggedOut: LiveData<Boolean>
-        get() = _isLoggedOut
-
     private val repositoryStore = RepositoryStore.instance
     private val repositoryPurchase = RepositoryPurchase.instance
     private val repositoryAdvertisement = RepositoryAdvertisement.instance
+    private val repositoryLoyaltyCard = RepositoryLoyaltyCard.instance
 
-    // Store data
+    // Logout state
+    private val _isLoggedOut = MutableLiveData<Boolean>()
+    val isLoggedOut: LiveData<Boolean> get() = _isLoggedOut
+
+    // Store name
     private val _storeName = MutableLiveData<String>()
-    val storeName: LiveData<String>
-        get() = _storeName
+    val storeName: LiveData<String> get() = _storeName
 
-    // Number of transactions (purchases)
+    // Number of today's transactions (purchases)
     private val _transactionCount = MutableLiveData<Int>()
-    val transactionCount: LiveData<Int>
-        get() = _transactionCount
+    val transactionCount: LiveData<Int> get() = _transactionCount
 
     // Number of advertisements
     private val _advertisementCount = MutableLiveData<Int>()
-    val advertisementCount: LiveData<Int>
-        get() = _advertisementCount
+    val advertisementCount: LiveData<Int> get() = _advertisementCount
 
     // Store rating
     private val _rating = MutableLiveData<Float>()
-    val rating: LiveData<Float>
-        get() = _rating
+    val rating: LiveData<Float> get() = _rating
 
     // Error messages
     private val _errorMessage = MutableLiveData<String?>()
-    val errorMessage: LiveData<String?>
-        get() = _errorMessage
+    val errorMessage: LiveData<String?> get() = _errorMessage
 
+    // Function to fetch business owner data
     fun fetchBusinessOwnerData(businessOwnerId: String) {
         viewModelScope.launch {
             try {
                 // Fetch the store by business owner ID
                 val storeData = repositoryStore.getStoreByBusinessOwnerId(businessOwnerId)
                 if (storeData != null) {
-                    // Update the LiveData store object
                     _store.value = storeData
-
                     _storeName.value = storeData.name!!
                     _rating.value = storeData.rating!!.toFloat()
 
-                    val purchases = storeData.id?.let { repositoryPurchase.getPurchasesByStoreId(it) }
-                    _transactionCount.value = purchases!!.size
+                    // Fetch all loyalty cards related to the store
+                    val loyaltyCards = repositoryLoyaltyCard.getLoyaltyCardsByStoreId(storeData.id!!)
 
+                    // Initialize the count for today's purchases
+                    var todayPurchaseCount = 0
+
+                    // For each loyalty card, retrieve the associated purchases and filter today's purchases
+                    val today = LocalDate.now().toString()
+                    loyaltyCards.forEach { loyaltyCard ->
+                        val purchases = repositoryPurchase.getPurchasesByLoyaltyCardId(loyaltyCard.id!!)
+                        todayPurchaseCount += purchases.count { it.date == today }
+                    }
+
+                    _transactionCount.value = todayPurchaseCount
+
+                    // Fetch advertisement count
                     val advertisements = repositoryAdvertisement.getAdvertisementsByStoreId(storeData.id)
                     _advertisementCount.value = advertisements.size
                 } else {
@@ -78,6 +87,7 @@ class ViewModelBusinessOwnerLandingPage : ViewModel() {
         }
     }
 
+    // Function to log out the user
     fun logOut() {
         viewModelScope.launch {
             repositoryAuthentication.logOut()
@@ -87,6 +97,7 @@ class ViewModelBusinessOwnerLandingPage : ViewModel() {
         }
     }
 
+    // Clear error message after navigation
     fun onNavigated() {
         _errorMessage.value = null
     }
