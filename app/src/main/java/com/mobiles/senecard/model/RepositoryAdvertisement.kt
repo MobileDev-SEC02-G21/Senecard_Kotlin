@@ -12,6 +12,7 @@ class RepositoryAdvertisement private constructor() {
 
     private val firebase = FirebaseClient.instance
     private val repositoryStore = RepositoryStore.instance
+    private val repositoryLoyaltyCard = RepositoryLoyaltyCard.instance
 
     companion object {
         val instance: RepositoryAdvertisement by lazy { RepositoryAdvertisement() }
@@ -67,6 +68,18 @@ class RepositoryAdvertisement private constructor() {
             .map { it.first }
 
         return sortedAdvertisements
+    }
+
+    suspend fun getRecommendedAdvertisementsByUniandesMemberId(uniandesMemberId: String): List<Advertisement> {
+        val advertisementsList = getAllAdvertisements()
+        val loyaltyCardList = repositoryLoyaltyCard.getLoyaltyCardsByUniandesMemberId(uniandesMemberId)
+
+        val storeIdsWithPurchases = loyaltyCardList.mapNotNull { it.storeId }
+
+        val recommendedAdvertisements = advertisementsList
+            .filter { advertisement -> advertisement.id != null && advertisement.storeId !in storeIdsWithPurchases && !isAdvertisementStoreClosed(advertisement) }
+
+        return recommendedAdvertisements.take(2)
     }
 
     suspend fun getAdvertisementById(id: String): Advertisement? {

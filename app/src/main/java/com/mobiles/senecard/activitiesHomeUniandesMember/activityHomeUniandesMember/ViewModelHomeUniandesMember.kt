@@ -77,18 +77,20 @@ class ViewModelHomeUniandesMember: ViewModel() {
     fun getUser() {
         viewModelScope.launch {
             _isUser.value = repositoryAuthentication.getCurrentUser()
+            getStoresRecommended(_isUser.value?.id!!)
+            getAdvertisementRecommended(_isUser.value?.id!!)
         }
     }
 
-    fun getStoresRecommended() {
+    private fun getStoresRecommended(uniandesMemberId: String) {
         viewModelScope.launch {
-            _storeListRecommended.value = repositoryStore.getAllStores().take(2)
+            _storeListRecommended.value = repositoryStore.getRecommendedStoresByUniandesMemberId(uniandesMemberId)
         }
     }
 
-    fun getAdvertisementRecommended() {
+    private fun getAdvertisementRecommended(uniandesMemberId: String) {
         viewModelScope.launch {
-            _advertisementListRecommended.value = repositoryAdvertisement.getAllAdvertisements().take(2)
+            _advertisementListRecommended.value = repositoryAdvertisement.getRecommendedAdvertisementsByUniandesMemberId(uniandesMemberId)
         }
     }
 

@@ -2,6 +2,7 @@ package com.mobiles.senecard.model
 
 import com.google.firebase.firestore.ktx.toObject
 import com.mobiles.senecard.model.FirebaseClient
+import com.google.firebase.firestore.toObject
 import com.mobiles.senecard.model.entities.LoyaltyCard
 import kotlinx.coroutines.tasks.await
 
@@ -43,13 +44,20 @@ class RepositoryLoyaltyCard private constructor() {
         }
     }
 
+
     suspend fun getLoyaltyCardsByStoreIdAndUniandesMemberId(storeId: String, uniandesMemberId: String): List<LoyaltyCard> {
         return try {
             val querySnapshot = firebase.firestore.collection("loyaltyCards")
                 .whereEqualTo("storeId", storeId)
+
+    suspend fun getLoyaltyCardsByUniandesMemberId(uniandesMemberId: String): List<LoyaltyCard> {
+        val loyaltyCardsList = mutableListOf<LoyaltyCard>()
+        try {
+            val querySnapshot = firebase.firestore.collection("royaltyCards")
                 .whereEqualTo("uniandesMemberId", uniandesMemberId)
                 .get()
                 .await()
+
 
             querySnapshot.documents.mapNotNull { it.toObject<LoyaltyCard>()?.copy(id = it.id) }
         } catch (e: Exception) {
@@ -81,10 +89,17 @@ class RepositoryLoyaltyCard private constructor() {
             loyaltyCardsSnapshot.documents.mapNotNull { document ->
                 document.toObject(LoyaltyCard::class.java)?.apply {
                     id = document.id // Set the document ID
+
+            for (documentSnapshot in querySnapshot.documents) {
+                val loyaltyCard = documentSnapshot.toObject<LoyaltyCard>()?.copy(id = documentSnapshot.id)
+                if (loyaltyCard != null) {
+                    loyaltyCardsList.add(loyaltyCard)
+
                 }
             }
         } catch (e: Exception) {
             e.printStackTrace()
+
             emptyList() // Return an empty list if there's an error
         }
     }
@@ -100,6 +115,11 @@ class RepositoryLoyaltyCard private constructor() {
             e.printStackTrace()
             false
         }
+    }
+
+
+        }
+        return loyaltyCardsList
     }
 
 }
