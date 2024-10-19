@@ -2,7 +2,6 @@ package com.mobiles.senecard.model
 
 import com.google.firebase.firestore.ktx.toObject
 import com.mobiles.senecard.model.FirebaseClient
-import com.google.firebase.firestore.toObject
 import com.mobiles.senecard.model.entities.LoyaltyCard
 import kotlinx.coroutines.tasks.await
 
@@ -24,44 +23,53 @@ class RepositoryLoyaltyCard private constructor() {
         }
     }
 
-    // Get loyalty card by storeId and uniandesMemberId
-    suspend fun getLoyaltyCardByStoreIdAndUniandesMemberId(storeId: String, uniandesMemberId: String): LoyaltyCard? {
-        return try {
-            val querySnapshot = firebase.firestore.collection("loyaltyCards")
-                .whereEqualTo("storeId", storeId)
-                .whereEqualTo("uniandesMemberId", uniandesMemberId)
-                .get()
-                .await()
-
-            if (querySnapshot.documents.isNotEmpty()) {
-                querySnapshot.documents[0].toObject<LoyaltyCard>()?.copy(id = querySnapshot.documents[0].id)
-            } else {
-                null
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
-        }
-    }
-
-
+    // Get all loyalty cards by storeId and uniandesMemberId
     suspend fun getLoyaltyCardsByStoreIdAndUniandesMemberId(storeId: String, uniandesMemberId: String): List<LoyaltyCard> {
         return try {
             val querySnapshot = firebase.firestore.collection("loyaltyCards")
                 .whereEqualTo("storeId", storeId)
-
-    suspend fun getLoyaltyCardsByUniandesMemberId(uniandesMemberId: String): List<LoyaltyCard> {
-        val loyaltyCardsList = mutableListOf<LoyaltyCard>()
-        try {
-            val querySnapshot = firebase.firestore.collection("royaltyCards")
                 .whereEqualTo("uniandesMemberId", uniandesMemberId)
                 .get()
                 .await()
 
+            querySnapshot.documents.mapNotNull { it.toObject<LoyaltyCard>()?.copy(id = it.id) }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emptyList() // Return empty list on error
+        }
+    }
+
+    // Get all loyalty cards by storeId
+    suspend fun getLoyaltyCardsByStoreId(storeId: String): List<LoyaltyCard> {
+        return try {
+            val loyaltyCardsSnapshot = firebase.firestore.collection("loyaltyCards")
+                .whereEqualTo("storeId", storeId)
+                .get()
+                .await()
+
+            loyaltyCardsSnapshot.documents.mapNotNull { document ->
+                document.toObject(LoyaltyCard::class.java)?.apply {
+                    id = document.id // Set the document ID
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emptyList()
+        }
+    }
+
+    // Get all loyalty cards by uniandesMemberId
+    suspend fun getLoyaltyCardsByUniandesMemberId(uniandesMemberId: String): List<LoyaltyCard> {
+        return try {
+            val querySnapshot = firebase.firestore.collection("loyaltyCards")
+                .whereEqualTo("uniandesMemberId", uniandesMemberId)
+                .get()
+                .await()
 
             querySnapshot.documents.mapNotNull { it.toObject<LoyaltyCard>()?.copy(id = it.id) }
         } catch (e: Exception) {
-            emptyList() // Return empty list on error
+            e.printStackTrace()
+            emptyList()
         }
     }
 
@@ -77,33 +85,28 @@ class RepositoryLoyaltyCard private constructor() {
         }
     }
 
-    // **Function to get all loyalty cards related to a store**
-    suspend fun getLoyaltyCardsByStoreId(storeId: String): List<LoyaltyCard> {
+    // Get current active loyalty card by storeId and uniandesMemberId
+    suspend fun getCurrentLoyaltyCardsByStoreIdAndUniandesMemberId(storeId: String, uniandesMemberId: String): LoyaltyCard? {
         return try {
-            val loyaltyCardsSnapshot = firebase.firestore.collection("loyaltyCards")
+            val querySnapshot = firebase.firestore.collection("loyaltyCards")
                 .whereEqualTo("storeId", storeId)
+                .whereEqualTo("uniandesMemberId", uniandesMemberId)
+                .whereEqualTo("isCurrent", true) // Fetch only active/current loyalty card
                 .get()
                 .await()
 
-            // Map each document to a LoyaltyCard object
-            loyaltyCardsSnapshot.documents.mapNotNull { document ->
-                document.toObject(LoyaltyCard::class.java)?.apply {
-                    id = document.id // Set the document ID
-
-            for (documentSnapshot in querySnapshot.documents) {
-                val loyaltyCard = documentSnapshot.toObject<LoyaltyCard>()?.copy(id = documentSnapshot.id)
-                if (loyaltyCard != null) {
-                    loyaltyCardsList.add(loyaltyCard)
-
-                }
+            if (querySnapshot.documents.isNotEmpty()) {
+                querySnapshot.documents[0].toObject<LoyaltyCard>()?.copy(id = querySnapshot.documents[0].id)
+            } else {
+                null
             }
         } catch (e: Exception) {
             e.printStackTrace()
-
-            emptyList() // Return an empty list if there's an error
+            null
         }
     }
 
+    // Update an existing loyalty card
     suspend fun updateLoyaltyCard(loyaltyCard: LoyaltyCard): Boolean {
         return try {
             firebase.firestore.collection("loyaltyCards")
@@ -116,10 +119,4 @@ class RepositoryLoyaltyCard private constructor() {
             false
         }
     }
-
-
-        }
-        return loyaltyCardsList
-    }
-
 }
