@@ -103,6 +103,7 @@
             android:exported="true"
             android:screenOrientation="portrait"
             tools:ignore="DiscouragedApi,LockedOrientationActivity">
+
         </activity>
 
         <activity
@@ -129,8 +130,13 @@
             android:screenOrientation="portrait"
             tools:ignore="DiscouragedApi,LockedOrientationActivity" />
 
-        <activity android:name=".activitiesBusinessOwner.activityBusinessOwnerQRSuccess.ActivityBusinessOwnerQRSuccess"
+        <activity
+            android:name=".activitiesBusinessOwner.activityBusinessOwnerQRSuccess.ActivityBusinessOwnerQRSuccess"
             android:label="Success Transaction" />
+
+        <activity
+            android:name=".activitiesBusinessOwner.activityBusinessOwnerRedeemLoyalty.ActivityBusinessOwnerRedeemLoyalty"
+            android:label="Redeem loyalty" />
 
         <activity android:name=".activitiesBusinessOwner.activityBusinessOwnerQRScanner.ActivityBusinessOwnerQRScanner"
             android:label="QR Scanner" />

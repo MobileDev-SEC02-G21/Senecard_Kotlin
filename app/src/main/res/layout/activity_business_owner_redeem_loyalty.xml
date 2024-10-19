@@ -85,39 +85,39 @@
             android:textColor="@color/text"
             android:layout_marginTop="4dp" />
 
-        <!-- Make Stamp Button -->
+        <!-- Make Stamp Button (Disabled) -->
         <Button
             android:id="@+id/makeStampButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="MAKE STAMP"
-            android:background="@drawable/custom_dialog_button_background"
-            android:textColor="@android:color/white"
-            android:textStyle="bold"
-            android:padding="16dp"
-            android:layout_marginTop="24dp" />
-
-        <!-- Redeem Loyalty Card Button (Disabled) -->
-        <Button
-            android:id="@+id/redeemLoyaltyCardButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="REDEEMED LOYALTY CARD"
             android:background="@drawable/custom_disabled_button_background"
             android:textColor="@android:color/white"
             android:textStyle="bold"
             android:padding="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="24dp"
             android:enabled="false" />
+
+        <!-- Redeem Loyalty Card Button (Enabled and Green) -->
+        <Button
+            android:id="@+id/redeemLoyaltyCardButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="REDEEM LOYALTY CARD"
+            android:background="@color/green_highlight"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:padding="16dp"
+            android:layout_marginTop="16dp" />
 
         <!-- Info Message for Redeeming -->
         <TextView
             android:id="@+id/redeemLoyaltyInfoText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="IS NOT AVAILABLE TO REDEEM A LOYALTY CARD"
+            android:text="IS AVAILABLE TO REDEEM A LOYALTY CARD"
             android:textSize="12sp"
-            android:textColor="@android:color/darker_gray"
+            android:textColor="@color/green_highlight"
             android:gravity="center"
             android:layout_marginTop="8dp" />
     </LinearLayout>
