@@ -18,8 +18,8 @@ class ViewModelHomeUniandesMemberAdvertisementDetail : ViewModel() {
     val navigateToActivityBack: LiveData<Boolean>
         get() = _navigateToActivityBack
 
-    private val _advertisement = MutableLiveData<Advertisement>()
-    val advertisement: LiveData<Advertisement>
+    private val _advertisement = MutableLiveData<Advertisement?>()
+    val advertisement: LiveData<Advertisement?>
         get() = _advertisement
 
     private val _storeName = MutableLiveData<String>()
@@ -28,8 +28,16 @@ class ViewModelHomeUniandesMemberAdvertisementDetail : ViewModel() {
 
     fun getAdvertisementById(advertisementId: String) {
         viewModelScope.launch {
-            _advertisement.value = repositoryAdvertisement.getAdvertisementById(advertisementId)
-            _storeName.value =  repositoryStore.getStoreById(_advertisement.value?.storeId!!)?.name!!
+            val advertisement = repositoryAdvertisement.getAdvertisementById(advertisementId)
+            _advertisement.value = advertisement
+
+            val storeId = advertisement?.storeId
+            if (storeId != null) {
+                val store = repositoryStore.getStoreById(storeId)
+                _storeName.value = store?.name ?: "Unknown Store"
+            } else {
+                _storeName.value = "Unknown Store"
+            }
         }
     }
 

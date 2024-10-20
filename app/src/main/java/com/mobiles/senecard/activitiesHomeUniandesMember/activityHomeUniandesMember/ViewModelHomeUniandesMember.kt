@@ -74,7 +74,7 @@ class ViewModelHomeUniandesMember: ViewModel() {
         }
     }
 
-    fun getUser() {
+    fun getInformation() {
         viewModelScope.launch {
             _isUser.value = repositoryAuthentication.getCurrentUser()
             getStoresRecommended(_isUser.value?.id!!)

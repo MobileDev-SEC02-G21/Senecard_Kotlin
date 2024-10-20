@@ -46,7 +46,7 @@ class ViewModelHomeUniandesMemberStoreList : ViewModel() {
             _filteredStoreList.value = allStores
         } else {
             _filteredStoreList.value = allStores.filter { store ->
-                store.name!!.contains(query, ignoreCase = true)
+                store.name?.contains(query, ignoreCase = true) ?: false
             }
         }
     }

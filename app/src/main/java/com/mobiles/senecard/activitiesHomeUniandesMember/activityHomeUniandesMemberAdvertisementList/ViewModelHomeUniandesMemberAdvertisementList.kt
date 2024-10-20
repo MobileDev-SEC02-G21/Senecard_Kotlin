@@ -44,7 +44,7 @@ class ViewModelHomeUniandesMemberAdvertisementList : ViewModel() {
             _filteredAdvertisementList.value = allAdvertisements
         } else {
             _filteredAdvertisementList.value = allAdvertisements.filter { advertisement ->
-                advertisement.title!!.contains(query, ignoreCase = true)
+                advertisement.title?.contains(query, ignoreCase = true) ?: false
             }
         }
     }

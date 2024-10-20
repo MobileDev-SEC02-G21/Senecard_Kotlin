@@ -67,14 +67,33 @@ class RepositoryStore private constructor() {
     }
 
     suspend fun getRecommendedStoresByUniandesMemberId(uniandesMemberId: String): List<Store> {
+        // Get the list of all stores and member loyalty cards
         val storesList = getAllStores()
         val loyaltyCardList = repositoryLoyaltyCard.getLoyaltyCardsByUniandesMemberId(uniandesMemberId)
 
+        // Get the store IDs where the member has made purchases
         val storeIdsWithPurchases = loyaltyCardList.mapNotNull { it.storeId }
 
+        // Identify the most frequent categories in member purchases
+        val frequentCategories = storesList
+            .filter { it.id in storeIdsWithPurchases && it.category != null }
+            .groupingBy { it.category }
+            .eachCount()
+            .toList()
+            .sortedByDescending { (_, count) -> count }
+            .map { it.first }
+
+        // Filter stores that are not on the shopping list, that are not closed, that belong to frequent categories and have good rating
         val recommendedStores = storesList
-            .filter { store -> store.id != null && store.id !in storeIdsWithPurchases && !isStoreClosed(store) }
-            .sortedByDescending { it.rating ?: 0.0 }
+            .filter { store ->
+                store.id != null &&
+                        store.id !in storeIdsWithPurchases &&
+                        !isStoreClosed(store) &&
+                        store.category != null
+            }
+            .sortedWith(compareByDescending<Store> { store ->
+                frequentCategories.indexOf(store.category).takeIf { it >= 0 } ?: Int.MAX_VALUE
+            }.thenByDescending { it.rating ?: 0.0 })
 
         return recommendedStores.take(2)
     }

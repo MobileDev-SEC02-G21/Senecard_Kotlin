@@ -16,8 +16,8 @@ class ViewModelHomeUniandesMemberStoreDetail : ViewModel() {
     val navigateToActivityBack: LiveData<Boolean>
         get() = _navigateToActivityBack
 
-    private val _store = MutableLiveData<Store>()
-    val store: LiveData<Store>
+    private val _store = MutableLiveData<Store?>()
+    val store: LiveData<Store?>
         get() = _store
 
     fun getStoreById(storeId: String) {
