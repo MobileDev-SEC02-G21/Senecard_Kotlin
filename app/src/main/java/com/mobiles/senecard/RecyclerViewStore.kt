@@ -1,5 +1,6 @@
 package com.mobiles.senecard
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,6 +34,7 @@ class StoreViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     private val repositoryStore = RepositoryStore.instance
     private val binding = ItemStoreBinding.bind(view)
 
+    @SuppressLint("DefaultLocale")
     fun render(store: Store, onClickedItemStore:(Store) -> Unit) {
 
         val closed = repositoryStore.isStoreClosed(store)
@@ -50,7 +52,7 @@ class StoreViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
 
         binding.storeNameTextView.text = store.name
-        binding.storeRatingTextView.text = store.rating.toString()
+        binding.storeRatingTextView.text = String.format("%.1f", store.rating)
 
         Glide.with(binding.storeImageView.context)
             .load(store.image)

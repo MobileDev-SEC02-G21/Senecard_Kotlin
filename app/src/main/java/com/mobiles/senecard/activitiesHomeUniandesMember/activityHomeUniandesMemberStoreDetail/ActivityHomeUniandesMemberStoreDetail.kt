@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityOptionsCompat
 import com.bumptech.glide.Glide
 import com.mobiles.senecard.R
 import com.mobiles.senecard.databinding.ActivityHomeUniandesMemberStoreDetailBinding

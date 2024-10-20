@@ -1,5 +1,6 @@
 package com.mobiles.senecard.activitiesHomeUniandesMember.activityHomeUniandesMember
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -37,7 +38,7 @@ class ActivityHomeUniandesMember : AppCompatActivity() {
         setObservers()
         setElementsMenu()
         setObserversMenu()
-        viewModelHomeUniandesMember.getUser()
+        viewModelHomeUniandesMember.getInformation()
     }
 
     private fun setElements() {
@@ -58,6 +59,7 @@ class ActivityHomeUniandesMember : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun setObservers() {
         viewModelHomeUniandesMember.isUser.observe(this) { user ->
             if (user != null) {

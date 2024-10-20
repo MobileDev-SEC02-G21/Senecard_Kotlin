@@ -31,7 +31,7 @@ class ViewModelBusinessOwnerQRSuccess : ViewModel() {
         viewModelScope.launch {
             try {
                 // Retrieve the active loyalty card (current) for the given store and user
-                val activeLoyaltyCard = repositoryLoyaltyCard.getCurrentLoyaltyCardsByStoreIdAndUniandesMemberId(storeId, userId)
+                val activeLoyaltyCard = repositoryLoyaltyCard.getCurrentLoyaltyCardByStoreIdAndUniandesMemberId(storeId, userId)
 
                 if (activeLoyaltyCard != null) {
                     // Get the purchases associated with the active loyalty card
@@ -83,7 +83,7 @@ class ViewModelBusinessOwnerQRSuccess : ViewModel() {
         viewModelScope.launch {
             try {
                 // Retrieve the current active loyalty card
-                val loyaltyCard = repositoryLoyaltyCard.getCurrentLoyaltyCardsByStoreIdAndUniandesMemberId(storeId, userId)
+                val loyaltyCard = repositoryLoyaltyCard.getCurrentLoyaltyCardByStoreIdAndUniandesMemberId(storeId, userId)
 
                 if (loyaltyCard != null) {
                     // Create a new purchase for the current loyalty card
