@@ -13,90 +13,94 @@ class RepositoryLoyaltyCard private constructor() {
         val instance: RepositoryLoyaltyCard by lazy { RepositoryLoyaltyCard() }
     }
 
-    // Añadir o actualizar la RoyaltyCard
     suspend fun addOrUpdateRoyaltyCard(uniandesMemberId: String, storeId: String, maxPoints: Int): String {
         return try {
-            // Busca todas las RoyaltyCards asociadas al usuario y la tienda
-            val royaltyCards = getRoyaltyCardsByUserAndStore(uniandesMemberId, storeId)
+            // Fetch all loyalty cards associated with the user and store
+            val loyaltyCards = getRoyaltyCardsByUserAndStore(uniandesMemberId, storeId)
 
-            // Si no hay tarjetas, crear una nueva
-            if (royaltyCards.isEmpty()) {
+            // If no cards exist, create a new one
+            if (loyaltyCards.isEmpty()) {
                 val newLoyaltyCard = LoyaltyCard(
                     uniandesMemberId = uniandesMemberId,
                     storeId = storeId,
-                    points = 1,  // Comienza con 1 punto
+                    points = 1,  // Starts with 1 point
                     maxPoints = maxPoints,
-                    isCurrent = true // Esta es la nueva tarjeta actual
+                    isCurrent = true // This is the new current card
                 )
 
-                // Añadir la nueva tarjeta y obtener el ID del documento creado
+                // Add the new card and get the document ID
                 val documentRef = firebase.firestore.collection("royaltyCards").add(newLoyaltyCard).await()
-                newLoyaltyCard.id = documentRef.id // Asignar el ID generado
+                newLoyaltyCard.id = documentRef.id // Assign the generated ID
 
-                Log.d("RepositoryRoyaltyCard", "Se ha creado una nueva tarjeta con 1 punto. ID: ${newLoyaltyCard.id}")
-                "Se ha creado una nueva tarjeta de fidelidad. Tienes 1 punto."
+                Log.d("RepositoryRoyaltyCard", "A new loyalty card with 1 point was created. ID: ${newLoyaltyCard.id}")
+                return "A new loyalty card was created. You have 1 point."
             } else {
-                // Si hay tarjetas, verificar el estado
+                // If cards exist, check their status
                 var currentCard: LoyaltyCard? = null
                 var allInactive = true
 
-                for (card in royaltyCards) {
+                for (card in loyaltyCards) {
                     if (card.isCurrent) {
                         currentCard = card
                         allInactive = false
-                        break // Si encontramos una tarjeta actual, salimos del bucle
+                        break // If we find an active card, exit the loop
                     }
-                    // Si encontramos una tarjeta que no está llena
+                    // Check if there's a card that's not full
                     if (card.points < card.maxPoints) {
-                        allInactive = false // No todas están inactivas
+                        allInactive = false // Not all cards are inactive
                     }
                 }
 
-                // Si hay una tarjeta actual, incrementamos sus puntos
+                // If there is a current card, increment its points
                 if (currentCard != null) {
-                    Log.d("RepositoryRoyaltyCard", "Tarjeta actual encontrada con ${currentCard.points} puntos.")
+                    Log.d("RepositoryRoyaltyCard", "Current card found with ${currentCard.points} points.")
 
                     if (currentCard.points < currentCard.maxPoints) {
                         currentCard.points += 1
-                        Log.d("RepositoryRoyaltyCard", "Puntos incrementados: ${currentCard.points}")
+                        Log.d("RepositoryRoyaltyCard", "Points incremented: ${currentCard.points}")
 
-                        // Actualiza la tarjeta en Firestore
+                        // Update the card in Firestore
                         firebase.firestore.collection("royaltyCards").document(currentCard.id!!).set(currentCard).await()
-                        return "Puntos incrementados. Ahora tienes ${currentCard.points} puntos."
+                        return "Points incremented. You now have ${currentCard.points} points."
                     } else {
-                        // Si se alcanza el máximo de puntos, inactivamos la tarjeta
+                        // If the maximum points are reached, deactivate the card
                         currentCard.isCurrent = false
                         firebase.firestore.collection("royaltyCards").document(currentCard.id!!).set(currentCard).await()
-                        Log.d("RepositoryRoyaltyCard", "Tarjeta inactivada: ${currentCard.id}")
+                        Log.d("RepositoryRoyaltyCard", "Card deactivated: ${currentCard.id}")
                     }
                 }
 
-                // Si todas las tarjetas están inactivas o llenas, creamos una nueva
+                // If all cards are inactive or full, deactivate all active cards and create a new one
                 if (allInactive) {
+                    // Deactivate all current cards before creating a new one
+                    deactivateAllCurrentCards(uniandesMemberId, storeId)
+
+                    // Create a new card
                     val newLoyaltyCard = LoyaltyCard(
                         uniandesMemberId = uniandesMemberId,
                         storeId = storeId,
-                        points = 1,  // Comienza con 1 punto
+                        points = 1,  // Starts with 1 point
                         maxPoints = maxPoints,
-                        isCurrent = true // Esta es la nueva tarjeta actual
+                        isCurrent = true // This is the new current card
                     )
 
-                    // Añadir la nueva tarjeta y obtener el ID del documento creado
+                    // Add the new card and get the document ID
                     val documentRef = firebase.firestore.collection("royaltyCards").add(newLoyaltyCard).await()
-                    newLoyaltyCard.id = documentRef.id // Asignar el ID generado
+                    newLoyaltyCard.id = documentRef.id // Assign the generated ID
 
-                    Log.d("RepositoryRoyaltyCard", "Se ha creado una nueva tarjeta con 1 punto. ID: ${newLoyaltyCard.id}")
-                    return "Se ha creado una nueva tarjeta de fidelidad. Tienes 1 punto."
+                    Log.d("RepositoryRoyaltyCard", "A new loyalty card with 1 point was created. ID: ${newLoyaltyCard.id}")
+                    return "A new loyalty card was created. You have 1 point."
                 }
 
-                // Si no se ha creado ninguna tarjeta nueva, devuelve un mensaje informativo
-                return "No se realizaron cambios en las tarjetas."
+                // If no new card was created, return an informational message
+                return "No changes were made to the loyalty cards."
             }
         } catch (e: Exception) {
-            Log.e("RepositoryRoyaltyCard", "Error al procesar la tarjeta de fidelidad: ${e.message}")
-            return "Error al procesar la tarjeta de fidelidad."
+            Log.e("RepositoryRoyaltyCard", "Error processing the loyalty card: ${e.message}")
+            return "Error processing the loyalty card."
         }
     }
+
 
     // Obtener todas las RoyaltyCards por usuario y tienda
     suspend fun getRoyaltyCardsByUserAndStore(uniandesMemberId: String, storeId: String): List<LoyaltyCard> {
@@ -269,19 +273,35 @@ class RepositoryLoyaltyCard private constructor() {
     suspend fun getLoyaltyCardsByStoreIdAndUniandesMemberId(storeId: String, uniandesMemberId: String): List<LoyaltyCard> {
         val loyaltyCardList = mutableListOf<LoyaltyCard>()
         try {
+            // Force Firestore to fetch data from the server (bypassing cache)
             val querySnapshot = firebase.firestore.collection("loyaltyCards")
                 .whereEqualTo("storeId", storeId)
                 .whereEqualTo("uniandesMemberId", uniandesMemberId)
-                .get()
+                .get(com.google.firebase.firestore.Source.SERVER)  // Fetch from server
                 .await()
 
+            Log.d("LoyaltyCardRepository", "Number of loyalty cards found: ${querySnapshot.documents.size}")
+
             for (documentSnapshot in querySnapshot.documents) {
-                val loyaltyCard = documentSnapshot.toObject<LoyaltyCard>()?.copy(id = documentSnapshot.id)
-                if (loyaltyCard != null) {
-                    loyaltyCardList.add(loyaltyCard)
+                val loyaltyCard = documentSnapshot.toObject(LoyaltyCard::class.java)
+
+                // Explicitly setting the `isCurrent` field from the raw data
+                val rawIsCurrent = documentSnapshot.getBoolean("isCurrent") ?: true // Default to true if not present
+                loyaltyCard?.isCurrent = rawIsCurrent
+
+                // Manually setting the document ID as the LoyaltyCard ID
+                loyaltyCard?.id = documentSnapshot.id
+
+                loyaltyCard?.let {
+                    Log.d("LoyaltyCardRepository", "LoyaltyCard ID: ${it.id}, isCurrent: ${it.isCurrent}, Points: ${it.points}, MaxPoints: ${it.maxPoints}")
+                    loyaltyCardList.add(it)
                 }
             }
+
+            Log.d("LoyaltyCardRepository", "Total loyalty cards retrieved: ${loyaltyCardList.size}")
+
         } catch (e: Exception) {
+            Log.e("LoyaltyCardRepository", "Error fetching loyalty cards: ${e.message}")
             e.printStackTrace()
         }
 
@@ -324,15 +344,28 @@ class RepositoryLoyaltyCard private constructor() {
     // Update an existing loyalty card
     suspend fun updateLoyaltyCard(loyaltyCard: LoyaltyCard): Boolean {
         return try {
+            // Create a map without the 'id' field to prevent it from being saved as a document field
+            val loyaltyCardData = hashMapOf(
+                "storeId" to loyaltyCard.storeId,
+                "uniandesMemberId" to loyaltyCard.uniandesMemberId,
+                "maxPoints" to loyaltyCard.maxPoints,
+                "points" to loyaltyCard.points,
+                "isCurrent" to loyaltyCard.isCurrent // Use the correct field name
+            )
+
+            // Use the 'id' to update the document, but do not store it inside the document
             firebase.firestore.collection("loyaltyCards")
-                .document(loyaltyCard.id!!)
-                .set(loyaltyCard)
+                .document(loyaltyCard.id!!)  // Use the document ID for the reference
+                .set(loyaltyCardData)        // Set the data without 'id'
                 .await()
+
+            Log.d("RepositoryRoyaltyCard", "LoyaltyCard updated successfully.")
             true
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e("RepositoryRoyaltyCard", "Error updating LoyaltyCard: ${e.message}")
             false
         }
     }
+
 }
 

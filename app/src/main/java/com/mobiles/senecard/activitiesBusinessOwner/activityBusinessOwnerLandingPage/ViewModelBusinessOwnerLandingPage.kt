@@ -10,6 +10,7 @@ import com.mobiles.senecard.model.RepositoryAdvertisement
 import com.mobiles.senecard.model.RepositoryAuthentication
 import com.mobiles.senecard.model.RepositoryLoyaltyCard
 import com.mobiles.senecard.model.entities.Store
+import com.mobiles.senecard.model.entities.User
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
@@ -45,9 +46,30 @@ class ViewModelBusinessOwnerLandingPage : ViewModel() {
     private val _rating = MutableLiveData<Float>()
     val rating: LiveData<Float> get() = _rating
 
+    private val _userLiveData = MutableLiveData<User?>()
+    val userLiveData: LiveData<User?> get() = _userLiveData
+
+    private val _errorLiveData = MutableLiveData<String>()
+    val errorLiveData: LiveData<String>
+        get() = _errorLiveData
+
     // Error messages
     private val _errorMessage = MutableLiveData<String?>()
     val errorMessage: LiveData<String?> get() = _errorMessage
+
+    // Get current user information using Firebase Authentication
+    fun getCurrentUserInformation() {
+        viewModelScope.launch {
+            val user = repositoryAuthentication.getCurrentUser()
+            if (user != null) {
+                // Now we can set the user info and continue based on that
+                _userLiveData.value = user
+            } else {
+                // Handle case where no user is logged in
+                _errorLiveData.value = "No user logged in"
+            }
+        }
+    }
 
     // Function to fetch business owner data
     fun fetchBusinessOwnerData(businessOwnerId: String) {
