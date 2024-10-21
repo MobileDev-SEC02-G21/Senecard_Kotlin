@@ -91,9 +91,8 @@ class RepositoryStore private constructor() {
                         !isStoreClosed(store) &&
                         store.category != null
             }
-            .sortedWith(compareByDescending<Store> { store ->
-                frequentCategories.indexOf(store.category).takeIf { it >= 0 } ?: Int.MAX_VALUE
-            }.thenByDescending { it.rating ?: 0.0 })
+            .sortedWith(compareByDescending<Store> { it.rating ?: 0.0 }
+                .thenComparing { store -> frequentCategories.indexOf(store.category).takeIf { it >= 0 } ?: Int.MAX_VALUE })
 
         return recommendedStores.take(2)
     }
