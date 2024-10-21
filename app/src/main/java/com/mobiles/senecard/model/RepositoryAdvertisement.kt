@@ -109,7 +109,12 @@ class RepositoryAdvertisement private constructor() {
     suspend fun getAdvertisementById(id: String): Advertisement? {
         try {
             val documentSnapshot = firebase.firestore.collection("advertisements").document(id).get().await()
-            return documentSnapshot.toObject<Advertisement>()?.copy(id = documentSnapshot.id)
+            val advertisement = documentSnapshot.toObject<Advertisement>()?.copy(id = documentSnapshot.id)
+
+            // Register a click for this advertisement analytics
+            RepositoryAdvertisementAnalytics.instance.registerAdvertisementClick(id)
+
+            return advertisement
         } catch (e: Exception) {
             return null
         }
