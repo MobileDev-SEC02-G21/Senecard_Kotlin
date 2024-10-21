@@ -20,7 +20,6 @@ class ActivityBusinessOwnerLandingPage : AppCompatActivity() {
 
     private val viewModel: ViewModelBusinessOwnerLandingPage by viewModels()
 
-    private var businessOwnerId: String = "93AqPXLaN42cT8OxvewX" // Default ID for development purposes
     private var store: Store? = null
 
     private lateinit var drawerLayout: DrawerLayout
@@ -31,39 +30,22 @@ class ActivityBusinessOwnerLandingPage : AppCompatActivity() {
 
         setupObservers() // Set up the observers for LiveData in the ViewModel
 
-        // Check if a businessOwnerId was passed via the Intent
-        val passedId = intent.getStringExtra("businessOwnerId")
-        if (passedId != null) {
-            businessOwnerId = passedId // Use the passed ID
-        }
-
-        // Fetch business owner data
-        viewModel.fetchBusinessOwnerData(businessOwnerId)
+        // Retrieve the current user information using Firebase Authentication
+        viewModel.getCurrentUserInformation()
 
         // Button to handle navigating to advertisements
         findViewById<Button>(R.id.advertisementsButton).setOnClickListener {
-            val intent = Intent(this, ActivityBusinessOwnerAdvertisements::class.java)
-            intent.putExtra("businessOwnerId", businessOwnerId)
-            startActivity(intent)
+            navigateToActivity(ActivityBusinessOwnerAdvertisements::class.java)
         }
 
         // Button to handle QR scanning
         findViewById<ImageButton>(R.id.qrButton).setOnClickListener {
-            val intent = Intent(this, ActivityBusinessOwnerQRScanner::class.java)
-            intent.putExtra("businessOwnerId", businessOwnerId)
-            intent.putExtra("storeId", store?.id) // Pass store ID to the next activity
-            intent.putExtra("storeName", store?.name)
-            startActivity(intent)
+            navigateToActivity(ActivityBusinessOwnerQRScanner::class.java)
         }
 
         // Button to handle loyalty programs
-        val loyaltyButton = findViewById<Button>(R.id.loyaltyButton)
-        loyaltyButton.setOnClickListener {
-            val intent = Intent(this, ActivityBusinessOwnerQRScanner::class.java)
-            intent.putExtra("businessOwnerId", businessOwnerId)
-            intent.putExtra("storeId", store?.id) // Pass store ID to the next activity
-            intent.putExtra("storeName", store?.name)
-            startActivity(intent)
+        findViewById<Button>(R.id.loyaltyButton).setOnClickListener {
+            navigateToActivity(ActivityBusinessOwnerQRScanner::class.java)
         }
 
         // Drawer layout handling
@@ -103,6 +85,14 @@ class ActivityBusinessOwnerLandingPage : AppCompatActivity() {
             advertisementsButton.text = "YOU HAVE $adCount ADVERTISEMENTS ACTIVE"
         }
 
+        // Observe user LiveData to get businessOwnerId and fetch the business owner data
+        viewModel.userLiveData.observe(this) { user ->
+            user?.let {
+                // Fetch the business owner data based on the user ID
+                user.id?.let { it1 -> viewModel.fetchBusinessOwnerData(it1) }
+            }
+        }
+
         // Observe log out state and redirect if the user is logged out
         viewModel.isLoggedOut.observe(this) { isLoggedOut ->
             if (isLoggedOut) {
@@ -111,6 +101,24 @@ class ActivityBusinessOwnerLandingPage : AppCompatActivity() {
                 }
                 startActivity(initialIntent)
             }
+        }
+
+        // Observe error messages
+        viewModel.errorLiveData.observe(this) { errorMessage ->
+            errorMessage?.let {
+                // Handle the error (you could show a Toast or Snackbar here)
+            }
+        }
+    }
+
+    // Method to navigate to other activities, passing the user ID and store information
+    private fun navigateToActivity(activityClass: Class<*>) {
+        viewModel.userLiveData.value?.let { user ->
+            val intent = Intent(this, activityClass)
+            intent.putExtra("businessOwnerId", user.id)
+            intent.putExtra("storeId", store?.id)
+            intent.putExtra("storeName", store?.name)
+            startActivity(intent)
         }
     }
 }
