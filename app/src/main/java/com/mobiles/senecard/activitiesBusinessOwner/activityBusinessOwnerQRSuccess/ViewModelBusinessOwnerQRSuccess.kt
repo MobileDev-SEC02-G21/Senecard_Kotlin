@@ -61,7 +61,7 @@ class ViewModelBusinessOwnerQRSuccess : ViewModel() {
                     _loyaltyCardInfo.value = LoyaltyCardInfo(
                         loyaltyCardsRedeemed = redeemedLoyaltyCards,
                         currentPoints = activeLoyaltyCard.points ?: 0,
-                        maxPoints = activeLoyaltyCard.maxPoints ?: 20
+                        maxPoints = activeLoyaltyCard.maxPoints ?: 5
                     )
 
                     // Check if the loyalty card points are enough to redeem, navigate to redeem loyalty

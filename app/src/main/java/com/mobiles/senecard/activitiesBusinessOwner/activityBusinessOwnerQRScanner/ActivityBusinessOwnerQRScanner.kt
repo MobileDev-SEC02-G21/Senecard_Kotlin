@@ -30,7 +30,7 @@ class ActivityBusinessOwnerQRScanner : AppCompatActivity() {
     private lateinit var cameraExecutor: ExecutorService
     private var businessOwnerId: String? = null
     private var storeId: String? = null
-    private var isProcessingQR: Boolean = false // Flag to track if a QR code is being processed
+    private var isProcessingQR: Boolean = false // New flag to track if a QR code is being processed
 
     private val viewModel: ViewModelBusinessOwnerQRScanner by viewModels()
 
@@ -58,15 +58,25 @@ class ActivityBusinessOwnerQRScanner : AppCompatActivity() {
 
     private fun observeViewModel() {
         viewModel.navigateToSuccess.observe(this, Observer { success ->
+            Log.d("QRScannerActivity", "Navigate to success observer triggered with value: $success")
             if (success == true) {
-                // Navigate to the success page with the user ID and store ID
+                // Call simulateRoyaltyCardCreation after successful QR code scan
+                viewModel.simulateRoyaltyCardCreation(
+                    businessOwnerId!!, // Business owner ID
+                    viewModel.userId.value!!, // User ID from the ViewModel
+                    storeId!!, // Store ID
+                    maxPoints = 8 // Maximum points for the loyalty card
+                )
+
+                // Navigate to the success page
                 val intent = Intent(this, ActivityBusinessOwnerQRSuccess::class.java)
                 intent.putExtra("businessOwnerId", businessOwnerId)
                 intent.putExtra("storeId", storeId)
-                intent.putExtra("userId", viewModel.userId.value) // Pass the scanned user ID
+                intent.putExtra("userId", viewModel.userId.value)
+                Log.d("QRScannerActivity", "Navigating to success page")
                 startActivity(intent)
                 viewModel.onNavigated()
-                isProcessingQR = false // Re-enable scanning after navigation
+                isProcessingQR = true // Re-enable scanning after processing is done
             }
         })
 
@@ -107,10 +117,11 @@ class ActivityBusinessOwnerQRScanner : AppCompatActivity() {
     private fun handleQRCodeResult(result: String) {
         if (!isProcessingQR) {
             Log.d("QRScannerActivity", "QR code result: $result")
+            Log.d("QRScannerActivity", "BusinessOwnerID: $businessOwnerId, StoreID: $storeId")
 
             isProcessingQR = true // Set the flag to prevent further scans until processing is done
             lifecycleScope.launch {
-                viewModel.processQRCode(result) // Only process the QR code, no loyalty card logic here
+                viewModel.processQRCode(result)
             }
         }
     }
@@ -129,6 +140,7 @@ class ActivityBusinessOwnerQRScanner : AppCompatActivity() {
             val binaryBitmap = BinaryBitmap(HybridBinarizer(source))
             try {
                 val result = MultiFormatReader().decode(binaryBitmap)
+                Log.d("QRCodeAnalyzer", "Scanned QR code: ${result.text}")
                 onQRCodeScanned(result.text)
             } catch (e: NotFoundException) {
                 Log.e("QRCodeAnalyzer", "No QR code found")

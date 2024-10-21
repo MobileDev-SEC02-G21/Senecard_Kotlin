@@ -51,7 +51,7 @@ class ViewModelBusinessOwnerRedeemLoyalty : ViewModel() {
                     LoyaltyCardInfo(
                         loyaltyCardsRedeemed = redeemedLoyaltyCards,
                         currentPoints = 0,
-                        maxPoints = 20
+                        maxPoints = 5
                     )
                 }
             } catch (e: Exception) {
@@ -80,7 +80,7 @@ class ViewModelBusinessOwnerRedeemLoyalty : ViewModel() {
                         val newLoyaltyCard = LoyaltyCard(
                             storeId = storeId,
                             uniandesMemberId = userId,
-                            maxPoints = 20,  // Set a default value for max points
+                            maxPoints = 5,  // Set a default value for max points
                             points = 0,      // Start with 0 points
                             isCurrent = true
                         )
