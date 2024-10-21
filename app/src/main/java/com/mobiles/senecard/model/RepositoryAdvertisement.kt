@@ -98,7 +98,10 @@ class RepositoryAdvertisement private constructor() {
                         store.category != null &&
                         !isAdvertisementStoreClosed(advertisement)
             }
-            .sortedWith(compareByDescending { advertisement ->
+            .sortedWith(compareByDescending<Advertisement> { advertisement ->
+                val store = storesList.find { it.id == advertisement.storeId }
+                store?.rating ?: 0.0
+            }.thenComparing { advertisement ->
                 val store = storesList.find { it.id == advertisement.storeId }
                 frequentCategories.indexOf(store?.category).takeIf { it >= 0 } ?: Int.MAX_VALUE
             })
