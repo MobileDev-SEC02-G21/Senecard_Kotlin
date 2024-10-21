@@ -151,7 +151,7 @@
         </service>
         <activity android:name="com.mobiles.senecard.activityQRCodeUniandesMember.ActivityQRCodeUniandesMember" />
         <activity android:name=".LoyaltyCardsActivity.ActivityLoyaltyCards" />
-        <activity android:name=".LoyaltyCardsActivity.LoyaltyBusinessCardActivity.LoyaltyBusinessCardActivity" />
+        <activity android:name=".LoyaltyCardsActivity.ActivityLoyaltyCardDetail.ActivityLoyaltyCardDetail" />
 
     </application>
 
