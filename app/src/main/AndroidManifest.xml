@@ -150,7 +150,7 @@
         </service>
         <activity android:name="com.mobiles.senecard.QRgenerator.QRgenerator" />
         <activity android:name=".LoyaltyCardsActivity.ActivityLoyaltyCards" />
-        <activity android:name=".LoyaltyCardsActivity.LoyaltyBusinessCardActivity.LoyaltyBusinessCardActivity" />
+        <activity android:name=".LoyaltyCardsActivity.ActivityLoyaltyCardDetail.ActivityLoyaltyCardDetail" />
 
 
     </application>

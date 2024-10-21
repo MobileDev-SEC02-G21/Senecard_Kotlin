@@ -1,18 +1,30 @@
 package com.mobiles.senecard.adapters
 
+import android.content.Intent
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.mobiles.senecard.LoyaltyCardsActivity.ActivityLoyaltyCardDetail.ActivityLoyaltyCardDetail
 import com.mobiles.senecard.R
 import com.mobiles.senecard.databinding.ItemLoyaltyCardBinding
 import com.mobiles.senecard.model.entities.RoyaltyCard
 import com.mobiles.senecard.model.entities.Store
+
 class LoyaltyCardAdapter(
     private val royaltyCards: List<RoyaltyCard>,
     private val stores: Map<String, Store>,
-    private val onClickedLoyaltyCard: (RoyaltyCard) -> Unit
+    private val onCardClick: (RoyaltyCard) -> Unit // Agregar el listener aquí
 ) : RecyclerView.Adapter<LoyaltyCardAdapter.LoyaltyCardViewHolder>() {
+
+    companion object {
+        const val EXTRA_STORE_NAME = "STORE_NAME"
+        const val EXTRA_STORE_ADDRESS = "STORE_ADDRESS"
+        const val EXTRA_STORE_IMAGE = "STORE_IMAGE"
+        const val EXTRA_POINTS = "POINTS"
+        const val EXTRA_MAX_POINTS = "MAX_POINTS"
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LoyaltyCardViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -24,25 +36,22 @@ class LoyaltyCardAdapter(
         val royaltyCard = royaltyCards[position]
         val store = stores[royaltyCard.storeId]
 
-        // Verificar si los puntos son iguales al máximo permitido (maxPoints)
-        if (royaltyCard.points == royaltyCard.maxPoints) {
-            // Si los puntos son iguales a maxPoints, aplicar el borde amarillo
-            holder.itemView.setBackgroundResource(R.drawable.border_yellow)
-        } else {
-            // Si no, eliminar cualquier fondo especial (sin borde)
-            holder.itemView.setBackgroundResource(0)  // o usa el fondo predeterminado
-        }
+        // Aplicar fondo especial si los puntos son iguales a maxPoints
+        holder.itemView.setBackgroundResource(
+            if (royaltyCard.points == royaltyCard.maxPoints) R.drawable.border_yellow else 0
+        )
 
-        holder.render(royaltyCard, store, onClickedLoyaltyCard)
+        holder.render(royaltyCard, store)
     }
 
     override fun getItemCount(): Int {
         return royaltyCards.size
     }
 
-    class LoyaltyCardViewHolder(private val binding: ItemLoyaltyCardBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class LoyaltyCardViewHolder(private val binding: ItemLoyaltyCardBinding) :
+        RecyclerView.ViewHolder(binding.root) {
 
-        fun render(royaltyCard: RoyaltyCard, store: Store?, onClickedLoyaltyCard: (RoyaltyCard) -> Unit) {
+        fun render(royaltyCard: RoyaltyCard, store: Store?) {
             // Establecer el nombre de la tienda
             binding.storeNameTextView.text = store?.name ?: "Desconocido"
 
@@ -58,11 +67,14 @@ class LoyaltyCardAdapter(
 
             // Manejar el clic en la tarjeta
             itemView.setOnClickListener {
-                onClickedLoyaltyCard(royaltyCard)
+                Log.d("LoyaltyCardAdapter", "Card clicked: ${royaltyCard.id}")
+                onCardClick(royaltyCard) // Llamar al listener aquí
             }
         }
     }
 }
+
+
 
 
 

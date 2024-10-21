@@ -58,15 +58,17 @@ class LoyaltyCardsViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val cards = repository.getRoyaltyCardsByUser(uniandesMemberId)
-                _royaltyCards.postValue(cards)
-                Log.d(TAG, "Tarjetas de lealtad obtenidas para el usuario: ${cards.size}") // Log de cantidad
-                cards.forEach { card ->
-                    Log.d(TAG, "Tarjeta: ID=${card.id}, Puntos=${card.points}, MaxPuntos=${card.maxPoints}") // Log detallado
-                }
+
+                // Ordenar las tarjetas por la cantidad de puntos restantes para completarse
+                val sortedCards = cards.sortedByDescending { it.points.toFloat() / it.maxPoints }
+
+                _royaltyCards.postValue(sortedCards)  // Publicar la lista ordenada
+                Log.d(TAG, "Tarjetas de lealtad ordenadas obtenidas para el usuario: ${sortedCards.size}")
             } catch (e: Exception) {
                 Log.e(TAG, "Error obteniendo las tarjetas de lealtad: ${e.message}")
             }
         }
         return royaltyCards
     }
+
 }

@@ -4,9 +4,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context=".LoyaltyCardDetailActivity">
 
-    <!-- ImageView para el botón de regresar -->
+    <!-- ImageButton para regresar -->
     <ImageButton
         android:id="@+id/back_button"
         android:layout_width="50dp"
@@ -20,7 +21,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- TextView para mostrar "Cosechas" -->
+    <!-- TextView para mostrar el nombre de la tienda -->
     <TextView
         android:id="@+id/harvest_text_view"
         android:layout_width="wrap_content"
@@ -74,7 +75,6 @@
         app:layout_constraintTop_toBottomOf="@id/stamps_needed_text_view"
         android:layout_marginTop="16dp">
 
-        <!-- Imágenes de sellos -->
         <ImageView
             android:id="@+id/stamp_1"
             android:layout_width="0dp"
@@ -101,7 +101,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:src="@mipmap/icon_image_landscape" />
+            android:src="@mipmap/icon_stamp" />
     </LinearLayout>
 
     <!-- Segundo contenedor para sellos -->
@@ -113,35 +113,33 @@
         app:layout_constraintTop_toBottomOf="@id/stamps_container_1"
         android:layout_marginTop="16dp">
 
-        <!-- Imágenes de sellos -->
         <ImageView
             android:id="@+id/stamp_5"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:src="@mipmap/icon_image_landscape" />
+            android:src="@mipmap/icon_stamp" />
 
         <ImageView
             android:id="@+id/stamp_6"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:src="@mipmap/icon_image_landscape" />
+            android:src="@mipmap/icon_stamp" />
 
         <ImageView
             android:id="@+id/stamp_7"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:src="@mipmap/icon_image_landscape" />
+            android:src="@mipmap/icon_stamp" />
 
         <ImageView
             android:id="@+id/stamp_8"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:src="@mipmap/icon_image_landscape" />
+            android:src="@mipmap/icon_stamp" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-
