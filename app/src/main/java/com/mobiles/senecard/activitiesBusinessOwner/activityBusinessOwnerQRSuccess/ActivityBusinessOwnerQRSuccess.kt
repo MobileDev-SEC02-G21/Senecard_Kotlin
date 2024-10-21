@@ -19,6 +19,7 @@ class ActivityBusinessOwnerQRSuccess : AppCompatActivity() {
     private var businessOwnerId: String? = null
     private var storeId: String? = null
     private var userId: String? = null
+    private var hasNavigatedToRedeem: Boolean = false // Flag to prevent multiple navigations
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,6 +36,7 @@ class ActivityBusinessOwnerQRSuccess : AppCompatActivity() {
         // Load the current loyalty card and purchase info
         if (storeId != null && userId != null) {
             viewModel.getLoyaltyCardAndPurchases(storeId!!, userId!!)
+            viewModel.getUserName(userId!!) // Fetch the user name using userId
         } else {
             Toast.makeText(this, "Missing required data", Toast.LENGTH_SHORT).show()
         }
@@ -47,6 +49,11 @@ class ActivityBusinessOwnerQRSuccess : AppCompatActivity() {
                 Toast.makeText(this, "Missing required data", Toast.LENGTH_SHORT).show()
             }
         }
+
+        // Handle back button functionality
+        findViewById<ImageButton>(R.id.backButton).setOnClickListener {
+            navigateToLandingPage()
+        }
     }
 
     private fun observeViewModel() {
@@ -57,8 +64,9 @@ class ActivityBusinessOwnerQRSuccess : AppCompatActivity() {
                 findViewById<TextView>(R.id.loyaltyCardsTextView).text = it.loyaltyCardsRedeemed.toString()
                 findViewById<TextView>(R.id.stampsAwardedTextView).text = "${it.currentPoints}/${it.maxPoints}"
 
-                // Navigate to RedeemLoyalty view if points meet the requirement
-                if (it.currentPoints >= it.maxPoints) {
+                // Navigate to RedeemLoyalty view if points meet the requirement and prevent multiple navigations
+                if (it.currentPoints >= it.maxPoints && !hasNavigatedToRedeem) {
+                    hasNavigatedToRedeem = true // Set the flag to true to prevent re-triggering navigation
                     navigateToRedeemLoyaltyCard()
                 }
             }
@@ -73,27 +81,36 @@ class ActivityBusinessOwnerQRSuccess : AppCompatActivity() {
             }
         }
 
-        // Handle back button functionality
-        findViewById<ImageButton>(R.id.backButton).setOnClickListener {
-            val intent = Intent(this, ActivityBusinessOwnerLandingPage::class.java)
-            intent.putExtra("businessOwnerId", businessOwnerId)
-            startActivity(intent)
-            finish() // Close the current activity
-        }
-
         // Observe error messages
         viewModel.errorMessage.observe(this) { message ->
             Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+        }
+
+        // Observe user name and update the UI
+        viewModel.userName.observe(this) { name ->
+            findViewById<TextView>(R.id.customerNameTextView).text = "Customer: $name"
         }
     }
 
     // Navigate to the RedeemLoyalty view if loyalty card points meet the requirement
     private fun navigateToRedeemLoyaltyCard() {
-        val intent = Intent(this, ActivityBusinessOwnerRedeemLoyalty::class.java)
-        intent.putExtra("businessOwnerId", businessOwnerId)
-        intent.putExtra("storeId", storeId)
-        intent.putExtra("userId", userId)
+        val intent = Intent(this, ActivityBusinessOwnerRedeemLoyalty::class.java).apply {
+            putExtra("businessOwnerId", businessOwnerId)
+            putExtra("storeId", storeId)
+            putExtra("userId", userId)
+            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK // Clear activity stack
+        }
         startActivity(intent)
         finish() // End current activity to prevent returning to it
+    }
+
+    // Navigate to the landing page
+    private fun navigateToLandingPage() {
+        val intent = Intent(this, ActivityBusinessOwnerLandingPage::class.java).apply {
+            putExtra("businessOwnerId", businessOwnerId)
+            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK // Clear activity stack
+        }
+        startActivity(intent)
+        finish() // End current activity
     }
 }
