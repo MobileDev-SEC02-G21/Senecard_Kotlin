@@ -5,18 +5,18 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mobiles.senecard.model.RepositoryRoyaltyCard
-import com.mobiles.senecard.model.entities.RoyaltyCard
+import com.mobiles.senecard.model.RepositoryLoyaltyCard
+import com.mobiles.senecard.model.entities.LoyaltyCard
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class LoyaltyCardsViewModel : ViewModel() {
 
     private val TAG = "LoyaltyCardsViewModel"
-    private val repository = RepositoryRoyaltyCard.instance
+    private val repository = RepositoryLoyaltyCard.instance
 
-    private val _royaltyCards = MutableLiveData<List<RoyaltyCard>>()
-    val royaltyCards: LiveData<List<RoyaltyCard>> get() = _royaltyCards
+    private val _loyaltyCards = MutableLiveData<List<LoyaltyCard>>()
+    val loyaltyCards: LiveData<List<LoyaltyCard>> get() = _loyaltyCards
 
     // Método para simular la creación o actualización de una tarjeta de lealtad
     fun simulateRoyaltyCardCreation(businessOwnerId: String, uniandesMemberId: String, storeId: String, maxPoints: Int) {
@@ -54,7 +54,7 @@ class LoyaltyCardsViewModel : ViewModel() {
     }
 
     // Obtiene tarjetas de lealtad para un usuario específico
-    fun getLoyaltyCardsForUser(uniandesMemberId: String): LiveData<List<RoyaltyCard>> {
+    fun getLoyaltyCardsForUser(uniandesMemberId: String): LiveData<List<LoyaltyCard>> {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val cards = repository.getRoyaltyCardsByUser(uniandesMemberId)
@@ -62,13 +62,13 @@ class LoyaltyCardsViewModel : ViewModel() {
                 // Ordenar las tarjetas por la cantidad de puntos restantes para completarse
                 val sortedCards = cards.sortedByDescending { it.points.toFloat() / it.maxPoints }
 
-                _royaltyCards.postValue(sortedCards)  // Publicar la lista ordenada
+                _loyaltyCards.postValue(sortedCards)  // Publicar la lista ordenada
                 Log.d(TAG, "Tarjetas de lealtad ordenadas obtenidas para el usuario: ${sortedCards.size}")
             } catch (e: Exception) {
                 Log.e(TAG, "Error obteniendo las tarjetas de lealtad: ${e.message}")
             }
         }
-        return royaltyCards
+        return loyaltyCards
     }
 
 }

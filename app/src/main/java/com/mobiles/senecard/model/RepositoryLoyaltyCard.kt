@@ -1,18 +1,16 @@
     package com.mobiles.senecard.model
 
     import android.util.Log
-    import com.google.firebase.firestore.ktx.firestore
-    import com.google.firebase.ktx.Firebase
     import com.google.firebase.firestore.ktx.toObject
-    import com.mobiles.senecard.model.entities.RoyaltyCard
+    import com.mobiles.senecard.model.entities.LoyaltyCard
     import kotlinx.coroutines.tasks.await
 
-    class RepositoryRoyaltyCard private constructor() {
+    class RepositoryLoyaltyCard private constructor() {
 
         private val firebase = FirebaseClient.instance
 
         companion object {
-            val instance: RepositoryRoyaltyCard by lazy { RepositoryRoyaltyCard() }
+            val instance: RepositoryLoyaltyCard by lazy { RepositoryLoyaltyCard() }
         }
 
         // Añadir o actualizar la RoyaltyCard
@@ -23,7 +21,7 @@
 
                 // Si no hay tarjetas, crear una nueva
                 if (royaltyCards.isEmpty()) {
-                    val newRoyaltyCard = RoyaltyCard(
+                    val newLoyaltyCard = LoyaltyCard(
                         uniandesMemberId = uniandesMemberId,
                         storeId = storeId,
                         points = 1,  // Comienza con 1 punto
@@ -32,14 +30,14 @@
                     )
 
                     // Añadir la nueva tarjeta y obtener el ID del documento creado
-                    val documentRef = firebase.firestore.collection("royaltyCards").add(newRoyaltyCard).await()
-                    newRoyaltyCard.id = documentRef.id // Asignar el ID generado
+                    val documentRef = firebase.firestore.collection("royaltyCards").add(newLoyaltyCard).await()
+                    newLoyaltyCard.id = documentRef.id // Asignar el ID generado
 
-                    Log.d("RepositoryRoyaltyCard", "Se ha creado una nueva tarjeta con 1 punto. ID: ${newRoyaltyCard.id}")
+                    Log.d("RepositoryRoyaltyCard", "Se ha creado una nueva tarjeta con 1 punto. ID: ${newLoyaltyCard.id}")
                     "Se ha creado una nueva tarjeta de fidelidad. Tienes 1 punto."
                 } else {
                     // Si hay tarjetas, verificar el estado
-                    var currentCard: RoyaltyCard? = null
+                    var currentCard: LoyaltyCard? = null
                     var allInactive = true
 
                     for (card in royaltyCards) {
@@ -75,7 +73,7 @@
 
                     // Si todas las tarjetas están inactivas o llenas, creamos una nueva
                     if (allInactive) {
-                        val newRoyaltyCard = RoyaltyCard(
+                        val newLoyaltyCard = LoyaltyCard(
                             uniandesMemberId = uniandesMemberId,
                             storeId = storeId,
                             points = 1,  // Comienza con 1 punto
@@ -84,10 +82,10 @@
                         )
 
                         // Añadir la nueva tarjeta y obtener el ID del documento creado
-                        val documentRef = firebase.firestore.collection("royaltyCards").add(newRoyaltyCard).await()
-                        newRoyaltyCard.id = documentRef.id // Asignar el ID generado
+                        val documentRef = firebase.firestore.collection("royaltyCards").add(newLoyaltyCard).await()
+                        newLoyaltyCard.id = documentRef.id // Asignar el ID generado
 
-                        Log.d("RepositoryRoyaltyCard", "Se ha creado una nueva tarjeta con 1 punto. ID: ${newRoyaltyCard.id}")
+                        Log.d("RepositoryRoyaltyCard", "Se ha creado una nueva tarjeta con 1 punto. ID: ${newLoyaltyCard.id}")
                         return "Se ha creado una nueva tarjeta de fidelidad. Tienes 1 punto."
                     }
 
@@ -101,8 +99,8 @@
         }
 
         // Obtener todas las RoyaltyCards por usuario y tienda
-        suspend fun getRoyaltyCardsByUserAndStore(uniandesMemberId: String, storeId: String): List<RoyaltyCard> {
-            val cards = mutableListOf<RoyaltyCard>()
+        suspend fun getRoyaltyCardsByUserAndStore(uniandesMemberId: String, storeId: String): List<LoyaltyCard> {
+            val cards = mutableListOf<LoyaltyCard>()
             try {
                 val querySnapshot = firebase.firestore.collection("royaltyCards")
                     .whereEqualTo("uniandesMemberId", uniandesMemberId)
@@ -112,10 +110,10 @@
 
                 // Verificar si se encontró alguna tarjeta
                 for (document in querySnapshot.documents) {
-                    val royaltyCard = document.toObject(RoyaltyCard::class.java)
-                    royaltyCard?.id = document.id // Asignar el ID del documento
-                    if (royaltyCard != null) {
-                        cards.add(royaltyCard)
+                    val loyaltyCard = document.toObject(LoyaltyCard::class.java)
+                    loyaltyCard?.id = document.id // Asignar el ID del documento
+                    if (loyaltyCard != null) {
+                        cards.add(loyaltyCard)
                     }
                 }
             } catch (e: Exception) {
@@ -125,7 +123,7 @@
         }
 
         // Método para obtener una RoyaltyCard específica (sólo la última actual)
-        suspend fun getRoyaltyCardByUserAndStore(uniandesMemberId: String, storeId: String): RoyaltyCard? {
+        suspend fun getRoyaltyCardByUserAndStore(uniandesMemberId: String, storeId: String): LoyaltyCard? {
             val cards = getRoyaltyCardsByUserAndStore(uniandesMemberId, storeId)
             return cards.firstOrNull { it.isCurrent }  // Retorna la tarjeta actual si existe
         }
@@ -141,7 +139,7 @@
                     .await()
 
                 for (document in querySnapshot.documents) {
-                    val card = document.toObject<RoyaltyCard>()
+                    val card = document.toObject<LoyaltyCard>()
                     if (card != null && card.isCurrent) {
                         card.isCurrent = false
                         firebase.firestore.collection("royaltyCards").document(document.id).set(card).await()
@@ -154,12 +152,12 @@
         }
 
         // Actualizar una RoyaltyCard
-        suspend fun updateRoyaltyCard(royaltyCard: RoyaltyCard) {
+        suspend fun updateRoyaltyCard(loyaltyCard: LoyaltyCard) {
             try {
-                Log.d("RepositoryRoyaltyCard", "Actualizando la tarjeta con puntos: ${royaltyCard.points}")
+                Log.d("RepositoryRoyaltyCard", "Actualizando la tarjeta con puntos: ${loyaltyCard.points}")
                 firebase.firestore.collection("royaltyCards")
-                    .document(royaltyCard.id!!)  // Asegúrate de que el ID no sea nulo
-                    .set(royaltyCard)
+                    .document(loyaltyCard.id!!)  // Asegúrate de que el ID no sea nulo
+                    .set(loyaltyCard)
                     .await()
                 Log.d("RepositoryRoyaltyCard", "RoyaltyCard actualizada correctamente.")
             } catch (e: Exception) {
@@ -167,8 +165,8 @@
             }
         }
 
-        suspend fun getRoyaltyCardsByUser(uniandesMemberId: String): List<RoyaltyCard> {
-            val cards = mutableListOf<RoyaltyCard>()
+        suspend fun getRoyaltyCardsByUser(uniandesMemberId: String): List<LoyaltyCard> {
+            val cards = mutableListOf<LoyaltyCard>()
             try {
                 val querySnapshot = firebase.firestore.collection("royaltyCards")
                     .whereEqualTo("uniandesMemberId", uniandesMemberId)  // Filtra por el ID de usuario
@@ -177,10 +175,10 @@
 
                 // Itera sobre los resultados y convierte los documentos a objetos RoyaltyCard
                 for (document in querySnapshot.documents) {
-                    val royaltyCard = document.toObject(RoyaltyCard::class.java)
-                    royaltyCard?.id = document.id  // Asigna el ID del documento a la tarjeta
-                    if (royaltyCard != null) {
-                        cards.add(royaltyCard)
+                    val loyaltyCard = document.toObject(LoyaltyCard::class.java)
+                    loyaltyCard?.id = document.id  // Asigna el ID del documento a la tarjeta
+                    if (loyaltyCard != null) {
+                        cards.add(loyaltyCard)
                     }
                 }
             } catch (e: Exception) {
@@ -190,8 +188,8 @@
             return cards  // Retorna la lista de tarjetas
         }
 
-        suspend fun getLoyaltyCardsByUser(userId: String): List<RoyaltyCard> {
-            val loyaltyCardsList = mutableListOf<RoyaltyCard>()
+        suspend fun getLoyaltyCardsByUser(userId: String): List<LoyaltyCard> {
+            val loyaltyCardsList = mutableListOf<LoyaltyCard>()
             try {
                 val querySnapshot = firebase.firestore.collection("loyaltyCards")
                     .whereEqualTo("userId", userId)
@@ -199,7 +197,7 @@
                     .await()
 
                 for (document in querySnapshot.documents) {
-                    val loyaltyCard = document.toObject<RoyaltyCard>()?.copy(id = document.id)
+                    val loyaltyCard = document.toObject<LoyaltyCard>()?.copy(id = document.id)
                     if (loyaltyCard != null) {
                         loyaltyCardsList.add(loyaltyCard)
                     }

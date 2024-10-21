@@ -1,6 +1,6 @@
 package com.mobiles.senecard.model.entities
 
-data class RoyaltyCard(
+data class LoyaltyCard(
     var id: String? = null,
     var uniandesMemberId: String? = null,
     var storeId: String? = null,

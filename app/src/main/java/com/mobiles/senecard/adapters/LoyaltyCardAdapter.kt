@@ -1,21 +1,19 @@
 package com.mobiles.senecard.adapters
 
-import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.mobiles.senecard.LoyaltyCardsActivity.ActivityLoyaltyCardDetail.ActivityLoyaltyCardDetail
 import com.mobiles.senecard.R
 import com.mobiles.senecard.databinding.ItemLoyaltyCardBinding
-import com.mobiles.senecard.model.entities.RoyaltyCard
+import com.mobiles.senecard.model.entities.LoyaltyCard
 import com.mobiles.senecard.model.entities.Store
 
 class LoyaltyCardAdapter(
-    private val royaltyCards: List<RoyaltyCard>,
+    private val loyaltyCards: List<LoyaltyCard>,
     private val stores: Map<String, Store>,
-    private val onCardClick: (RoyaltyCard) -> Unit // Agregar el listener aquí
+    private val onCardClick: (LoyaltyCard) -> Unit // Agregar el listener aquí
 ) : RecyclerView.Adapter<LoyaltyCardAdapter.LoyaltyCardViewHolder>() {
 
     companion object {
@@ -33,7 +31,7 @@ class LoyaltyCardAdapter(
     }
 
     override fun onBindViewHolder(holder: LoyaltyCardViewHolder, position: Int) {
-        val royaltyCard = royaltyCards[position]
+        val royaltyCard = loyaltyCards[position]
         val store = stores[royaltyCard.storeId]
 
         // Aplicar fondo especial si los puntos son iguales a maxPoints
@@ -45,13 +43,13 @@ class LoyaltyCardAdapter(
     }
 
     override fun getItemCount(): Int {
-        return royaltyCards.size
+        return loyaltyCards.size
     }
 
     inner class LoyaltyCardViewHolder(private val binding: ItemLoyaltyCardBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun render(royaltyCard: RoyaltyCard, store: Store?) {
+        fun render(loyaltyCard: LoyaltyCard, store: Store?) {
             // Establecer el nombre de la tienda
             binding.storeNameTextView.text = store?.name ?: "Desconocido"
 
@@ -67,8 +65,8 @@ class LoyaltyCardAdapter(
 
             // Manejar el clic en la tarjeta
             itemView.setOnClickListener {
-                Log.d("LoyaltyCardAdapter", "Card clicked: ${royaltyCard.id}")
-                onCardClick(royaltyCard) // Llamar al listener aquí
+                Log.d("LoyaltyCardAdapter", "Card clicked: ${loyaltyCard.id}")
+                onCardClick(loyaltyCard) // Llamar al listener aquí
             }
         }
     }

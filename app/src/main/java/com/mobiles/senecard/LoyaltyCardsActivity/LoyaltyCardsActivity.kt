@@ -9,7 +9,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -17,7 +16,7 @@ import com.mobiles.senecard.LoyaltyCardsActivity.ActivityLoyaltyCardDetail.Activ
 import com.mobiles.senecard.R
 import com.mobiles.senecard.adapters.LoyaltyCardAdapter
 import com.mobiles.senecard.model.RepositoryStore
-import com.mobiles.senecard.model.entities.RoyaltyCard
+import com.mobiles.senecard.model.entities.LoyaltyCard
 import com.mobiles.senecard.model.entities.Store
 import kotlinx.coroutines.launch
 
@@ -95,7 +94,7 @@ class ActivityLoyaltyCards : AppCompatActivity() {
     }
 
 
-    private fun showClosestStoreToast(loyaltyCards: List<RoyaltyCard>, fetchedStores: Map<String, Store>) {
+    private fun showClosestStoreToast(loyaltyCards: List<LoyaltyCard>, fetchedStores: Map<String, Store>) {
         val incompleteCards = loyaltyCards.filter { it.points < it.maxPoints }
         if (incompleteCards.isNotEmpty()) {
             val topCard = incompleteCards[0]
