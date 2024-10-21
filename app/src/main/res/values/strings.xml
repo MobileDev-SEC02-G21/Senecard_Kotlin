@@ -183,5 +183,7 @@
     <string name="reward_image_desc">Description of the example</string>
     <string name="back_button_desc">Back botton</string>
     <string name="harvest_text">Cosechas</string>
+    <string name="options">Cosechas</string>
+    <string name="store_image">Cosechas</string>
 
 </resources>

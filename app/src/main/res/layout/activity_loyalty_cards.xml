@@ -1,10 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="match_parent">
 
+    <!-- Botón de Opciones -->
     <ImageButton
         android:id="@+id/options_image_view2"
         android:layout_width="50dp"
@@ -18,7 +19,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp" />
 
-
+    <!-- Contenedor de Tarjetas de Lealtad (solo uno visible) -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/loyalty_cards_container"
         android:layout_width="match_parent"
@@ -32,24 +33,23 @@
         app:layout_constraintEnd_toEndOf="parent">
 
         <ImageView
-            android:id="@+id/options_image_view3"
+            android:id="@+id/storeImageView"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:contentDescription="@string/icon_example"
-            android:src="@mipmap/icon_image_landscape"
+            android:scaleType="centerCrop"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1.0" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/textView2"
+            android:id="@+id/storeNameTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Cosechas"
+            android:text="Pollos Hermanos JM"
             android:textSize="16sp"
             android:textColor="@android:color/black"
-            app:layout_constraintStart_toEndOf="@id/options_image_view3"
+            app:layout_constraintStart_toEndOf="@id/storeImageView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -59,6 +59,33 @@
             android:maxLines="1" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <!-- RecyclerView para las demás tarjetas -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:padding="8dp"
+        app:layout_constraintTop_toBottomOf="@id/loyalty_cards_container"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- TextView para mostrar un mensaje si no hay tarjetas de lealtad -->
+    <TextView
+        android:id="@+id/empty_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No tienes tarjetas de lealtad."
+        android:visibility="gone"
+    android:layout_gravity="center"
+    android:textSize="18sp"
+    android:textColor="@android:color/darker_gray"
+    app:layout_constraintTop_toBottomOf="@id/recyclerView"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 

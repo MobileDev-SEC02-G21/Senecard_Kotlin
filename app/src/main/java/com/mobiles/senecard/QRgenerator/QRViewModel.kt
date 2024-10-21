@@ -19,6 +19,10 @@ class QRViewModel : ViewModel() {
     private val _error = MutableLiveData<String?>()
     val error: LiveData<String?> get() = _error
 
+    // LiveData para almacenar el tiempo de generación
+    private val _generationTime = MutableLiveData<Long>()
+    val generationTime: LiveData<Long> get() = _generationTime
+
     // Método para generar un QR Code
     fun generateQRCode(data: String) {
         if (data.isEmpty()) {
@@ -27,8 +31,17 @@ class QRViewModel : ViewModel() {
         }
 
         try {
+            // Obtener el tiempo de inicio
+            val startTime = System.currentTimeMillis()
+
             val barcodeEncoder = BarcodeEncoder()
             val bitmap = barcodeEncoder.encodeBitmap(data, BarcodeFormat.QR_CODE, 750, 750)
+
+            // Calcular el tiempo de generación
+            val endTime = System.currentTimeMillis()
+            val duration = endTime - startTime // Duración en milisegundos
+            _generationTime.value = duration // Guardar duración en LiveData
+
             _qrCodeBitmap.value = bitmap
             _error.value = null // Restablece el estado de error si se genera correctamente
         } catch (e: Exception) {
@@ -61,4 +74,3 @@ class QRViewModel : ViewModel() {
         }
     }
 }
-

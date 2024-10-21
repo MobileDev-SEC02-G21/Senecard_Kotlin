@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.mobiles.senecard.AdvertisementAdapter
 import com.mobiles.senecard.LoyaltyCardsActivity.ActivityLoyaltyCards
 import com.mobiles.senecard.QRgenerator.QRgenerator
-
 import com.mobiles.senecard.R
 import com.mobiles.senecard.StoreAdapter
 import com.mobiles.senecard.activitiesHomeUniandesMember.activityHomeUniandesMemberAdvertisementDetail.ActivityHomeUniandesMemberAdvertisementDetail

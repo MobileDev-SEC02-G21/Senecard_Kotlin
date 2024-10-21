@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     id("com.google.gms.google-services")
+    id ("kotlin-android")
+    id ("kotlin-kapt") // Habilitar KAPT
 }
 
 android {
@@ -98,4 +100,7 @@ dependencies {
     implementation(libs.glide)
 
     implementation(libs.imagepicker)
+
+    implementation ("com.github.bumptech.glide:glide:4.12.0")
+    kapt("com.github.bumptech.glide:compiler:4.12.0")
 }
