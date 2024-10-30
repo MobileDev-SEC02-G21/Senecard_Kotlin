@@ -41,12 +41,12 @@ class ActivityLoyaltyCards : AppCompatActivity() {
         emptyView = findViewById(R.id.empty_view)
 
         // Simulación de IDs de prueba
-        val uniandesMemberId = "Z1aNZn8BnA9dxVdT9QaK"
+        val uniandesMemberId = "mOD7RaYRy6ew0wOwznvs"
         val businessOwnerId = "UqD7b4Twit3rD98w6Inq"
         val storeId = "olNh6XZeAVdRxgEHawJV"
 
         // Llamar a la función en el ViewModel para simular la creación o actualización de la tarjeta
-        viewModel.simulateRoyaltyCardCreation(businessOwnerId, uniandesMemberId, storeId, maxPoints = 8)
+        //viewModel.simulateLoyaltyCardCreation(businessOwnerId, uniandesMemberId, storeId, maxPoints = 8)
 
 
 
@@ -60,7 +60,6 @@ class ActivityLoyaltyCards : AppCompatActivity() {
     }
 
     private fun loadLoyaltyCardsAndStores(uniandesMemberId: String) {
-        Log.d(TAG, "Entrando a loadLoyaltyCardsAndStores.")
         val loyaltyCardsLiveData = viewModel.getLoyaltyCardsForUser(uniandesMemberId)
 
         loyaltyCardsLiveData.observe(this@ActivityLoyaltyCards) { cards ->

@@ -31,15 +31,15 @@ class LoyaltyCardAdapter(
     }
 
     override fun onBindViewHolder(holder: LoyaltyCardViewHolder, position: Int) {
-        val royaltyCard = loyaltyCards[position]
-        val store = stores[royaltyCard.storeId]
+        val loyaltyCard = loyaltyCards[position]
+        val store = stores[loyaltyCard.storeId]
 
         // Aplicar fondo especial si los puntos son iguales a maxPoints
         holder.itemView.setBackgroundResource(
-            if (royaltyCard.points == royaltyCard.maxPoints) R.drawable.border_yellow else 0
+            if (loyaltyCard.points == loyaltyCard.maxPoints) R.drawable.border_yellow else 0
         )
 
-        holder.render(royaltyCard, store)
+        holder.render(loyaltyCard, store)
     }
 
     override fun getItemCount(): Int {

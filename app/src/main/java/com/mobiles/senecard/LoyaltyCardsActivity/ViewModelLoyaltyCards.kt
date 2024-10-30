@@ -19,14 +19,14 @@ class ViewModelLoyaltyCards : ViewModel() {
     val loyaltyCards: LiveData<List<LoyaltyCard>> get() = _loyaltyCards
 
     // Método para simular la creación o actualización de una tarjeta de lealtad
-    fun simulateRoyaltyCardCreation(businessOwnerId: String, uniandesMemberId: String, storeId: String, maxPoints: Int) {
+    fun simulateLoyaltyCardCreation(businessOwnerId: String, uniandesMemberId: String, storeId: String, maxPoints: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 // Agrega log aquí
                 Log.d(TAG, "Simulando creación de tarjeta: businessOwnerId=$businessOwnerId, uniandesMemberId=$uniandesMemberId, storeId=$storeId, maxPoints=$maxPoints")
 
-                // Verificar si ya existe una RoyaltyCard entre el businessOwner y uniandesMember
-                val existingCard = repository.getRoyaltyCardByUserAndStore(uniandesMemberId, storeId)
+                // Verificar si ya existe una LoyaltyCard entre el businessOwner y uniandesMember
+                val existingCard = repository.getLoyaltyCardByUserAndStore(uniandesMemberId, storeId)
 
                 // Agrega log para verificar si se encontró una tarjeta existente
                 if (existingCard != null) {
@@ -36,17 +36,17 @@ class ViewModelLoyaltyCards : ViewModel() {
                     if (existingCard.points < maxPoints) {
                         // Incrementar los puntos si no se ha alcanzado el máximo
                         existingCard.points += 1
-                        repository.updateRoyaltyCard(existingCard)
+                        repository.updateLoyaltyCard(existingCard)
                         Log.d(TAG, "Puntos incrementados. Ahora tienes ${existingCard.points} puntos.")
                     } else {
                         // Si alcanzó el máximo de puntos, marcar la tarjeta como inactiva
                         existingCard.isCurrent = false
-                        repository.updateRoyaltyCard(existingCard)
+                        repository.updateLoyaltyCard(existingCard)
                         Log.d(TAG, "Has alcanzado el máximo de puntos (${existingCard.maxPoints}). La tarjeta está inactiva.")
                     }
                 } else {
-                    // Si no existe, crear una nueva RoyaltyCard
-                    val message = repository.addOrUpdateRoyaltyCard(
+                    // Si no existe, crear una nueva LoyaltyCard
+                    val message = repository.addOrUpdateLoyaltyCard(
                         uniandesMemberId = uniandesMemberId,
                         storeId = storeId,
                         maxPoints = maxPoints
@@ -54,7 +54,7 @@ class ViewModelLoyaltyCards : ViewModel() {
                     Log.d(TAG, message)  // Log del mensaje retornado por la creación de la tarjeta
                 }
             } catch (e: Exception) {
-                Log.e(TAG, "Error creando o actualizando RoyaltyCard: ${e.message}")
+                Log.e(TAG, "Error creando o actualizando LoyaltyCard: ${e.message}")
             }
         }
     }
@@ -64,7 +64,8 @@ class ViewModelLoyaltyCards : ViewModel() {
     fun getLoyaltyCardsForUser(uniandesMemberId: String): LiveData<List<LoyaltyCard>> {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val cards = repository.getRoyaltyCardsByUser(uniandesMemberId)
+                val cards = repository.getLoyaltyCardsByUniandesMemberId(uniandesMemberId)
+
 
                 // Ordenar las tarjetas por la cantidad de puntos restantes para completarse
                 val sortedCards = cards.sortedByDescending { it.points.toFloat() / it.maxPoints }
