@@ -60,13 +60,7 @@ class ActivityBusinessOwnerQRScanner : AppCompatActivity() {
         viewModel.navigateToSuccess.observe(this, Observer { success ->
             Log.d("QRScannerActivity", "Navigate to success observer triggered with value: $success")
             if (success == true) {
-                // Call simulateRoyaltyCardCreation after successful QR code scan
-                viewModel.simulateRoyaltyCardCreation(
-                    businessOwnerId!!, // Business owner ID
-                    viewModel.userId.value!!, // User ID from the ViewModel
-                    storeId!!, // Store ID
-                    maxPoints = 8 // Maximum points for the loyalty card
-                )
+
 
                 // Navigate to the success page
                 val intent = Intent(this, ActivityBusinessOwnerQRSuccess::class.java)
