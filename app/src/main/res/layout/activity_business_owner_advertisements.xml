@@ -34,14 +34,13 @@
         app:layout_constraintStart_toEndOf="@id/btnBack"
         app:layout_constraintEnd_toStartOf="@id/btnAdd"
         app:layout_constraintTop_toTopOf="@id/btnBack"
-        app:layout_constraintBottom_toBottomOf="@id/btnBack"
-        app:layout_constraintHorizontalBias="0.2" />
+        app:layout_constraintBottom_toBottomOf="@id/btnBack" />
 
     <!-- Add Button -->
     <ImageButton
         android:id="@+id/btnAdd"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="34dp"
+        android:layout_height="34dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:src="@drawable/ic_add"
         app:tint="@color/black"
