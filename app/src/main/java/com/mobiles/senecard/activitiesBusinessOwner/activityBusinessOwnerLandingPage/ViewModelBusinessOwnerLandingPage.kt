@@ -13,6 +13,7 @@ import com.mobiles.senecard.model.entities.Store
 import com.mobiles.senecard.model.entities.User
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import android.util.Log
 
 class ViewModelBusinessOwnerLandingPage : ViewModel() {
 
@@ -75,40 +76,57 @@ class ViewModelBusinessOwnerLandingPage : ViewModel() {
     fun fetchBusinessOwnerData(businessOwnerId: String) {
         viewModelScope.launch {
             try {
+                Log.d("fetchBusinessOwnerData", "Fetching store for business owner ID: $businessOwnerId")
+
                 // Fetch the store by business owner ID
                 val storeData = repositoryStore.getStoreByBusinessOwnerId(businessOwnerId)
                 if (storeData != null) {
+                    Log.d("fetchBusinessOwnerData", "Store fetched successfully: ${storeData.name}")
+
                     _store.value = storeData
-                    _storeName.value = storeData.name!!
-                    _rating.value = storeData.rating!!.toFloat()
+                    _storeName.value = storeData.name ?: "Unknown Store"
+
+                    if (storeData.rating != null) {
+                        _rating.value = storeData.rating!!.toFloat()
+                        Log.d("fetchBusinessOwnerData", "Store rating: ${storeData.rating}")
+                    } else {
+                        Log.w("fetchBusinessOwnerData", "Store rating is null")
+                        _rating.value = 0.0f // Default value if rating is null
+                    }
 
                     // Fetch all loyalty cards related to the store
+                    Log.d("fetchBusinessOwnerData", "Fetching loyalty cards for store ID: ${storeData.id}")
                     val loyaltyCards = repositoryLoyaltyCard.getLoyaltyCardsByStoreId(storeData.id!!)
 
                     // Initialize the count for today's purchases
                     var todayPurchaseCount = 0
+                    val today = LocalDate.now().toString()
 
                     // For each loyalty card, retrieve the associated purchases and filter today's purchases
-                    val today = LocalDate.now().toString()
                     loyaltyCards.forEach { loyaltyCard ->
+                        Log.d("fetchBusinessOwnerData", "Fetching purchases for loyalty card ID: ${loyaltyCard.id}")
                         val purchases = repositoryPurchase.getPurchasesByLoyaltyCardId(loyaltyCard.id!!)
                         todayPurchaseCount += purchases.count { it.date == today }
                     }
-
                     _transactionCount.value = todayPurchaseCount
+                    Log.d("fetchBusinessOwnerData", "Today's purchase count: $todayPurchaseCount")
 
                     // Fetch advertisement count
+                    Log.d("fetchBusinessOwnerData", "Fetching advertisements for store ID: ${storeData.id}")
                     val advertisements = repositoryAdvertisement.getAdvertisementsByStoreId(storeData.id)
                     _advertisementCount.value = advertisements.size
+                    Log.d("fetchBusinessOwnerData", "Advertisement count: ${advertisements.size}")
+
                 } else {
                     _errorMessage.value = "Store not found."
+                    Log.e("fetchBusinessOwnerData", "Store not found for business owner ID: $businessOwnerId")
                 }
             } catch (e: Exception) {
                 _errorMessage.value = "Error fetching business owner data: ${e.message}"
+                Log.e("fetchBusinessOwnerData", "Exception: ${e.message}", e)
             }
         }
     }
-
     // Function to log out the user
     fun logOut() {
         viewModelScope.launch {
