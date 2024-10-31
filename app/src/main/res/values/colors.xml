@@ -7,7 +7,7 @@
     <color name="tertiary">#F0F5FA</color>
     <color name="text_highlight">#2B2B2B</color>
     <color name="text">#646982</color>
-
+    <color name="lightgray">#ECF0F4</color>
     <color name="green_highlight">#00BF63</color>
     <color name="red_highlight">#FF0013</color>
 </resources>

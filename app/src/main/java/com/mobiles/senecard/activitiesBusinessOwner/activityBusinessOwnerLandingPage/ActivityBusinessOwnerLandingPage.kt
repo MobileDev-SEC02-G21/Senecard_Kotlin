@@ -48,6 +48,11 @@ class ActivityBusinessOwnerLandingPage : AppCompatActivity() {
             navigateToActivity(ActivityBusinessOwnerQRScanner::class.java)
         }
 
+        // Button to handle navigating to advertisements
+        findViewById<Button>(R.id.advertisementsMenuButton).setOnClickListener {
+            navigateToActivity(ActivityBusinessOwnerAdvertisements::class.java)
+        }
+
         // Drawer layout handling
         drawerLayout = findViewById(R.id.drawer_layout)
 

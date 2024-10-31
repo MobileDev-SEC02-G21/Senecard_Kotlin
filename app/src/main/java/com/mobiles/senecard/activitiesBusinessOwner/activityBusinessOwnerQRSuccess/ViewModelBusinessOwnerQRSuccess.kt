@@ -81,7 +81,7 @@ class ViewModelBusinessOwnerQRSuccess : ViewModel() {
                     val success = repositoryLoyaltyCard.addLoyaltyCard(newLoyaltyCard)
 
                     if (success) {
-                        _errorMessage.value = "Created new loyalty card. Please try again."
+                        _errorMessage.value = "Created new loyalty card."
                         // Optionally, reload the newly created loyalty card
                         getLoyaltyCardAndPurchases(storeId, userId)
                     } else {
