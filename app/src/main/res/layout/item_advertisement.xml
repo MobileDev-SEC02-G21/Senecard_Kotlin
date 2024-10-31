@@ -1,177 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    app:cardCornerRadius="12dp"
-    app:cardBackgroundColor="@color/primary">
+    android:layout_height="wrap_content">
 
-    <LinearLayout
+    <ImageView
+        android:id="@+id/advertisement_image_view"
+        android:src="@mipmap/icon_image_landscape"
+        android:contentDescription="@string/icon_image"
+        android:foreground="@drawable/advertisement_image_foreground"
+        android:scaleType="centerCrop"
+
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="8dp">
+        android:layout_height="160dp"
+        android:layout_gravity="center_vertical" />
 
-        <!-- Advertisement Image Card -->
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="160dp">
+    <View
+        android:visibility="gone"
+        android:id="@+id/overlay_view"
+        android:background="#80000000"
+        android:foreground="@drawable/advertisement_image_foreground"
 
-            <!-- Advertisement Image -->
-            <ImageView
-                android:id="@+id/advertisement_image_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                android:contentDescription="Advertisement Image"
-                android:src="@drawable/no_image_placeholder" />
-        </RelativeLayout>
+        android:layout_width="match_parent"
+        android:layout_height="160dp" />
 
-        <!-- Details Card for Information -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            app:cardCornerRadius="8dp"
-            app:cardBackgroundColor="@color/tertiary">
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/closed_text_view"
+        android:fontFamily="@font/sen_semibold"
+        android:text="Store Closed"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="8dp">
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
-                <!-- Title Row -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:weightSum="2">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Title:"
-                        android:textColor="@color/text_highlight"
-                        android:fontFamily="@font/sen_bold" />
-
-                    <TextView
-                        android:id="@+id/advertisement_title"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="end"
-                        android:text="Burrito Special"
-                        android:textColor="@color/text"
-                        android:fontFamily="@font/sen_regular" />
-                </LinearLayout>
-
-                <!-- Description Row -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:weightSum="2"
-                    android:layout_marginTop="4dp">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Description:"
-                        android:textColor="@color/text_highlight"
-                        android:fontFamily="@font/sen_bold" />
-
-                    <TextView
-                        android:id="@+id/advertisement_description"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="end"
-                        android:text="20% OFF ALL BURRITOS"
-                        android:textColor="@color/text"
-                        android:fontFamily="@font/sen_regular" />
-                </LinearLayout>
-
-                <!-- Availability Row -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:weightSum="2"
-                    android:layout_marginTop="4dp">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Available:"
-                        android:textColor="@color/text_highlight"
-                        android:fontFamily="@font/sen_bold" />
-
-                    <TextView
-                        android:id="@+id/advertisement_availability"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="end"
-                        android:text="Yes"
-                        android:textColor="@color/text"
-                        android:fontFamily="@font/sen_regular" />
-                </LinearLayout>
-
-                <!-- Date Range Row -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:weightSum="2"
-                    android:layout_marginTop="4dp">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Dates:"
-                        android:textColor="@color/text_highlight"
-                        android:fontFamily="@font/sen_bold" />
-
-                    <TextView
-                        android:id="@+id/advertisement_dates"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="end"
-                        android:text="01/01/2024 - 01/31/2024"
-                        android:textColor="@color/text"
-                        android:fontFamily="@font/sen_regular" />
-                </LinearLayout>
-
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-
-        <!-- Delete Icon Container -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="end"
-            android:paddingTop="8dp">
-
-        <!-- Delete Icon -->
-        <ImageButton
-            android:id="@+id/delete_button"
-            android:layout_width="34dp"
-            android:layout_height="34dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_delete"
-            android:contentDescription="Delete Advertisement"
-            app:tint="@color/white" />
-    </LinearLayout>
-
-</LinearLayout>
-
-</androidx.cardview.widget.CardView>
-
+</FrameLayout>

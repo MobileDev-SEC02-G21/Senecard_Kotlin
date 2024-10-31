@@ -141,6 +141,8 @@
         <activity android:name=".activitiesBusinessOwner.activityBusinessOwnerQRScanner.ActivityBusinessOwnerQRScanner"
             android:label="QR Scanner" />
 
+        <activity android:name=".activitiesBusinessOwner.activityBusinessOwnerAdvertisements.ActivityBusinessOwnerAdvertisements" />
+
         <!-- Servicio de Firebase Cloud Messaging -->
         <service
             android:name="MyFirebaseMessagingService"
