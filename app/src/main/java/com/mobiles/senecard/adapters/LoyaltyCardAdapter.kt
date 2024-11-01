@@ -34,9 +34,9 @@ class LoyaltyCardAdapter(
         val loyaltyCard = loyaltyCards[position]
         val store = stores[loyaltyCard.storeId]
 
-        // Aplicar fondo especial si los puntos son iguales a maxPoints
+        // Aplicar borde amarillo si los puntos son iguales a maxPoints, gris si aún no llega a maxPoints
         holder.itemView.setBackgroundResource(
-            if (loyaltyCard.points == loyaltyCard.maxPoints) R.drawable.border_yellow else 0
+            if (loyaltyCard.points == loyaltyCard.maxPoints) R.drawable.border_gray else R.drawable.border_yellow
         )
 
         holder.render(loyaltyCard, store)

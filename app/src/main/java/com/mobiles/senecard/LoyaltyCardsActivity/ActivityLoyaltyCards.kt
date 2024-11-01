@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -26,8 +27,16 @@ class ActivityLoyaltyCards : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: LoyaltyCardAdapter
-    private lateinit var emptyView: TextView // Para mostrar el mensaje de vacío
+    private lateinit var emptyView: TextView
     private val viewModel: ViewModelLoyaltyCards by viewModels()
+
+    // Lanzador para ActivityResult
+    private val detailActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            // Recargar las tarjetas de lealtad al regresar
+            loadLoyaltyCardsAndStores()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,27 +49,19 @@ class ActivityLoyaltyCards : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         emptyView = findViewById(R.id.empty_view)
 
-        // Simulación de IDs de prueba
+        // Simulación de ID de usuario
         val uniandesMemberId = "mOD7RaYRy6ew0wOwznvs"
-        val businessOwnerId = "UqD7b4Twit3rD98w6Inq"
-        val storeId = "olNh6XZeAVdRxgEHawJV"
 
-        // Llamar a la función en el ViewModel para simular la creación o actualización de la tarjeta
-        //viewModel.simulateLoyaltyCardCreation(businessOwnerId, uniandesMemberId, storeId, maxPoints = 8)
-
-
-
-        loadLoyaltyCardsAndStores(uniandesMemberId)
+        loadLoyaltyCardsAndStores()
 
         val optionsButton = findViewById<ImageButton>(R.id.options_image_view2)
         optionsButton.setOnClickListener {
             onBackPressed()
         }
-
     }
 
-    private fun loadLoyaltyCardsAndStores(uniandesMemberId: String) {
-        val loyaltyCardsLiveData = viewModel.getLoyaltyCardsForUser(uniandesMemberId)
+    private fun loadLoyaltyCardsAndStores() {
+        val loyaltyCardsLiveData = viewModel.getLoyaltyCardsForUser()
 
         loyaltyCardsLiveData.observe(this@ActivityLoyaltyCards) { cards ->
             val loyaltyCards = cards ?: emptyList()
@@ -71,12 +72,25 @@ class ActivityLoyaltyCards : AppCompatActivity() {
                     .filter { it.id != null }
                     .associateBy { it.id!! }
 
-                if (loyaltyCards.isNotEmpty()) {
+                // Filtrar solo las tarjetas incompletas
+                val incompleteCards = loyaltyCards.filter { it.points < it.maxPoints }
+
+                if (incompleteCards.isNotEmpty()) {
+                    // Mostrar Toast para el primer negocio incompleto
+                    val firstIncompleteCard = incompleteCards.firstOrNull()
+                    firstIncompleteCard?.let { card ->
+                        val storeName = fetchedStores[card.storeId]?.name ?: "Tienda Desconocida"
+                        val pointsRemaining = card.maxPoints - card.points
+                        Toast.makeText(
+                            this@ActivityLoyaltyCards,
+                            "Negocio: $storeName, te faltan $pointsRemaining puntos para completar.",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+
                     adapter = LoyaltyCardAdapter(loyaltyCards, fetchedStores) { selectedCard ->
-                        // Aquí es donde se maneja el clic en la tarjeta seleccionada
                         Log.d(TAG, "Card clicked: ${selectedCard.id}")
 
-                        // Inicia ActivityLoyaltyCardDetail con los datos correspondientes
                         val intent = Intent(this@ActivityLoyaltyCards, ActivityLoyaltyCardDetail::class.java).apply {
                             putExtra(LoyaltyCardAdapter.EXTRA_STORE_NAME, fetchedStores[selectedCard.storeId]?.name ?: "Tienda Desconocida")
                             putExtra(LoyaltyCardAdapter.EXTRA_STORE_ADDRESS, fetchedStores[selectedCard.storeId]?.address ?: "Dirección Desconocida")
@@ -84,16 +98,14 @@ class ActivityLoyaltyCards : AppCompatActivity() {
                             putExtra(LoyaltyCardAdapter.EXTRA_POINTS, selectedCard.points)
                             putExtra(LoyaltyCardAdapter.EXTRA_MAX_POINTS, selectedCard.maxPoints)
                         }
-                        startActivity(intent)
+                        detailActivityLauncher.launch(intent) // Usar el launcher para iniciar la actividad
                     }
 
                     recyclerView.adapter = adapter
                     emptyView.visibility = View.GONE
                     recyclerView.visibility = View.VISIBLE
-
-                    // Código para mostrar un toast o cualquier otra lógica
                 } else {
-                    Log.d(TAG, "No hay tarjetas de lealtad para mostrar.")
+                    Log.d(TAG, "No hay tarjetas incompletas para mostrar.")
                     emptyView.visibility = View.VISIBLE
                     recyclerView.visibility = View.GONE
                 }
@@ -101,36 +113,6 @@ class ActivityLoyaltyCards : AppCompatActivity() {
         }
     }
 
-
-    private fun showClosestStoreToast(loyaltyCards: List<LoyaltyCard>, fetchedStores: Map<String, Store>) {
-        val incompleteCards = loyaltyCards.filter { it.points < it.maxPoints }
-        if (incompleteCards.isNotEmpty()) {
-            val topCard = incompleteCards[0]
-            val store = fetchedStores[topCard.storeId]
-            val storeName = store?.name ?: "Desconocido"
-            val pointsInfo = "${topCard.points} / ${topCard.maxPoints}"
-
-            val toast = Toast.makeText(
-                this,
-                "Restaurante más cercano a llenar la tarjeta: $storeName ($pointsInfo)",
-                Toast.LENGTH_SHORT
-            )
-
-            val durationInMilliseconds = 7000
-            val handler = android.os.Handler(mainLooper)
-            val delay: Long = 1000
-            var timesShown = 0
-            val runnable = object : Runnable {
-                override fun run() {
-                    if (timesShown * delay < durationInMilliseconds) {
-                        toast.show()
-                        timesShown++
-                        handler.postDelayed(this, delay)
-                    }
-                }
-            }
-            handler.post(runnable)
-        }
-    }
 }
+
 
