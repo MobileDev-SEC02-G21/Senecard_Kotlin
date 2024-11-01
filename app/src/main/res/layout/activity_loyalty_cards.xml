@@ -19,45 +19,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp" />
 
-    <!-- Contenedor de Tarjetas de Lealtad (solo uno visible) -->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/loyalty_cards_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:background="?attr/selectableItemBackground"
-        android:clickable="true"
-        android:focusable="true"
-        app:layout_constraintTop_toBottomOf="@id/options_image_view2"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
 
-        <ImageView
-            android:id="@+id/storeImageView"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:contentDescription="@string/icon_example"
-            android:scaleType="centerCrop"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/storeNameTextView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="Pollos Hermanos JM"
-            android:textSize="16sp"
-            android:textColor="@android:color/black"
-            app:layout_constraintStart_toEndOf="@id/storeImageView"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginStart="16dp"
-            android:maxWidth="200dp"
-            android:ellipsize="end"
-            android:maxLines="1" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- RecyclerView para las demás tarjetas -->
     <androidx.recyclerview.widget.RecyclerView
@@ -65,7 +27,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:padding="8dp"
-        app:layout_constraintTop_toBottomOf="@id/loyalty_cards_container"
+        app:layout_constraintTop_toBottomOf="@id/options_image_view2"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
