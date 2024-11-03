@@ -32,11 +32,15 @@ class ViewModelSignUpStoreOwner1: ViewModel() {
 
     fun nextButtonClicked(name: String, email: String, phone: String, password: String, confirmPassword: String) {
         viewModelScope.launch {
+            val nameRegex = "^(?! )[A-Za-z]+( [A-Za-z]+)*(?<! )$".toRegex()
+
             if (name.isEmpty()) { _message.value = "name_empty" }
+            else if (!nameRegex.matches(name)) { _message.value = "name_invalid" }
             else if (email.isEmpty()) { _message.value = "email_empty" }
             else if (phone.isEmpty()) { _message.value = "phone_empty" }
             else if (password.isEmpty()) { _message.value = "password_empty" }
             else if (confirmPassword.isEmpty()) { _message.value = "confirm_password_empty" }
+            else if (email.contains(" ") || phone.contains(" ") || password.contains(" ") || confirmPassword.contains(" ")) { _message.value = "no_spaces_allowed" }
             else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) { _message.value = "email_invalid" }
             else if (password.length < 6) { _message.value = "password_short" }
             else if (password != confirmPassword) { _message.value = "passwords_not_equals" }

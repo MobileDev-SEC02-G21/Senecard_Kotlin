@@ -1,5 +1,6 @@
 package com.mobiles.senecard.activitiesSignUp.activitySignUpStoreOwner3
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -36,7 +37,7 @@ class ViewModelSignUpStoreOwner3: ViewModel() {
         _navigateToActivitySignUpStoreOwner2.value = true
     }
 
-    fun registerButtonClicked(storeSchedule: Map<String, List<Int>>) {
+    fun registerButtonClicked(storeSchedule: Map<String, List<Int>>, context: Context) {
         viewModelScope.launch {
             var isScheduleValid = true
 
@@ -48,21 +49,23 @@ class ViewModelSignUpStoreOwner3: ViewModel() {
                 }
             }
 
-            println(signUpUser)
-
-            if (isScheduleValid) {
-                if (repositoryAuthentication.createUser(signUpUser.email!!, signUpUser.password!!)) {
-                    if (repositoryUser.addUser(name = signUpUser.name!!, email = signUpUser.email!!, phone = signUpUser.phone!!, role = "businessOwner") ) {
-                        val user = repositoryUser.getUserByEmail(signUpUser.email!!)
-                        if (user != null) {
-                            if (repositoryStore.addStore(businessOwnerId = user.id!!, name = signUpStore.name!!, category = signUpStore.category!!, address = signUpStore.address!!, image = signUpStore.image!!, schedule = storeSchedule)) {
-                                signUpUser.reset()
-                                signUpStore.reset()
-                                _navigateToActivityBusinessOwner.value = true
-                            } else { _message.value = "error_firebase_firestore" }
-                        }
-                    } else { _message.value = "error_firebase_firestore" }
-                } else { _message.value = "error_firebase_auth" }
+            if (!com.mobiles.senecard.activitiesInitial.activitySplash.ViewModelSplash.NetworkUtils.isInternetAvailable(context)) {
+                _message.value = "no_internet_connection"
+            } else {
+                if (isScheduleValid) {
+                    if (repositoryAuthentication.createUser(signUpUser.email!!, signUpUser.password!!)) {
+                        if (repositoryUser.addUser(name = signUpUser.name!!, email = signUpUser.email!!, phone = signUpUser.phone!!, role = "businessOwner") ) {
+                            val user = repositoryUser.getUserByEmail(signUpUser.email!!)
+                            if (user != null) {
+                                if (repositoryStore.addStore(businessOwnerId = user.id!!, name = signUpStore.name!!, category = signUpStore.category!!, address = signUpStore.address!!, image = signUpStore.image!!, schedule = storeSchedule)) {
+                                    signUpUser.reset()
+                                    signUpStore.reset()
+                                    _navigateToActivityBusinessOwner.value = true
+                                } else { _message.value = "error_firebase_firestore" }
+                            }
+                        } else { _message.value = "error_firebase_firestore" }
+                    } else { _message.value = "error_firebase_auth" }
+                }
             }
         }
     }

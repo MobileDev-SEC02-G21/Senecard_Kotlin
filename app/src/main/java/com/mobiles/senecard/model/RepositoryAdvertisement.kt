@@ -46,7 +46,9 @@ class RepositoryAdvertisement private constructor() {
     suspend fun getAllAdvertisements(): List<Advertisement> {
         val advertisementsList = mutableListOf<Advertisement>()
         try {
-            val querySnapshot = firebase.firestore.collection("advertisements").get().await()
+            val querySnapshot = firebase.firestore.collection("advertisements")
+                .get()
+                .await()
 
             for (documentSnapshot in querySnapshot.documents) {
                 val advertisement = documentSnapshot.toObject<Advertisement>()?.copy(id = documentSnapshot.id)

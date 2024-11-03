@@ -28,6 +28,9 @@ class ViewModelHomeUniandesMemberStoreList : ViewModel() {
     val filteredStoreList: LiveData<List<Store>>
         get() = _filteredStoreList
 
+    private var currentSearchQuery: String = ""
+    private var currentCategory: String = "All"
+
     fun backImageViewClicked() {
         _navigateToActivityHomeUniandesMember.value = true
     }
@@ -41,14 +44,32 @@ class ViewModelHomeUniandesMemberStoreList : ViewModel() {
     }
 
     fun filterStoresByName(query: String) {
+        currentSearchQuery = query
+        applyFilters()
+    }
+
+    fun filterStoresByCategory(category: String) {
+        currentCategory = if (category == "Other") "Other" else category
+        applyFilters()
+    }
+
+    private fun applyFilters() {
+        val validCategories = listOf("Bakeries", "Bar", "Coffee", "Electronic", "Pizzeria", "Restaurant", "Stationery")
+
         val allStores = _storeList.value ?: return
-        if (query.isEmpty()) {
-            _filteredStoreList.value = allStores
-        } else {
-            _filteredStoreList.value = allStores.filter { store ->
-                store.name?.contains(query, ignoreCase = true) ?: false
+
+        val filteredStores = allStores.filter { store ->
+            val matchesCategory = when (currentCategory) {
+                "All" -> true
+                "Other" -> store.category !in validCategories
+                else -> store.category.equals(currentCategory, ignoreCase = true)
             }
+
+            val matchesQuery = store.name?.contains(currentSearchQuery, ignoreCase = true) ?: false
+            matchesCategory && matchesQuery
         }
+
+        _filteredStoreList.value = filteredStores
     }
 
     fun onClickedItemStore(store: Store) {

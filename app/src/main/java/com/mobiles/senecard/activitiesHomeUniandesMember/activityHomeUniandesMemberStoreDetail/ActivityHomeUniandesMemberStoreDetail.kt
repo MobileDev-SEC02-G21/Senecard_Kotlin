@@ -48,7 +48,7 @@ class ActivityHomeUniandesMemberStoreDetail : AppCompatActivity() {
 
                 binding.titleStoreTextView.text = store.name
                 binding.categoryStoreTextView.text = store.category
-                binding.ratingStoreTextView.text = store.rating.toString()
+                binding.ratingStoreTextView.text = String.format("%.1f", store.rating)
                 binding.addressStoreTextView.text = store.address
 
                 val startMondayHour = store.schedule?.get("monday")?.let { String.format("%02d:00", it[0]) } ?: "N/A"

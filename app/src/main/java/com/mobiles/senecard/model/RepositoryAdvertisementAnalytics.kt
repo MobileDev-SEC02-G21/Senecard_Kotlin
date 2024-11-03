@@ -15,7 +15,12 @@ class RepositoryAdvertisementAnalytics private constructor() {
     suspend fun registerAdvertisementClick(advertisementId: String) {
         try {
             // Check if an analytics document for this ad already exists
-            val docRef = firebase.firestore.collection("advertisementClicksAnalytics").document(advertisementId)
+            val docRef = firebase.firestore
+                .collection("AnalyticsBusinessQuestions")
+                .document("sprint2")
+                .collection("businessQuestion4")
+                .document(advertisementId)
+
             val docSnapshot = docRef.get().await()
 
             if (docSnapshot.exists()) {

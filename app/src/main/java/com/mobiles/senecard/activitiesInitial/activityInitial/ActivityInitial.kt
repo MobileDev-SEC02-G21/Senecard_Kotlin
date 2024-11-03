@@ -25,7 +25,6 @@ class ActivityInitial : AppCompatActivity() {
 
         setElements()
         setObservers()
-        viewModelInitial.validateSession()
     }
 
     private fun setElements() {
@@ -62,22 +61,6 @@ class ActivityInitial : AppCompatActivity() {
                 )
                 startActivity(intent, options.toBundle())
                 viewModelInitial.onNavigated()
-            }
-        }
-        viewModelInitial.isLoggedRole.observe(this) { role ->
-            if (role != null) {
-                if (role == "uniandesMember") {
-                    val initialIntent =
-                        Intent(this, ActivityHomeUniandesMember::class.java).apply {
-                            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                        }
-                    startActivity(initialIntent)
-                } else if (role == "businessOwner") {
-                    val initialIntent = Intent(this, ActivityBusinessOwnerLandingPage::class.java).apply {
-                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    }
-                    startActivity(initialIntent)
-                }
             }
         }
     }
