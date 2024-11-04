@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mobiles.senecard.NetworkUtils
 import com.mobiles.senecard.model.RepositoryAuthentication
 import com.mobiles.senecard.model.RepositoryUser
 import kotlinx.coroutines.launch
@@ -31,7 +32,7 @@ class ViewModelSignUpUniandesMember: ViewModel() {
         _navigateToActivitySignUp.value = true
     }
 
-    fun registerButtonClicked(name: String, email: String, phone: String, password: String, confirmPassword: String, context: Context) {
+    fun registerButtonClicked(name: String, email: String, phone: String, password: String, confirmPassword: String) {
         viewModelScope.launch {
             val nameRegex = "^(?! )[A-Za-z]+( [A-Za-z]+)*(?<! )$".toRegex()
 
@@ -46,7 +47,7 @@ class ViewModelSignUpUniandesMember: ViewModel() {
                 !Patterns.EMAIL_ADDRESS.matcher(email).matches() -> _message.value = "email_invalid"
                 password.length < 7 -> _message.value = "password_short"
                 password != confirmPassword -> _message.value = "passwords_not_equals"
-                !com.mobiles.senecard.activitiesInitial.activitySplash.ViewModelSplash.NetworkUtils.isInternetAvailable(context) -> {
+                !NetworkUtils.isInternetAvailable() -> {
                     _message.value = "no_internet_connection"
                 }
                 repositoryUser.existsUserByEmail(email) == true -> _message.value = "user_exists"

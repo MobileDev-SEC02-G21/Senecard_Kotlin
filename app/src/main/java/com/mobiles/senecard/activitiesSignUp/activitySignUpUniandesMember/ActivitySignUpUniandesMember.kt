@@ -38,8 +38,7 @@ class ActivitySignUpUniandesMember : AppCompatActivity() {
                 email = binding.emailEditText.text.toString(),
                 phone = binding.phoneEditText.text.toString(),
                 password = binding.passwordEditText.text.toString(),
-                confirmPassword = binding.confirmPasswordEditText.text.toString(),
-                this
+                confirmPassword = binding.confirmPasswordEditText.text.toString()
             )
         }
     }

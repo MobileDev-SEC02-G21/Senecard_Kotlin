@@ -1,13 +1,12 @@
 package com.mobiles.senecard.activitiesSignIn.activitySignIn
 
-import android.app.Application
 import android.content.Context
-import android.net.ConnectivityManager
 import android.util.Patterns
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mobiles.senecard.NetworkUtils
 import com.mobiles.senecard.model.RepositoryAuthentication
 import com.mobiles.senecard.model.RepositoryUser
 import kotlinx.coroutines.launch
@@ -49,7 +48,7 @@ class ViewModelSignIn : ViewModel() {
         _navigateToActivitySignInForgotPassword.value = true
     }
 
-    fun enterButtonClicked(email: String, password: String, context: Context) {
+    fun enterButtonClicked(email: String, password: String) {
         viewModelScope.launch {
             when {
                 email.isEmpty() -> {
@@ -64,7 +63,7 @@ class ViewModelSignIn : ViewModel() {
                 !Patterns.EMAIL_ADDRESS.matcher(email).matches() -> {
                     _message.value = "email_invalid"
                 }
-                !com.mobiles.senecard.activitiesInitial.activitySplash.ViewModelSplash.NetworkUtils.isInternetAvailable(context) -> {
+                !NetworkUtils.isInternetAvailable() -> {
                     _message.value = "no_internet_connection"
                 }
                 else -> {

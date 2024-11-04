@@ -1,9 +1,13 @@
 package com.mobiles.senecard.model
 
 import android.util.Log
-import com.google.firebase.firestore.ktx.toObject
+import com.google.firebase.firestore.Source
+import com.google.firebase.firestore.toObject
+import com.mobiles.senecard.NetworkUtils
 import com.mobiles.senecard.model.entities.LoyaltyCard
+import com.mobiles.senecard.model.entities.Store
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withTimeout
 
 class RepositoryLoyaltyCard private constructor() {
 
@@ -155,7 +159,6 @@ class RepositoryLoyaltyCard private constructor() {
         }
     }
 
-
     suspend fun getLoyaltyCardsByUser(uniandesMemberId: String): List<LoyaltyCard> {
         val loyaltyCardsList = mutableListOf<LoyaltyCard>()
         try {
@@ -218,20 +221,41 @@ class RepositoryLoyaltyCard private constructor() {
 
     suspend fun getLoyaltyCardsByUniandesMemberId(uniandesMemberId: String): List<LoyaltyCard> {
         val loyaltyCardList = mutableListOf<LoyaltyCard>()
-        try {
-            val querySnapshot = firebase.firestore.collection("loyaltyCards")
-                .whereEqualTo("uniandesMemberId", uniandesMemberId)
-                .get()
-                .await()
 
-            for (documentSnapshot in querySnapshot.documents) {
-                val loyaltyCard = documentSnapshot.toObject<LoyaltyCard>()?.copy(id = documentSnapshot.id)
-                if (loyaltyCard != null) {
-                    loyaltyCardList.add(loyaltyCard)
+        if (NetworkUtils.isInternetAvailable()) {
+            try {
+                withTimeout(3000) {
+                    val querySnapshot = firebase.firestore.collection("loyaltyCards")
+                        .whereEqualTo("uniandesMemberId", uniandesMemberId)
+                        .get()
+                        .await()
+
+                    querySnapshot.documents.forEach { documentSnapshot ->
+                        documentSnapshot.toObject<LoyaltyCard>()?.copy(id = documentSnapshot.id)?.let { loyaltyCard ->
+                            loyaltyCardList.add(loyaltyCard)
+                        }
+                    }
                 }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
+        }
+
+        if (loyaltyCardList.isEmpty()) {
+            try {
+                val cachedSnapshot = firebase.firestore.collection("loyaltyCards")
+                    .whereEqualTo("uniandesMemberId", uniandesMemberId)
+                    .get(Source.CACHE)
+                    .await()
+
+                cachedSnapshot.documents.forEach { documentSnapshot ->
+                    documentSnapshot.toObject<LoyaltyCard>()?.copy(id = documentSnapshot.id)?.let { loyaltyCard ->
+                        loyaltyCardList.add(loyaltyCard)
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
 
         return loyaltyCardList

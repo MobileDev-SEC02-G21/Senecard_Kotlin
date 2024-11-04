@@ -1,7 +1,10 @@
 package com.mobiles.senecard.model
 
 import android.net.Uri
+import kotlinx.coroutines.withTimeout
+import com.google.firebase.firestore.Source
 import com.google.firebase.firestore.toObject
+import com.mobiles.senecard.NetworkUtils
 import com.mobiles.senecard.model.entities.Store
 import kotlinx.coroutines.tasks.await
 import java.util.Calendar
@@ -43,38 +46,53 @@ class RepositoryStore private constructor() {
     }
 
     suspend fun getAllStores(): List<Store> {
-        var storesList = mutableListOf<Store>()
-        try {
-            val querySnapshot = firebase.firestore.collection("stores")
-                .get()
-                .await()
+        val storesList = mutableListOf<Store>()
 
-            for (documentSnapshot in querySnapshot.documents) {
-                val store = documentSnapshot.toObject<Store>()?.copy(id = documentSnapshot.id)
-                if (store != null) {
-                    storesList.add(store)
+        if (NetworkUtils.isInternetAvailable()) {
+            try {
+                withTimeout(3000) {
+                    val querySnapshot = firebase.firestore.collection("stores")
+                        .get(Source.SERVER)
+                        .await()
+
+                    querySnapshot.documents.forEach { documentSnapshot ->
+                        documentSnapshot.toObject<Store>()?.copy(id = documentSnapshot.id)?.let { store ->
+                            storesList.add(store)
+                        }
+                    }
                 }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
         }
 
-        storesList = storesList.sortedBy { store ->
-            if (isStoreClosed(store)) 1 else 0
-        }.toMutableList()
+        if (storesList.isEmpty()) {
+            try {
+                val cachedSnapshot = firebase.firestore.collection("stores")
+                    .get(Source.CACHE)
+                    .await()
 
-        return storesList
+                cachedSnapshot.documents.forEach { documentSnapshot ->
+                    documentSnapshot.toObject<Store>()?.copy(id = documentSnapshot.id)?.let { store ->
+                        storesList.add(store)
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+
+        return storesList.sortedBy { store ->
+            if (isStoreClosed(store)) 1 else 0
+        }
     }
 
     suspend fun getRecommendedStoresByUniandesMemberId(uniandesMemberId: String): List<Store> {
-        // Get the list of all stores and member loyalty cards
         val storesList = getAllStores()
         val loyaltyCardList = repositoryLoyaltyCard.getLoyaltyCardsByUniandesMemberId(uniandesMemberId)
 
-        // Get the store IDs where the member has made purchases
         val storeIdsWithPurchases = loyaltyCardList.mapNotNull { it.storeId }
 
-        // Identify the most frequent categories in member purchases
         val frequentCategories = storesList
             .filter { it.id in storeIdsWithPurchases && it.category != null }
             .groupingBy { it.category }
@@ -83,7 +101,6 @@ class RepositoryStore private constructor() {
             .sortedByDescending { (_, count) -> count }
             .map { it.first }
 
-        // Filter stores that are not on the shopping list, that are not closed, that belong to frequent categories and have good rating
         val recommendedStores = storesList
             .filter { store ->
                 store.id != null &&
@@ -98,16 +115,34 @@ class RepositoryStore private constructor() {
     }
 
     suspend fun getStoreById(storeId: String): Store? {
+
+        if (NetworkUtils.isInternetAvailable()) {
+            try {
+                return withTimeout(3000) {
+                    val documentSnapshot = firebase.firestore.collection("stores")
+                        .document(storeId)
+                        .get(Source.SERVER)
+                        .await()
+
+                    documentSnapshot.toObject<Store>()?.copy(id = documentSnapshot.id)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+
         try {
-            val documentSnapshot = firebase.firestore.collection("stores")
+            val cachedDocumentSnapshot = firebase.firestore.collection("stores")
                 .document(storeId)
-                .get()
+                .get(Source.CACHE)
                 .await()
 
-            return documentSnapshot.toObject<Store>()?.copy(id = documentSnapshot.id)
+            return cachedDocumentSnapshot.toObject<Store>()?.copy(id = cachedDocumentSnapshot.id)
         } catch (e: Exception) {
-            return null
+            e.printStackTrace()
         }
+
+        return null
     }
 
     suspend fun getStoreByBusinessOwnerId(businessOwnerId: String): Store? {

@@ -1,7 +1,5 @@
 package com.mobiles.senecard.activitiesInitial.activitySplash
 
-import android.content.Context
-import android.net.ConnectivityManager
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -14,14 +12,6 @@ import kotlinx.coroutines.launch
 class ViewModelSplash : ViewModel() {
 
     private val repositoryAuthentication = RepositoryAuthentication.instance
-
-    object NetworkUtils {
-        fun isInternetAvailable(context: Context): Boolean {
-            val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-            val activeNetwork = connectivityManager.activeNetworkInfo
-            return activeNetwork?.isConnected == true
-        }
-    }
 
     private val _isLoading = MutableStateFlow(true)
     val isLoading = _isLoading.asStateFlow()

@@ -64,7 +64,7 @@ class ActivitySignUpStoreOwner3 : AppCompatActivity() {
                     binding.sundayEndTimeSpinner.selectedItem.toString().toInt()
                 )
             )
-            viewModelSignUpStoreOwner3.registerButtonClicked(storeSchedule = schedule, this)
+            viewModelSignUpStoreOwner3.registerButtonClicked(storeSchedule = schedule)
         }
     }
 
