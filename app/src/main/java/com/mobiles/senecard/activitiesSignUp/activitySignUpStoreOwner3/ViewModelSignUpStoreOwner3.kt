@@ -1,10 +1,10 @@
 package com.mobiles.senecard.activitiesSignUp.activitySignUpStoreOwner3
 
-import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mobiles.senecard.NetworkUtils
 import com.mobiles.senecard.activitiesSignUp.SignUpStore
 import com.mobiles.senecard.activitiesSignUp.SignUpUser
 import com.mobiles.senecard.model.RepositoryAuthentication
@@ -37,7 +37,7 @@ class ViewModelSignUpStoreOwner3: ViewModel() {
         _navigateToActivitySignUpStoreOwner2.value = true
     }
 
-    fun registerButtonClicked(storeSchedule: Map<String, List<Int>>, context: Context) {
+    fun registerButtonClicked(storeSchedule: Map<String, List<Int>>) {
         viewModelScope.launch {
             var isScheduleValid = true
 
@@ -49,7 +49,7 @@ class ViewModelSignUpStoreOwner3: ViewModel() {
                 }
             }
 
-            if (!com.mobiles.senecard.activitiesInitial.activitySplash.ViewModelSplash.NetworkUtils.isInternetAvailable(context)) {
+            if (!NetworkUtils.isInternetAvailable()) {
                 _message.value = "no_internet_connection"
             } else {
                 if (isScheduleValid) {

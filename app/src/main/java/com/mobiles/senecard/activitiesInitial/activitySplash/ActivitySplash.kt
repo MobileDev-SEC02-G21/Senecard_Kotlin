@@ -38,6 +38,5 @@ class ActivitySplash : AppCompatActivity() {
             else -> Intent(this, ActivityInitial::class.java)
         }
         startActivity(intent)
-        finish()
     }
 }

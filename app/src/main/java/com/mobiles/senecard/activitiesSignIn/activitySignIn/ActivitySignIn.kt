@@ -41,8 +41,7 @@ class ActivitySignIn : AppCompatActivity() {
             showMessage("Please wait one moment while processing the information", "loading")
             viewModelSignIn.enterButtonClicked(
                 email = binding.emailEditText.text.toString(),
-                password = binding.passwordEditText.text.toString(),
-                this
+                password = binding.passwordEditText.text.toString()
             )
         }
         binding.signUpTextView.setOnClickListener {
