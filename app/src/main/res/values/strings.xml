@@ -66,7 +66,7 @@
     <string name="sign_in_remember_me">Remember me</string>
     <string name="sign_in_enter">ENTER</string>
     <string name="sing_in_don_t_have_an_account">Don\'t have an account?</string>
-    <string name="sign_in_sing_up">Sing up</string>
+    <string name="sign_in_sing_up">Sign up</string>
     <string name="sign_in_email_empty">Please enter a valid email to sign in</string>
     <string name="sign_in_password_empty">Please enter a valid password to sign in</string>
     <string name="sign_in_email_invalid">The email is not valid</string>

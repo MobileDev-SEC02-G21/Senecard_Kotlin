@@ -64,7 +64,7 @@ class ActivitySignUpStoreOwner3 : AppCompatActivity() {
                     binding.sundayEndTimeSpinner.selectedItem.toString().toInt()
                 )
             )
-            viewModelSignUpStoreOwner3.registerButtonClicked(storeSchedule = schedule)
+            viewModelSignUpStoreOwner3.registerButtonClicked(storeSchedule = schedule, this)
         }
     }
 
@@ -101,8 +101,9 @@ class ActivitySignUpStoreOwner3 : AppCompatActivity() {
                 "friday_error_hours" -> showMessage(getString(R.string.sign_up_store_owner_3_friday_error_hours))
                 "saturday_error_hours" -> showMessage(getString(R.string.sign_up_store_owner_3_saturday_error_hours))
                 "sunday_error_hours" -> showMessage(getString(R.string.sign_up_store_owner_3_sunday_error_hours))
-                "error_firebase_auth" -> showMessage(getString(R.string.sign_up_store_owner_3_error_firebase_auth))
-                "error_firebase_firestore" -> showMessage(getString(R.string.sign_up_store_owner_3_error_firebase_firestore))
+                "no_internet_connection" -> showMessage("No internet connection. Please check your connection and try again", "error")
+                "error_firebase_auth" -> showMessage(getString(R.string.sign_up_store_owner_3_error_firebase_auth), "error")
+                "error_firebase_firestore" -> showMessage(getString(R.string.sign_up_store_owner_3_error_firebase_firestore), "error")
             }
         }
     }

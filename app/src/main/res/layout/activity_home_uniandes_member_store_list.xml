@@ -85,6 +85,7 @@
             android:layout_height="wrap_content">
 
             <Button
+                android:id="@+id/categories_bakeries"
                 android:text="Bakeries"
                 android:fontFamily="@font/sen_regular"
                 android:textSize="16sp"
@@ -94,9 +95,11 @@
 
                 android:layout_marginEnd="10dp"
                 android:layout_width="120dp"
-                android:layout_height="40dp" />
+                android:layout_height="40dp"
+                android:onClick="onCategoryClicked" />
 
             <Button
+                android:id="@+id/categories_bar"
                 android:text="Bar"
                 android:fontFamily="@font/sen_regular"
                 android:textSize="16sp"
@@ -106,9 +109,11 @@
 
                 android:layout_marginEnd="10dp"
                 android:layout_width="120dp"
-                android:layout_height="40dp" />
+                android:layout_height="40dp"
+                android:onClick="onCategoryClicked" />
 
             <Button
+                android:id="@+id/categories_coffee"
                 android:text="Coffee"
                 android:fontFamily="@font/sen_regular"
                 android:textSize="16sp"
@@ -118,9 +123,11 @@
 
                 android:layout_marginEnd="10dp"
                 android:layout_width="120dp"
-                android:layout_height="40dp" />
+                android:layout_height="40dp"
+                android:onClick="onCategoryClicked" />
 
             <Button
+                android:id="@+id/categories_electronic"
                 android:text="Electronic"
                 android:fontFamily="@font/sen_regular"
                 android:textSize="16sp"
@@ -130,9 +137,11 @@
 
                 android:layout_marginEnd="10dp"
                 android:layout_width="120dp"
-                android:layout_height="40dp" />
+                android:layout_height="40dp"
+                android:onClick="onCategoryClicked" />
 
             <Button
+                android:id="@+id/categories_pizzeria"
                 android:text="Pizzeria"
                 android:fontFamily="@font/sen_regular"
                 android:textSize="16sp"
@@ -142,9 +151,11 @@
 
                 android:layout_marginEnd="10dp"
                 android:layout_width="120dp"
-                android:layout_height="40dp" />
+                android:layout_height="40dp"
+                android:onClick="onCategoryClicked" />
 
             <Button
+                android:id="@+id/categories_restaurant"
                 android:text="Restaurant"
                 android:fontFamily="@font/sen_regular"
                 android:textSize="16sp"
@@ -154,9 +165,11 @@
 
                 android:layout_marginEnd="10dp"
                 android:layout_width="120dp"
-                android:layout_height="40dp" />
+                android:layout_height="40dp"
+                android:onClick="onCategoryClicked" />
 
             <Button
+                android:id="@+id/categories_stationery"
                 android:text="Stationery"
                 android:fontFamily="@font/sen_regular"
                 android:textSize="16sp"
@@ -166,9 +179,11 @@
 
                 android:layout_marginEnd="10dp"
                 android:layout_width="120dp"
-                android:layout_height="40dp" />
+                android:layout_height="40dp"
+                android:onClick="onCategoryClicked" />
 
             <Button
+                android:id="@+id/categories_other"
                 android:text="Other"
                 android:fontFamily="@font/sen_regular"
                 android:textSize="16sp"
@@ -178,7 +193,8 @@
 
                 android:layout_marginEnd="10dp"
                 android:layout_width="120dp"
-                android:layout_height="40dp" />
+                android:layout_height="40dp"
+                android:onClick="onCategoryClicked" />
 
         </LinearLayout>
 

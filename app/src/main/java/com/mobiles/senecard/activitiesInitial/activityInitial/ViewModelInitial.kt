@@ -9,8 +9,6 @@ import kotlinx.coroutines.launch
 
 class ViewModelInitial : ViewModel() {
 
-    private val repositoryAuthentication = RepositoryAuthentication.instance
-
     private val _navigateToActivitySignIn = MutableLiveData<Boolean>()
     val navigateToActivitySignIn: LiveData<Boolean>
         get() = _navigateToActivitySignIn
@@ -18,21 +16,6 @@ class ViewModelInitial : ViewModel() {
     private val _navigateToActivitySignUp = MutableLiveData<Boolean>()
     val navigateToActivitySignUp: LiveData<Boolean>
         get() = _navigateToActivitySignUp
-
-    private val _isLoggedRole = MutableLiveData<String?>()
-    val isLoggedRole: LiveData<String?>
-        get() = _isLoggedRole
-
-    fun validateSession() {
-        viewModelScope.launch {
-            val user = repositoryAuthentication.getCurrentUser()
-            if (user != null) {
-                _isLoggedRole.value = user.role
-            } else {
-                _isLoggedRole.value = null
-            }
-        }
-    }
 
     fun onSignInClicked() {
         _navigateToActivitySignIn.value = true

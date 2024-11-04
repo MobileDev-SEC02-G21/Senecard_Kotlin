@@ -73,10 +73,12 @@ class ActivitySignUpStoreOwner1 : AppCompatActivity() {
         viewModelSignUpStoreOwner1.message.observe(this) { message ->
             when (message) {
                 "name_empty" -> showMessage(getString(R.string.sign_up_store_owner_1_name_empty))
+                "name_invalid" -> showMessage(getString(R.string.sign_up_uniandes_member_name_empty))
                 "email_empty" -> showMessage(getString(R.string.sign_up_store_owner_1_email_empty))
                 "phone_empty" -> showMessage(getString(R.string.sign_up_store_owner_1_phone_empty))
                 "password_empty" -> showMessage(getString(R.string.sign_up_store_owner_1_password_empty))
                 "confirm_password_empty" -> showMessage(getString(R.string.sign_up_store_owner_1_confirm_password_empty))
+                "no_spaces_allowed" -> showMessage("Please spaces are not allowed here")
                 "email_invalid" -> showMessage(getString(R.string.sign_up_store_owner_1_email_invalid))
                 "password_short" -> showMessage(getString(R.string.sign_up_store_owner_1_password_short))
                 "passwords_not_equals" -> showMessage(getString(R.string.sign_up_store_owner_1_passwords_not_equals))

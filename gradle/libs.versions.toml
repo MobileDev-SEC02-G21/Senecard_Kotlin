@@ -1,6 +1,7 @@
 [versions]
 agp = "8.5.2"
 androidxActivityActivityCompose4 = "1.8.0"
+coreSplashscreen = "1.0.1"
 firebaseBom = "33.3.0"
 firebaseStorage = "21.0.0"
 fragmentKtx = "1.8.3"
@@ -41,6 +42,7 @@ core = "3.5.3"
 [libraries]
 androidx-activity-activity-compose-v180-x5 = { module = "androidx.activity:activity-compose", version.ref = "androidxActivityActivityCompose4" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
 androidx-fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragmentKtx" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
 androidx-material = { module = "androidx.compose.material:material", version.ref = "materialVersion" }
