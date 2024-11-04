@@ -1,0 +1,4 @@
+package com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerAdvertisementsCreate
+
+class ViewModelBusinessOwnerAdvertisementsCreate {
+}
