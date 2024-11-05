@@ -144,6 +144,7 @@
 
         <activity android:name=".activitiesBusinessOwner.activityBusinessOwnerAdvertisements.ActivityBusinessOwnerAdvertisements" />
 
+        <activity android:name=".activitiesBusinessOwner.activityBusinessOwnerAdvertisementsCreate.ActivityBusinessOwnerAdvertisementsCreate" />
         <!-- Servicio de Firebase Cloud Messaging -->
         <service
             android:name="MyFirebaseMessagingService"
