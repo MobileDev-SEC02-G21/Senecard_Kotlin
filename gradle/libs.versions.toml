@@ -37,6 +37,7 @@ cameraLifecycle = "1.5.0-alpha01"
 cameraView = "1.5.0-alpha01"
 zxingAndroidEmbedded = "4.3.0"
 core = "3.5.3"
+firebaseCrashlyticsBuildtools = "3.0.2"
 
 [libraries]
 androidx-activity-activity-compose-v180-x5 = { module = "androidx.activity:activity-compose", version.ref = "androidxActivityActivityCompose4" }
@@ -85,6 +86,7 @@ androidx-camera-lifecycle = { group = "androidx.camera", name = "camera-lifecycl
 androidx-camera-view = { group = "androidx.camera", name = "camera-view", version.ref = "cameraView" }
 zxing-android-embedded = { group = "com.journeyapps", name = "zxing-android-embedded", version.ref = "zxingAndroidEmbedded" }
 core = { group = "com.google.zxing", name = "core", version.ref = "core" }
+firebase-crashlytics-buildtools = { group = "com.google.firebase", name = "firebase-crashlytics-buildtools", version.ref = "firebaseCrashlyticsBuildtools" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
