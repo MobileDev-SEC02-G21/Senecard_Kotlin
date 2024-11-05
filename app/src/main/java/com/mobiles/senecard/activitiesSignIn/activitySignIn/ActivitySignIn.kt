@@ -111,7 +111,9 @@ class ActivitySignIn : AppCompatActivity() {
             when (message) {
                 "email_empty" -> showMessage(getString(R.string.sign_in_email_empty))
                 "password_empty" -> showMessage(getString(R.string.sign_in_password_empty))
+                "no_spaces_allowed" -> showMessage("Please spaces are not allowed here")
                 "email_invalid" -> showMessage(getString(R.string.sign_in_email_invalid))
+                "no_internet_connection" -> showMessage("No internet connection. Please check your connection and try again")
                 "error_firebase_auth" -> showMessage(getString(R.string.sign_in_error_firebase_auth), "error")
             }
         }

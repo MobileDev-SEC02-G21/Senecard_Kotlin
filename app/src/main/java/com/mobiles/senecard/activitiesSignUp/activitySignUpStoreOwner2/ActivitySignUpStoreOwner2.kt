@@ -107,7 +107,9 @@ class ActivitySignUpStoreOwner2 : AppCompatActivity() {
         viewModelSignUpStoreOwner2.message.observe(this) { message ->
             when (message) {
                 "store_name_empty" -> showMessage(getString(R.string.sign_up_store_owner_2_store_name_empty))
+                "store_name_invalid" -> showMessage(getString(R.string.sign_up_store_owner_2_store_name_empty))
                 "store_address_empty" -> showMessage(getString(R.string.sign_up_store_owner_2_store_address_empty))
+                "store_address_invalid" -> showMessage(getString(R.string.sign_up_store_owner_2_store_address_empty))
                 "store_category_empty" -> showMessage(getString(R.string.sign_up_store_owner_2_store_category_empty))
                 "store_image_empty" -> showMessage(getString(R.string.sign_up_store_owner_2_store_image_empty))
             }

@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.widget.Button
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
@@ -19,6 +20,7 @@ class ActivityHomeUniandesMemberAdvertisementList : AppCompatActivity() {
 
     private lateinit var binding: ActivityHomeUniandesMemberAdvertisementListBinding
     private val viewModelHomeUniandesMemberAdvertisementList: ViewModelHomeUniandesMemberAdvertisementList by viewModels()
+    private var selectedCategoryButton: Button? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,6 +88,23 @@ class ActivityHomeUniandesMemberAdvertisementList : AppCompatActivity() {
                 startActivity(intent, options.toBundle())
                 viewModelHomeUniandesMemberAdvertisementList.onNavigated()
             }
+        }
+    }
+
+    fun onCategoryClicked(view: View) {
+        val clickedButton = view as Button
+        val category = clickedButton.text.toString()
+
+        if (selectedCategoryButton == clickedButton) {
+            selectedCategoryButton?.setBackgroundResource(R.drawable.home_categories_scroll_button_background)
+            selectedCategoryButton = null
+            viewModelHomeUniandesMemberAdvertisementList.filterStoresByCategory("All")
+        } else {
+            selectedCategoryButton?.setBackgroundResource(R.drawable.home_categories_scroll_button_background)
+            clickedButton.setBackgroundResource(R.drawable.home_categories_scroll_button_selected_background)
+            selectedCategoryButton = clickedButton
+            viewModelHomeUniandesMemberAdvertisementList.filterStoresByCategory(category)
+
         }
     }
 }

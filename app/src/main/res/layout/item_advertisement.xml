@@ -12,7 +12,7 @@
         android:scaleType="centerCrop"
 
         android:layout_width="match_parent"
-        android:layout_height="160dp"
+        android:layout_height="130dp"
         android:layout_gravity="center_vertical" />
 
     <View
@@ -22,7 +22,7 @@
         android:foreground="@drawable/advertisement_image_foreground"
 
         android:layout_width="match_parent"
-        android:layout_height="160dp" />
+        android:layout_height="130dp" />
 
     <TextView
         android:visibility="gone"

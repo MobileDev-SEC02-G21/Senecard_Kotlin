@@ -1,10 +1,12 @@
 package com.mobiles.senecard.activitiesSignIn.activitySignIn
 
+import android.content.Context
 import android.util.Patterns
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mobiles.senecard.NetworkUtils
 import com.mobiles.senecard.model.RepositoryAuthentication
 import com.mobiles.senecard.model.RepositoryUser
 import kotlinx.coroutines.launch
@@ -48,31 +50,41 @@ class ViewModelSignIn : ViewModel() {
 
     fun enterButtonClicked(email: String, password: String) {
         viewModelScope.launch {
-            if (email.isEmpty()) {
-                _message.value = "email_empty"
-            } else if (password.isEmpty()) {
-                _message.value = "password_empty"
-            } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                _message.value = "email_invalid"
-            } else {
-                if (repositoryAuthentication.authenticateUser(email, password)) {
-                    val user = repositoryUser.getUserByEmail(email)
-                    if (user != null) {
-                        if (user.role == "businessOwner") {
-                            _navigateToActivityBusinessOwner.value = true
+            when {
+                email.isEmpty() -> {
+                    _message.value = "email_empty"
+                }
+                password.isEmpty() -> {
+                    _message.value = "password_empty"
+                }
+                email.contains(" ") || password.contains(" ") -> {
+                    _message.value = "no_spaces_allowed"
+                }
+                !Patterns.EMAIL_ADDRESS.matcher(email).matches() -> {
+                    _message.value = "email_invalid"
+                }
+                !NetworkUtils.isInternetAvailable() -> {
+                    _message.value = "no_internet_connection"
+                }
+                else -> {
+                    if (repositoryAuthentication.authenticateUser(email, password)) {
+                        val user = repositoryUser.getUserByEmail(email)
+                        if (user != null) {
+                            if (user.role == "businessOwner") {
+                                _navigateToActivityBusinessOwner.value = true
+                            } else {
+                                _navigateToActivityHomeUniandesMember.value = true
+                            }
                         } else {
-                            _navigateToActivityHomeUniandesMember.value = true
+                            _message.value = "error_firebase_auth"
                         }
                     } else {
                         _message.value = "error_firebase_auth"
                     }
-                } else {
-                    _message.value = "error_firebase_auth"
                 }
             }
         }
     }
-
 
     fun signUpTextViewClicked() {
         _navigateToActivitySignUp.value = true

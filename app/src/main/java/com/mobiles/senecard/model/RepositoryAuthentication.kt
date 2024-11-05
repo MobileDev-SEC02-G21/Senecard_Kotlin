@@ -7,6 +7,7 @@ class RepositoryAuthentication private constructor() {
 
     private val firebase = FirebaseClient.instance
     private val repositoryUser = RepositoryUser.instance
+    private var currentUser: User? = null
 
     companion object {
         val instance: RepositoryAuthentication by lazy { RepositoryAuthentication() }
@@ -31,14 +32,17 @@ class RepositoryAuthentication private constructor() {
     }
 
     suspend fun getCurrentUser(): User? {
-        val firebaseUser = firebase.auth.currentUser
-        if (firebaseUser != null) {
-            return repositoryUser.getUserByEmail(firebaseUser.email!!)
+        if (currentUser == null) {
+            val firebaseUser = firebase.auth.currentUser
+            if (firebaseUser != null) {
+                currentUser = repositoryUser.getUserByEmail(firebaseUser.email!!)
+            }
         }
-        return null
+        return currentUser
     }
 
     fun logOut() {
+        currentUser = null
         firebase.auth.signOut()
     }
 }

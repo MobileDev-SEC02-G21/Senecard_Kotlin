@@ -70,6 +70,7 @@ dependencies {
     implementation(libs.androidx.camera.camera2)
     implementation(libs.androidx.camera.lifecycle)
     implementation(libs.androidx.camera.view)
+    implementation(libs.androidx.core.splashscreen)
     implementation(libs.zxing.android.embedded)
     implementation(libs.core)
     implementation(libs.firebase.crashlytics.buildtools)
@@ -82,6 +83,7 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
 
     // Dependencies of firebase
     implementation(platform(libs.firebase.bom))

@@ -1,10 +1,12 @@
 package com.mobiles.senecard.activitiesSignUp.activitySignUpUniandesMember
 
+import android.content.Context
 import android.util.Patterns
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mobiles.senecard.NetworkUtils
 import com.mobiles.senecard.model.RepositoryAuthentication
 import com.mobiles.senecard.model.RepositoryUser
 import kotlinx.coroutines.launch
@@ -32,24 +34,33 @@ class ViewModelSignUpUniandesMember: ViewModel() {
 
     fun registerButtonClicked(name: String, email: String, phone: String, password: String, confirmPassword: String) {
         viewModelScope.launch {
-            if (name.isEmpty()) { _message.value = "name_empty" }
-            else if (email.isEmpty()) { _message.value = "email_empty" }
-            else if (phone.isEmpty()) { _message.value = "phone_empty" }
-            else if (password.isEmpty()) { _message.value = "password_empty" }
-            else if (confirmPassword.isEmpty()) { _message.value = "confirm_password_empty" }
-            else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) { _message.value = "email_invalid" }
-            else if (password.length < 7) { _message.value = "password_short" }
-            else if (password != confirmPassword) { _message.value = "passwords_not_equals" }
-            else if (repositoryUser.existsUserByEmail(email) == true) { _message.value = "user_exists" }
-            else {
-                if (repositoryAuthentication.createUser(email = email, password = password)) {
-                    if (repositoryUser.addUser(name = name, email = email, phone = phone, role = "uniandesMember")) {
-                        _navigateToActivityHomeUniandesMember.value = true
+            val nameRegex = "^(?! )[A-Za-z]+( [A-Za-z]+)*(?<! )$".toRegex()
+
+            when {
+                name.isEmpty() -> _message.value = "name_empty"
+                !nameRegex.matches(name) -> _message.value = "name_invalid"
+                email.isEmpty() -> _message.value = "email_empty"
+                phone.isEmpty() -> _message.value = "phone_empty"
+                password.isEmpty() -> _message.value = "password_empty"
+                confirmPassword.isEmpty() -> _message.value = "confirm_password_empty"
+                email.contains(" ") || phone.contains(" ") || password.contains(" ") || confirmPassword.contains(" ") -> _message.value = "no_spaces_allowed"
+                !Patterns.EMAIL_ADDRESS.matcher(email).matches() -> _message.value = "email_invalid"
+                password.length < 7 -> _message.value = "password_short"
+                password != confirmPassword -> _message.value = "passwords_not_equals"
+                !NetworkUtils.isInternetAvailable() -> {
+                    _message.value = "no_internet_connection"
+                }
+                repositoryUser.existsUserByEmail(email) == true -> _message.value = "user_exists"
+                else -> {
+                    if (repositoryAuthentication.createUser(email = email, password = password)) {
+                        if (repositoryUser.addUser(name = name, email = email, phone = phone, role = "uniandesMember")) {
+                            _navigateToActivityHomeUniandesMember.value = true
+                        } else {
+                            _message.value = "error_firebase_firestore"
+                        }
                     } else {
-                        _message.value = "error_firebase_firestore"
+                        _message.value = "error_firebase_auth"
                     }
-                } else {
-                    _message.value = "error_firebase_auth"
                 }
             }
         }

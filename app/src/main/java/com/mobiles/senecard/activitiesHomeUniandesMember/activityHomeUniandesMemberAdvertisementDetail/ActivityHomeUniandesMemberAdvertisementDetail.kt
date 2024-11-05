@@ -8,6 +8,8 @@ import com.bumptech.glide.Glide
 import com.mobiles.senecard.R
 import com.mobiles.senecard.databinding.ActivityHomeUniandesMemberAdvertisementDetailBinding
 import com.mobiles.senecard.model.entities.Advertisement
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class ActivityHomeUniandesMemberAdvertisementDetail : AppCompatActivity() {
 
@@ -46,8 +48,16 @@ class ActivityHomeUniandesMemberAdvertisementDetail : AppCompatActivity() {
 
                 binding.titleAdvertisementTextView.text = advertisement.title
                 binding.descriptionAdvertisementTextView.text = advertisement.description
-                binding.startDateAdvertisementTextView.text = advertisement.startDate
-                binding.endDateAdvertisementTextView.text = advertisement.endDate
+                binding.startDateAdvertisementTextView.text = advertisement.startDate?.let {
+                    formatDate(
+                        it
+                    )
+                }
+                binding.endDateAdvertisementTextView.text = advertisement.endDate?.let {
+                    formatDate(
+                        it
+                    )
+                }
 
                 binding.loadingAnimation.visibility = View.GONE
                 binding.backgroundLinearLayout.visibility = View.GONE
@@ -62,6 +72,18 @@ class ActivityHomeUniandesMemberAdvertisementDetail : AppCompatActivity() {
                 overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
             }
 
+        }
+    }
+    private fun formatDate(dateStr: String): String {
+        return try {
+
+            val inputFormat = SimpleDateFormat("yyyyMMdd", Locale.getDefault())
+            val outputFormat = SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH)
+
+            val date = inputFormat.parse(dateStr)
+            outputFormat.format(date ?: "")
+        } catch (e: Exception) {
+            dateStr
         }
     }
 }

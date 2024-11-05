@@ -69,16 +69,19 @@ class ActivitySignUpUniandesMember : AppCompatActivity() {
         viewModelSignUpUniandesMember.message.observe(this) { message ->
             when (message) {
                 "name_empty" -> showMessage(getString(R.string.sign_up_uniandes_member_name_empty))
+                "name_invalid" -> showMessage(getString(R.string.sign_up_uniandes_member_name_empty))
                 "email_empty" -> showMessage(getString(R.string.sign_up_uniandes_member_email_empty))
                 "phone_empty" -> showMessage(getString(R.string.sign_up_uniandes_member_phone_empty))
                 "password_empty" -> showMessage(getString(R.string.sign_up_uniandes_member_password_empty))
                 "confirm_password_empty" -> showMessage(getString(R.string.sign_up_uniandes_member_confirm_password_empty))
+                "no_spaces_allowed" -> showMessage("Please spaces are not allowed here")
                 "email_invalid" -> showMessage(getString(R.string.sign_up_uniandes_member_email_invalid))
                 "password_short" -> showMessage(getString(R.string.sign_up_uniandes_member_password_short))
                 "passwords_not_equals" -> showMessage(getString(R.string.sign_up_uniandes_member_passwords_not_equals))
-                "user_exists" -> showMessage(getString(R.string.sign_up_uniandes_member_user_exists))
-                "error_firebase_auth" -> showMessage(getString(R.string.sign_up_uniandes_member_error_firebase_auth))
-                "error_firebase_firestore" -> showMessage(getString(R.string.sign_up_uniandes_member_error_firebase_firestore))
+                "no_internet_connection" -> showMessage("No internet connection. Please check your connection and try again", "error")
+                "user_exists" -> showMessage(getString(R.string.sign_up_uniandes_member_user_exists), "error")
+                "error_firebase_auth" -> showMessage(getString(R.string.sign_up_uniandes_member_error_firebase_auth), "error")
+                "error_firebase_firestore" -> showMessage(getString(R.string.sign_up_uniandes_member_error_firebase_firestore), "error")
             }
         }
     }

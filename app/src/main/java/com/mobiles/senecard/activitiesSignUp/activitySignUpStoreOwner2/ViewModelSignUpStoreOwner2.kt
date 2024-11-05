@@ -23,8 +23,13 @@ class ViewModelSignUpStoreOwner2: ViewModel() {
         get() = _message
 
     fun nextButtonClicked(storeName: String, storeAddress: String, storeCategory: String, storeImage: Uri?) {
+        val nameRegex = "^(?! )[A-Za-z]+( [A-Za-z]+)*(?<! )$".toRegex()
+        val addressRegex = "^(?! )[A-Za-z0-9\\s.,'#-]*\\S[A-Za-z0-9\\s.,'#-]*(?<! )$".toRegex()
+
         if (storeName.isEmpty()) { _message.value = "store_name_empty" }
+        else if (!nameRegex.matches(storeName)) { _message.value = "store_name_invalid" }
         else if (storeAddress.isEmpty()) { _message.value = "store_address_empty" }
+        else if (!addressRegex.matches(storeAddress)) { _message.value = "store_address_invalid" }
         else if (storeImage == null) { _message.value = "store_image_empty" }
         else {
             signUpStore.name = storeName
