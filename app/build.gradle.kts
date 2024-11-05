@@ -73,6 +73,7 @@ dependencies {
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.zxing.android.embedded)
     implementation(libs.core)
+    implementation(libs.firebase.crashlytics.buildtools)
 
     // Dependencies of tests
     testImplementation(libs.junit)
@@ -92,6 +93,7 @@ dependencies {
     implementation(libs.firebase.storage)
     implementation("com.google.firebase:firebase-messaging")
     implementation ("com.google.firebase:firebase-messaging-ktx")
+    implementation ("com.google.code.gson:gson:2.8.8")
 
     // Librería ZXING
     implementation ("com.journeyapps:zxing-android-embedded:4.3.0")
