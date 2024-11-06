@@ -26,10 +26,6 @@ class ActivityBusinessOwnerAdvertisements : AppCompatActivity() {
         binding = ActivityBusinessOwnerAdvertisementsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Retrieve the extras
-        businessOwnerId = intent.getStringExtra("businessOwnerId")
-        storeId = intent.getStringExtra("storeId")
-        storeName = intent.getStringExtra("storeName")
 
         // Sample advertisement data (for testing purposes)
         advertisements.addAll(
