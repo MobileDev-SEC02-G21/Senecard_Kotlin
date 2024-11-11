@@ -9,33 +9,32 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/tertiary"
         android:padding="16dp">
 
         <!-- Menu Icon -->
         <ImageButton
             android:id="@+id/menuButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@drawable/circle_background"
             android:src="@drawable/menu_vector_asset"
-            android:backgroundTint="@color/secondary"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Menu"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="16dp"
-            app:tint="@android:color/black" />
+            app:tint="@color/black" />
 
         <!-- QR Icon -->
         <ImageButton
             android:id="@+id/qrButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@drawable/circle_background"
             android:src="@drawable/qr_code_scanner"
-            android:backgroundTint="@color/secondary"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="QR Scanner"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="16dp"
-            app:tint="@android:color/black" />
+            app:tint="@color/black" />
 
         <!-- Welcome message -->
         <TextView
@@ -44,97 +43,106 @@
             android:layout_height="wrap_content"
             android:text="Welcome Back To Senecard!"
             android:textSize="18sp"
-            android:textStyle="bold"
+            android:fontFamily="@font/sen_bold"
+            android:textColor="@color/text_highlight"
             app:layout_constraintTop_toBottomOf="@id/menuButton"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            android:layout_marginTop="16dp" />
+            app:layout_constraintHorizontal_bias="0.5" />
 
-        <!-- You’ve had Label -->
         <TextView
             android:id="@+id/youveHadTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:fontFamily="@font/sen_regular"
             android:text="You’ve had"
+            android:textColor="@color/text"
             android:textSize="16sp"
-            app:layout_constraintTop_toBottomOf="@id/welcomeTextView"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="8dp" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/welcomeTextView" />
 
-        <!-- Half-Circle with Today's Customers Count -->
         <TextView
             android:id="@+id/todayCustomersTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="30"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/half_circle_background"
+            android:gravity="center"
+            android:padding="16dp"
+            android:text="0"
+            android:textColor="@android:color/white"
             android:textSize="50sp"
             android:textStyle="bold"
-            android:gravity="center"
-            android:textColor="@android:color/white"
-            android:background="@drawable/half_circle_background"
-            app:layout_constraintTop_toBottomOf="@id/youveHadTextView"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:padding="16dp"
-            android:layout_marginTop="16dp" />
+            app:layout_constraintHorizontal_bias="0.497"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/youveHadTextView" />
 
-        <!-- Customer scanned today text -->
         <TextView
             android:id="@+id/customersScannedTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/sen_regular"
             android:text="Customers scanned today. Keep up the good work!"
+            android:textColor="@color/text"
             android:textSize="14sp"
-            app:layout_constraintTop_toBottomOf="@id/todayCustomersTextView"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="8dp" />
+            app:layout_constraintHorizontal_bias="0.488"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/todayCustomersTextView" />
 
-        <!-- Business rating stars -->
         <TextView
             android:id="@+id/ratingLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="72dp"
+            android:fontFamily="@font/sen_regular"
             android:text="Current Business average Rating"
+            android:textColor="@color/text"
             android:textSize="14sp"
-            app:layout_constraintTop_toBottomOf="@id/customersScannedTextView"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="16dp" />
+            app:layout_constraintHorizontal_bias="0.496"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/customersScannedTextView" />
 
         <RatingBar
             android:id="@+id/ratingBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:isIndicator="true"
             android:numStars="5"
             android:rating="4.5"
-            app:layout_constraintTop_toBottomOf="@id/ratingLabel"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="8dp"
-            android:isIndicator="true" />
+            app:layout_constraintHorizontal_bias="0.496"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ratingLabel" />
 
         <!-- Advertisements Button -->
         <Button
             android:id="@+id/advertisementsButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="YOU HAVE 3 ADVERTISEMENTS ACTIVE"
-            android:textStyle="bold"
+            android:background="@drawable/rounded_background"
+            android:backgroundTint="@color/primary"
+            android:fontFamily="@font/sen_bold"
             android:padding="16dp"
+            android:text="YOU HAVE 0 ADVERTISEMENTS ACTIVE"
+            android:textColor="@color/white"
             android:textSize="14sp"
-            android:background="@drawable/advertisements_button_background"
-            app:layout_constraintTop_toBottomOf="@id/ratingBar"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="16dp" />
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ratingBar"
+            app:layout_constraintVertical_bias="0.949" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- Sliding Options Menu -->
+    <!-- Sliding Options Menu (Side Menu) -->
     <LinearLayout
         android:id="@+id/options_menu"
         android:layout_width="280dp"
@@ -150,21 +158,22 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:src="@drawable/arrow_back"
-            android:background="@drawable/circular_background"
-            android:layout_gravity="start"
+            android:background="@drawable/circle_background"
+            android:contentDescription="Back"
             app:tint="@android:color/white" />
 
-        <!-- Options -->
+        <!-- Options Title -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Options"
             android:textSize="18sp"
-            android:textStyle="bold"
+            android:fontFamily="@font/sen_bold"
+            android:textColor="@color/text_highlight"
             android:layout_marginTop="24dp"
-            android:layout_gravity="center" />
+            android:gravity="center" />
 
-        <!-- Buttons with custom dialog background -->
+        <!-- Side Menu Buttons -->
         <Button
             android:id="@+id/loyaltyButton"
             android:layout_width="match_parent"
@@ -172,9 +181,7 @@
             android:text="Loyalty"
             android:layout_marginTop="16dp"
             android:background="@drawable/custom_dialog_button_background"
-            android:textColor="@android:color/black"
-            android:backgroundTint="@color/white"
-            android:gravity="center" />
+            android:textColor="@android:color/black" />
 
         <Button
             android:id="@+id/advertisementsMenuButton"
@@ -183,9 +190,7 @@
             android:text="Advertisements"
             android:layout_marginTop="16dp"
             android:background="@drawable/custom_dialog_button_background"
-            android:textColor="@android:color/black"
-            android:backgroundTint="@color/white"
-            android:gravity="center" />
+            android:textColor="@android:color/black" />
 
         <Button
             android:id="@+id/profileButton"
@@ -194,9 +199,7 @@
             android:text="Profile"
             android:layout_marginTop="16dp"
             android:background="@drawable/custom_dialog_button_background"
-            android:textColor="@android:color/black"
-            android:backgroundTint="@color/white"
-            android:gravity="center" />
+            android:textColor="@android:color/black" />
 
         <Button
             android:id="@+id/logoutButton"
@@ -205,9 +208,7 @@
             android:text="Log Out"
             android:layout_marginTop="16dp"
             android:background="@drawable/custom_dialog_button_background"
-            android:textColor="@android:color/black"
-            android:backgroundTint="@color/white"
-            android:gravity="center" />
+            android:textColor="@android:color/black" />
 
     </LinearLayout>
 
