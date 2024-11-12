@@ -155,11 +155,13 @@
             android:layout_height="wrap_content"
             android:hint="Description"
             android:padding="12dp"
+            android:minHeight="120dp"
             android:background="@drawable/rounded_background"
             android:backgroundTint="@color/lightgray"
             android:textColor="@color/text"
             android:fontFamily="@font/sen_regular"
-            android:layout_marginTop="4dp" />
+            android:layout_marginTop="4dp"
+            android:gravity="top|start"/>
     </LinearLayout>
 
     <!-- Save Button -->
@@ -167,7 +169,7 @@
         android:id="@+id/saveButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="76dp"
+        android:layout_marginTop="28dp"
         android:background="@drawable/rounded_background"
         android:backgroundTint="@color/primary"
         android:fontFamily="@font/sen_bold"
