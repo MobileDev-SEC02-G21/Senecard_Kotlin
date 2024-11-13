@@ -5,7 +5,7 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerLandingPage.ActivityBusinessOwnerLandingPage
+import com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerLandingPage.ActivityBusinessOwnerProfile
 import com.mobiles.senecard.activitiesHomeUniandesMember.activityHomeUniandesMember.ActivityHomeUniandesMember
 import com.mobiles.senecard.activitiesInitial.activityInitial.ActivityInitial
 
@@ -34,7 +34,7 @@ class ActivitySplash : AppCompatActivity() {
         val role = viewModelSplash.isLoggedRole.value
         val intent = when (role) {
             "uniandesMember" -> Intent(this, ActivityHomeUniandesMember::class.java)
-            "businessOwner" -> Intent(this, ActivityBusinessOwnerLandingPage::class.java)
+            "businessOwner" -> Intent(this, ActivityBusinessOwnerProfile::class.java)
             else -> Intent(this, ActivityInitial::class.java)
         }
         startActivity(intent)

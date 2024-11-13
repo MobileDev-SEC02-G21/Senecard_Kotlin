@@ -9,7 +9,7 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.mobiles.senecard.R
-import com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerLandingPage.ActivityBusinessOwnerLandingPage
+import com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerLandingPage.ActivityBusinessOwnerProfile
 import com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerRedeemLoyalty.ActivityBusinessOwnerRedeemLoyalty
 
 class ActivityBusinessOwnerQRSuccess : AppCompatActivity() {
@@ -106,7 +106,7 @@ class ActivityBusinessOwnerQRSuccess : AppCompatActivity() {
 
     // Navigate to the landing page
     private fun navigateToLandingPage() {
-        val intent = Intent(this, ActivityBusinessOwnerLandingPage::class.java).apply {
+        val intent = Intent(this, ActivityBusinessOwnerProfile::class.java).apply {
             putExtra("businessOwnerId", businessOwnerId)
             flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK // Clear activity stack
         }
