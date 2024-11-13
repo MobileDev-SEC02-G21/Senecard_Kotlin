@@ -1,7 +1,5 @@
-package com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerLandingPage
+package com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerProfile
 
 enum class NavigationDestination {
-    ADVERTISEMENTS,
-    QR_SCANNER,
-    INITIAL
+    EDIT_PROFILE
 }

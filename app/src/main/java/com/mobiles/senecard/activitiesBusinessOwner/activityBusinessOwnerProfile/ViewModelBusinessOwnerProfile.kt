@@ -1,4 +1,4 @@
-package com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerLandingPage
+package com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerProfile
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -26,40 +26,15 @@ class  ViewModelBusinessOwnerProfile : ViewModel() {
         viewModelScope.launch {
             _isUser.value = repositoryAuthentication.getCurrentUser()
             _isUser.value?.id?.let { userId ->
-                getStoresRecommended(userId)
-                getAdvertisementRecommended(userId)
             }
         }
     }
 
     // Navigation methods
-    fun onAdvertisementsClicked() {
-        _navigateTo.value = NavigationDestination.ADVERTISEMENTS
-    }
-
-    fun onQrScannerClicked() {
-        _navigateTo.value = NavigationDestination.QR_SCANNER
-    }
 
     // Function to reset the navigation event after it's handled
     fun onNavigationHandled() {
         _navigateTo.value = null
     }
 
-    // Log out logic
-    fun logOut() {
-        viewModelScope.launch {
-            repositoryAuthentication.logOut()
-            _navigateTo.value = NavigationDestination.INITIAL
-        }
-    }
-
-    // Stub functions for recommended stores and advertisements
-    private fun getStoresRecommended(userId: String) {
-        // Retrieve recommended stores based on the user ID
-    }
-
-    private fun getAdvertisementRecommended(userId: String) {
-        // Retrieve recommended advertisements based on the user ID
-    }
 }
