@@ -1,0 +1,65 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:minWidth="280dp"
+    android:background="@drawable/custom_dialog_rounded_background"
+    android:gravity="center">
+
+    <!-- Error Icon -->
+    <ImageView
+        android:id="@+id/errorIcon"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@drawable/ic_error" />
+
+    <!-- Description Text -->
+    <TextView
+        android:id="@+id/errorMessageTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Error occurred"
+        android:textColor="@color/text"
+        android:fontFamily="@font/sen_bold"
+        android:textSize="16sp" />
+
+    <!-- Horizontal LinearLayout for Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="16dp"
+        android:gravity="center">
+
+        <!-- Retry Button -->
+        <Button
+            android:id="@+id/retryButton"
+            android:layout_width="48dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="@color/primary"
+            android:fontFamily="@font/sen_bold"
+            android:text="Retry"
+            android:textColor="@color/white"
+            android:background="@drawable/rounded_background"
+            android:textSize="14sp"
+            android:layout_marginEnd="8dp"/>
+
+        <!-- Cancel Button -->
+        <Button
+            android:id="@+id/cancelButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/primary"
+            android:fontFamily="@font/sen_bold"
+            android:text="Cancel"
+            android:textColor="@color/white"
+            android:background="@drawable/rounded_background"
+            android:textSize="14sp"
+            android:layout_marginStart="8dp"/>
+    </LinearLayout>
+</LinearLayout>

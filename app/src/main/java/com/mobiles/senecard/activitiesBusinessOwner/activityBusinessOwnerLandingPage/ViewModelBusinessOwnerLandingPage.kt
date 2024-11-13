@@ -22,6 +22,15 @@ class  ViewModelBusinessOwnerLandingPage : ViewModel() {
     val averageRating = MutableLiveData<Float>()
     val advertisementsCount = MutableLiveData<Int>()
 
+    private val _uiState = MutableLiveData<UiState>()
+    val uiState: LiveData<UiState> get() = _uiState
+
+    private val _errorMessage = MutableLiveData<String?>()
+    val errorMessage: LiveData<String?> get() = _errorMessage
+
+    private val _infoMessage = MutableLiveData<String?>()
+    val infoMessage: LiveData<String?> get() = _infoMessage
+
     // LiveData for navigation destination
     private val _navigateTo = MutableLiveData<NavigationDestination?>()
     val navigateTo: LiveData<NavigationDestination?> get() = _navigateTo
@@ -31,8 +40,7 @@ class  ViewModelBusinessOwnerLandingPage : ViewModel() {
         viewModelScope.launch {
             _isUser.value = repositoryAuthentication.getCurrentUser()
             _isUser.value?.id?.let { userId ->
-                getStoresRecommended(userId)
-                getAdvertisementRecommended(userId)
+
             }
         }
     }
@@ -59,12 +67,25 @@ class  ViewModelBusinessOwnerLandingPage : ViewModel() {
         }
     }
 
-    // Stub functions for recommended stores and advertisements
-    private fun getStoresRecommended(userId: String) {
-        // Retrieve recommended stores based on the user ID
+    // Functions to set or clear informational and error messages
+    fun showInformation(message: String) {
+        _infoMessage.value = message
+        _uiState.value = UiState.INFORMATION
     }
 
-    private fun getAdvertisementRecommended(userId: String) {
-        // Retrieve recommended advertisements based on the user ID
+    fun clearInfoMessage() {
+        _infoMessage.value = null
+    }
+
+    fun clearErrorMessage() {
+        _errorMessage.value = null
+    }
+
+    fun onErrorCancel() {
+        TODO("Not yet implemented")
+    }
+
+    fun onInformationAcknowledged() {
+        TODO("Not yet implemented")
     }
 }
