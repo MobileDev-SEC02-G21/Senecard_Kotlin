@@ -56,7 +56,7 @@
             android:layout_weight="1"
             android:backgroundTint="@color/primary"
             android:fontFamily="@font/sen_bold"
-            android:text="Cancel"
+            android:text="Logout"
             android:textColor="@color/white"
             android:background="@drawable/rounded_background"
             android:textSize="14sp"

@@ -186,8 +186,8 @@ class ActivityBusinessOwnerLandingPage : AppCompatActivity() {
         }
 
         errorDialog.findViewById<Button>(R.id.cancelButton).setOnClickListener {
-            viewModel.onErrorCancel() // Optional cancel action in ViewModel
             errorDialog.dismiss()
+            redirectToInitial() // Optional logout option
         }
 
         errorDialog.show()
