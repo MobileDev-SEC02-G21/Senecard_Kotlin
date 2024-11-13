@@ -17,6 +17,11 @@ class  ViewModelBusinessOwnerLandingPage : ViewModel() {
     private val _isUser = MutableLiveData<User?>()
     val isUser: LiveData<User?> get() = _isUser
 
+    // Observable variables from front
+    val todayCustomers = MutableLiveData<Int>()
+    val averageRating = MutableLiveData<Float>()
+    val advertisementsCount = MutableLiveData<Int>()
+
     // LiveData for navigation destination
     private val _navigateTo = MutableLiveData<NavigationDestination?>()
     val navigateTo: LiveData<NavigationDestination?> get() = _navigateTo

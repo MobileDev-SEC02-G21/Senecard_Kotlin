@@ -1,5 +1,6 @@
 package com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerLandingPage
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
@@ -58,11 +59,21 @@ class ActivityBusinessOwnerLandingPage : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun setupObservers() {
-        // Observe user data or other relevant data here
-        viewModel.isUser.observe(this) { user ->
-            // Update UI with user info if needed, e.g.:
-            // binding.usernameTextView.text = user?.name
+        // Update todayCustomersTextView with customer count
+        viewModel.todayCustomers.observe(this) { count ->
+            binding.todayCustomersTextView.text = count.toString()
+        }
+
+        // Update ratingBar with average rating
+        viewModel.averageRating.observe(this) { rating ->
+            binding.ratingBar.rating = rating
+        }
+
+        // Update advertisementsButton with the number of active advertisements
+        viewModel.advertisementsCount.observe(this) { count ->
+            binding.advertisementsButton.text = "YOU HAVE $count ADVERTISEMENTS ACTIVE"
         }
 
         // Navigation function

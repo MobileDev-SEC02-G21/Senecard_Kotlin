@@ -160,7 +160,7 @@
             android:src="@drawable/arrow_back"
             android:background="@drawable/circle_background"
             android:contentDescription="Back"
-            app:tint="@android:color/black" />
+            android:backgroundTint="@color/primary" />
 
         <!-- Options Title -->
         <TextView
