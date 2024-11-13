@@ -100,7 +100,7 @@
         </activity>
 
         <activity
-            android:name=".activitiesBusinessOwner.activityBusinessOwnerLandingPage.ActivityBusinessOwnerLandingPage"
+            android:name=".activitiesBusinessOwner.activityBusinessOwnerLandingPage.ActivityBusinessOwnerProfile"
             android:exported="true"
             android:screenOrientation="portrait"
             tools:ignore="DiscouragedApi,LockedOrientationActivity">
@@ -135,12 +135,15 @@
             android:name=".activitiesBusinessOwner.activityBusinessOwnerQRSuccess.ActivityBusinessOwnerQRSuccess"
             android:label="Success Transaction" />
 
-        <activity
-            android:name=".activitiesBusinessOwner.activityBusinessOwnerRedeemLoyalty.ActivityBusinessOwnerRedeemLoyalty"
-            android:label="Redeem loyalty" />
 
         <activity android:name=".activitiesBusinessOwner.activityBusinessOwnerQRScanner.ActivityBusinessOwnerQRScanner"
             android:label="QR Scanner" />
+
+        <activity android:name=".activitiesBusinessOwner.activityBusinessOwnerEditLoyalty.ActivityBusinessOwnerEditLoyalty"
+            android:label="Edit Loyalty" />
+
+        <activity android:name=".activitiesBusinessOwner.activityBusinessOwnerEditProfile.ActivityBusinessOwnerEditProfile"
+            android:label="Edit Profile" />
 
         <activity android:name=".activitiesBusinessOwner.activityBusinessOwnerAdvertisements.ActivityBusinessOwnerAdvertisements" />
 
