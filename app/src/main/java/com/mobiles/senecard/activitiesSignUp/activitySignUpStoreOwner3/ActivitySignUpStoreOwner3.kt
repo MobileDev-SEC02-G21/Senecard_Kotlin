@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
 import com.mobiles.senecard.CustomDialog
 import com.mobiles.senecard.R
-import com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerLandingPage.ActivityBusinessOwnerProfile
+import com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerLandingPage.ActivityBusinessOwnerLandingPage
 import com.mobiles.senecard.activitiesSignUp.activitySignUpStoreOwner2.ActivitySignUpStoreOwner2
 import com.mobiles.senecard.databinding.ActivitySignUpStoreOwner3Binding
 
@@ -84,7 +84,7 @@ class ActivitySignUpStoreOwner3 : AppCompatActivity() {
         viewModelSignUpStoreOwner3.navigateToActivityBusinessOwner.observe(this) { navigate ->
             if (navigate) {
                 Toast.makeText(this, getString(R.string.sign_up_store_owner_3_register_succesfully), Toast.LENGTH_SHORT).show()
-                val homeIntent = Intent(this, ActivityBusinessOwnerProfile::class.java).apply {
+                val homeIntent = Intent(this, ActivityBusinessOwnerLandingPage::class.java).apply {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 }
                 startActivity(homeIntent)

@@ -160,7 +160,7 @@
             android:src="@drawable/arrow_back"
             android:background="@drawable/circle_background"
             android:contentDescription="Back"
-            app:tint="@android:color/white" />
+            app:tint="@android:color/black" />
 
         <!-- Options Title -->
         <TextView
@@ -180,7 +180,8 @@
             android:layout_height="wrap_content"
             android:text="Loyalty"
             android:layout_marginTop="16dp"
-            android:background="@drawable/custom_dialog_button_background"
+            android:background="@drawable/circle_background"
+            android:backgroundTint="@color/white"
             android:textColor="@android:color/black" />
 
         <Button
@@ -189,7 +190,8 @@
             android:layout_height="wrap_content"
             android:text="Advertisements"
             android:layout_marginTop="16dp"
-            android:background="@drawable/custom_dialog_button_background"
+            android:background="@drawable/circle_background"
+            android:backgroundTint="@color/white"
             android:textColor="@android:color/black" />
 
         <Button
@@ -198,7 +200,8 @@
             android:layout_height="wrap_content"
             android:text="Profile"
             android:layout_marginTop="16dp"
-            android:background="@drawable/custom_dialog_button_background"
+            android:background="@drawable/circle_background"
+            android:backgroundTint="@color/white"
             android:textColor="@android:color/black" />
 
         <Button
@@ -207,7 +210,8 @@
             android:layout_height="wrap_content"
             android:text="Log Out"
             android:layout_marginTop="16dp"
-            android:background="@drawable/custom_dialog_button_background"
+            android:background="@drawable/circle_background"
+            android:backgroundTint="@color/white"
             android:textColor="@android:color/black" />
 
     </LinearLayout>

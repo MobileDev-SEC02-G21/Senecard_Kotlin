@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
 import com.mobiles.senecard.CustomDialog
 import com.mobiles.senecard.R
-import com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerLandingPage.ActivityBusinessOwnerProfile
+import com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerLandingPage.ActivityBusinessOwnerLandingPage
 import com.mobiles.senecard.activitiesHomeUniandesMember.activityHomeUniandesMember.ActivityHomeUniandesMember
 import com.mobiles.senecard.activitiesInitial.activityInitial.ActivityInitial
 import com.mobiles.senecard.activitiesSignUp.activitySignUp.ActivitySignUp
@@ -79,7 +79,7 @@ class ActivitySignIn : AppCompatActivity() {
         viewModelSignIn.navigateToActivityBusinessOwner.observe(this) { navigate ->
             if (navigate) {
                 Toast.makeText(this, getString(R.string.sign_in_authenticate_succesfully), Toast.LENGTH_SHORT).show()
-                startActivity(Intent(this, ActivityBusinessOwnerProfile::class.java).apply {
+                startActivity(Intent(this, ActivityBusinessOwnerLandingPage::class.java).apply {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 })
                 viewModelSignIn.onNavigated()

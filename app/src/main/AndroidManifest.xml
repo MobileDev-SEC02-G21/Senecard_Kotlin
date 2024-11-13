@@ -100,7 +100,7 @@
         </activity>
 
         <activity
-            android:name=".activitiesBusinessOwner.activityBusinessOwnerLandingPage.ActivityBusinessOwnerProfile"
+            android:name=".activitiesBusinessOwner.activityBusinessOwnerLandingPage.ActivityBusinessOwnerLandingPage"
             android:exported="true"
             android:screenOrientation="portrait"
             tools:ignore="DiscouragedApi,LockedOrientationActivity">
@@ -141,6 +141,9 @@
 
         <activity android:name=".activitiesBusinessOwner.activityBusinessOwnerEditLoyalty.ActivityBusinessOwnerEditLoyalty"
             android:label="Edit Loyalty" />
+
+        <activity android:name=".activitiesBusinessOwner.activityBusinessOwnerProfile.ActivityBusinessOwnerProfile"
+            android:label="Business Owner Profile" />
 
         <activity android:name=".activitiesBusinessOwner.activityBusinessOwnerEditProfile.ActivityBusinessOwnerEditProfile"
             android:label="Edit Profile" />
