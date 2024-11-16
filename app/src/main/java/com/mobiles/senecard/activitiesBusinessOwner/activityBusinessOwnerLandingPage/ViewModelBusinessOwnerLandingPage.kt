@@ -200,7 +200,15 @@ class  ViewModelBusinessOwnerLandingPage : ViewModel() {
     }
 
     fun onQrScannerClicked() {
-        _navigateTo.value = NavigationDestination.QR_SCANNER
+        viewModelScope.launch {
+            val isOnline = withContext(Dispatchers.IO) { NetworkUtils.isInternetAvailable() }
+
+            if (isOnline) {
+                _navigateTo.value = NavigationDestination.QR_SCANNER
+            } else {
+                showInfoPopup("This functionality requires an internet connection.")
+            }
+        }
     }
 
     // Function to reset the navigation event after it's handled
@@ -215,24 +223,8 @@ class  ViewModelBusinessOwnerLandingPage : ViewModel() {
             _navigateTo.value = NavigationDestination.INITIAL
         }
     }
-
-    // Functions to set or clear informational and error messages
-    fun showInformation(message: String) {
-        _infoMessage.value = message
-        _uiState.value = UiState.INFORMATION
-    }
-
-    fun clearInfoMessage() {
-        _infoMessage.value = null
-    }
-
+    
     fun clearErrorMessage() {
-        _errorMessage.value = null
-    }
-
-    fun onErrorCancel() {
-        // Reset error state or redirect to a fallback
-        _uiState.value = UiState.ERROR
         _errorMessage.value = null
     }
 
