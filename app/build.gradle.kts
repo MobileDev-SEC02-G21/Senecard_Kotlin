@@ -98,6 +98,9 @@ dependencies {
     // Librería ZXING
     implementation ("com.journeyapps:zxing-android-embedded:4.3.0")
 
+    // Guava for Caching
+    implementation("com.google.guava:guava:32.1.2-jre")
+
     implementation(libs.lottie)
     implementation(libs.glide)
 

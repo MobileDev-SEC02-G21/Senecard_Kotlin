@@ -78,7 +78,7 @@ class ActivityBusinessOwnerLandingPage : AppCompatActivity() {
 
         // Update ratingBar with average rating
         viewModel.averageRating.observe(this) { rating ->
-            binding.ratingBar.rating = rating
+            binding.ratingBar.rating = rating?.toFloat()!!
         }
 
         // Update advertisementsButton with the number of active advertisements
@@ -94,12 +94,10 @@ class ActivityBusinessOwnerLandingPage : AppCompatActivity() {
                 UiState.ERROR -> {
                     hideLoadingPopup()
                     showErrorPopup(viewModel.errorMessage.value ?: "An unknown error occurred")
-                    viewModel.clearErrorMessage()
                 }
                 UiState.INFORMATION -> {
                     hideLoadingPopup()
-                    showInformationPopup(viewModel.infoMessage.value ?: "Info")
-                    viewModel.clearInfoMessage()
+                    showInformationPopup(viewModel.infoMessage.value ?: "Information message")
                 }
             }
         }
@@ -136,12 +134,17 @@ class ActivityBusinessOwnerLandingPage : AppCompatActivity() {
         errorDialog = Dialog(this)
         errorDialog.setContentView(R.layout.businessowner_popup_error)
         errorDialog.findViewById<Button>(R.id.retryButton).setOnClickListener {
-            viewModel.getInformation() // Retry logic
-            errorDialog.dismiss()
+            viewModel.clearErrorMessage() // Reset error message
+            viewModel.getInformation()    // Retry logic
+            errorDialog.dismiss()         // Dismiss the error popup
         }
+
         errorDialog.findViewById<Button>(R.id.cancelButton).setOnClickListener {
-            errorDialog.dismiss()
+            viewModel.cancelFetchJob()    // Cancel the ongoing fetch
+            viewModel.logOut()            // Log out the user
+            errorDialog.dismiss()         // Dismiss the error popup
         }
+
         errorDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
     }
 
