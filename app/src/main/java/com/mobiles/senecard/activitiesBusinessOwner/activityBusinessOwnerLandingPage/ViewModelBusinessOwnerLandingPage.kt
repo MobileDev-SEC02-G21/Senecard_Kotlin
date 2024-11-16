@@ -223,7 +223,7 @@ class  ViewModelBusinessOwnerLandingPage : ViewModel() {
             _navigateTo.value = NavigationDestination.INITIAL
         }
     }
-    
+
     fun clearErrorMessage() {
         _errorMessage.value = null
     }
