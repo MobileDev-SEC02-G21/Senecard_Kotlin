@@ -74,6 +74,7 @@ dependencies {
     implementation(libs.zxing.android.embedded)
     implementation(libs.core)
     implementation(libs.firebase.crashlytics.buildtools)
+    implementation(libs.play.services.mlkit.barcode.scanning)
 
     // Dependencies of tests
     testImplementation(libs.junit)

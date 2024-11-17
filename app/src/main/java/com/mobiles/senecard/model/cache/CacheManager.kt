@@ -17,7 +17,7 @@ class CacheManager<K, V>(
         cache.put(key, value)
     }
 
-    fun get(key: K): V? {
+    operator fun get(key: K): V? {
         return cache.getIfPresent(key)
     }
 

@@ -1,105 +1,144 @@
 package com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerQRScanner
 
 import android.util.Log
+import androidx.annotation.OptIn
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.ExperimentalGetImage
+import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.camera.view.PreviewView
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mobiles.senecard.model.RepositoryLoyaltyCard
-import com.mobiles.senecard.model.RepositoryUser
+import com.google.mlkit.vision.barcode.BarcodeScannerOptions
+import com.google.mlkit.vision.barcode.BarcodeScanning
+import com.google.mlkit.vision.common.InputImage
+import com.mobiles.senecard.NetworkUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 class ViewModelBusinessOwnerQRScanner : ViewModel() {
 
-    private val repositoryUser = RepositoryUser.instance
-    private val repository = RepositoryLoyaltyCard.instance
+    private val _navigationDestination = MutableLiveData<NavigationDestination?>()
+    val navigationDestination: LiveData<NavigationDestination?> = _navigationDestination
 
-    private val TAG = "LoyaltyCardsViewModel"
+    private val _uiState = MutableLiveData<UiState>()
+    val uiState: LiveData<UiState> = _uiState
 
-    private val _navigateToSuccess = MutableLiveData<Boolean>()
-    val navigateToSuccess: LiveData<Boolean> get() = _navigateToSuccess
+    private val _errorMessage = MutableLiveData<String?>()
+    val errorMessage: LiveData<String?> = _errorMessage
 
-    private val _navigateToFailure = MutableLiveData<Boolean>()
-    val navigateToFailure: LiveData<Boolean> get() = _navigateToFailure
+    private val _infoMessage = MutableLiveData<String?>()
+    val infoMessage: LiveData<String?> = _infoMessage
 
-    private val _errorMessage = MutableLiveData<String>()
-    val errorMessage: LiveData<String> get() = _errorMessage
+    private val _scannedUserId = MutableLiveData<String?>()
+    val scannedUserId: LiveData<String?> = _scannedUserId
 
-    // LiveData to hold the userId once a user is found
-    private val _userId = MutableLiveData<String?>()
-    val userId: LiveData<String?> get() = _userId
+    private var isHandlingQRCode = false
+    private lateinit var cameraExecutor: ExecutorService
 
-    // Function to process the QR code
-    fun processQRCode(qrCode: String) {
-        viewModelScope.launch {
-            Log.d("QRScannerViewModel", "Processing QR Code: $qrCode")
+    fun initializeCamera(previewView: PreviewView, lifecycleOwner: LifecycleOwner) {
+        cameraExecutor = Executors.newSingleThreadExecutor()
 
-            try {
-                // Fetch the user by QR code
-                Log.d("QRScannerViewModel", "Attempting to fetch user with ID: $qrCode")
-                val user = repositoryUser.getUserById(qrCode)
+        val cameraProviderFuture = ProcessCameraProvider.getInstance(previewView.context)
+        cameraProviderFuture.addListener({
+            val cameraProvider = cameraProviderFuture.get()
 
-                if (user != null) {
-                    Log.d("QRScannerViewModel", "User found: ${user.name}")
-                    _userId.value = qrCode // Save the user ID
-                    _navigateToSuccess.value = true
-                } else {
-                    Log.e("QRScannerViewModel", "No user found for QR Code: $qrCode")
-                    _errorMessage.value = "User not found"
-                    _navigateToFailure.value = true
-                }
-            } catch (e: Exception) {
-                Log.e("QRScannerViewModel", "Error while processing QR code: ${e.message}")
-                _errorMessage.value = "Error processing QR Code"
-                _navigateToFailure.value = true
+            val preview = androidx.camera.core.Preview.Builder().build().also {
+                it.setSurfaceProvider(previewView.surfaceProvider)
             }
-        }
-    }
 
-    // This function resets the navigation flag after the navigation is triggered
-    fun onNavigated() {
-        _navigateToSuccess.value = false
-        _navigateToFailure.value = false
-    }
-    // Método para simular la creación o actualización de una tarjeta de lealtad
-    fun simulateLoyaltyCardCreation(businessOwnerId: String, uniandesMemberId: String, storeId: String, maxPoints: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                // Agrega log aquí
-                Log.d(TAG, "Simulando creación de tarjeta: businessOwnerId=$businessOwnerId, uniandesMemberId=$uniandesMemberId, storeId=$storeId, maxPoints=$maxPoints")
+            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
-                // Verificar si ya existe una LoyaltyCard entre el businessOwner y uniandesMember
-                val existingCard = repository.getLoyaltyCardByUserAndStore(uniandesMemberId, storeId)
-
-                // Agrega log para verificar si se encontró una tarjeta existente
-                if (existingCard != null) {
-                    Log.d(TAG, "Tarjeta existente encontrada: ${existingCard.id} con puntos: ${existingCard.points}")
-
-                    // Si la tarjeta ya existe, verificar los puntos
-                    if (existingCard.points < maxPoints) {
-                        // Incrementar los puntos si no se ha alcanzado el máximo
-                        existingCard.points += 1
-                        repository.updateLoyaltyCard(existingCard)
-                        Log.d(TAG, "Puntos incrementados. Ahora tienes ${existingCard.points} puntos.")
-                    } else {
-                        // Si alcanzó el máximo de puntos, marcar la tarjeta como inactiva
-                        existingCard.isCurrent = false
-                        repository.updateLoyaltyCard(existingCard)
-                        Log.d(TAG, "Has alcanzado el máximo de puntos (${existingCard.maxPoints}). La tarjeta está inactiva.")
+            val imageAnalyzer = androidx.camera.core.ImageAnalysis.Builder()
+                .setBackpressureStrategy(androidx.camera.core.ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                .build()
+                .also {
+                    it.setAnalyzer(cameraExecutor) { imageProxy ->
+                        processImageProxy(imageProxy)
                     }
-                } else {
-                    // Si no existe, crear una nueva LoyaltyCard
-                    val message = repository.addOrUpdateLoyaltyCard(
-                        uniandesMemberId = uniandesMemberId,
-                        storeId = storeId,
-                        maxPoints = maxPoints
-                    )
-                    Log.d(TAG, message)  // Log del mensaje retornado por la creación de la tarjeta
                 }
+
+            try {
+                cameraProvider.unbindAll()
+                cameraProvider.bindToLifecycle(
+                    lifecycleOwner,
+                    cameraSelector,
+                    preview,
+                    imageAnalyzer
+                )
             } catch (e: Exception) {
-                Log.e(TAG, "Error creando o actualizando LoyaltyCard: ${e.message}")
+                Log.e("QRScanner", "Camera initialization failed", e)
             }
+        }, ContextCompat.getMainExecutor(previewView.context))
+    }
+
+    private val barcodeScanner = BarcodeScanning.getClient(
+        BarcodeScannerOptions.Builder()
+            .setBarcodeFormats(com.google.mlkit.vision.barcode.common.Barcode.FORMAT_QR_CODE)
+            .build()
+    )
+
+    @OptIn(ExperimentalGetImage::class)
+    private fun processImageProxy(imageProxy: androidx.camera.core.ImageProxy) {
+        val mediaImage = imageProxy.image
+        if (mediaImage != null) {
+            val image = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
+            barcodeScanner.process(image)
+                .addOnSuccessListener { barcodes ->
+                    for (barcode in barcodes) {
+                        handleQRCode(barcode.rawValue)
+                        break // Process only the first QR code
+                    }
+                }
+                .addOnFailureListener { e ->
+                    Log.e("QRScanner", "QR code processing failed", e)
+                }
+                .addOnCompleteListener {
+                    imageProxy.close()
+                }
+        } else {
+            imageProxy.close()
         }
+    }
+
+    private fun handleQRCode(qrCodeValue: String?) {
+        if (isHandlingQRCode) return // Prevent redundant execution
+
+        isHandlingQRCode = true
+
+        qrCodeValue?.let { userId ->
+            if (!NetworkUtils.isInternetAvailable()) {
+                _uiState.value = UiState.INFORMATION
+                _infoMessage.value = "QR Scanning is only available when online."
+                isHandlingQRCode = false
+                return
+            }
+
+            _scannedUserId.value = userId
+            _navigationDestination.value = NavigationDestination.QR_SUCCESS
+            isHandlingQRCode = false
+        } ?: run {
+            _uiState.value = UiState.INFORMATION
+            _infoMessage.value = "Invalid QR code. Please try again."
+            isHandlingQRCode = false
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        cameraExecutor.shutdown()
+    }
+
+    fun onInformationAcknowledged() {
+        _infoMessage.value = null
+    }
+
+    fun navigateBack() {
+        _navigationDestination.value = NavigationDestination.LANDING_PAGE
     }
 }

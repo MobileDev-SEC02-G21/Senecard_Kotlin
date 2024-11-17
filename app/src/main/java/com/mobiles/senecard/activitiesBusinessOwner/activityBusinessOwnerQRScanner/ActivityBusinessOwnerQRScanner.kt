@@ -1,146 +1,140 @@
 package com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerQRScanner
 
-import android.Manifest
+import android.app.Dialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
-import android.widget.ImageButton
+import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.ImageAnalysis
-import androidx.camera.core.ImageProxy
-import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
-import com.google.zxing.*
-import com.google.zxing.common.HybridBinarizer
 import com.mobiles.senecard.R
+import com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerLandingPage.ActivityBusinessOwnerLandingPage
 import com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerQRSuccess.ActivityBusinessOwnerQRSuccess
-import kotlinx.coroutines.launch
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
+import com.mobiles.senecard.databinding.ActivityBusinessOwnerQrScannerBinding
 
 class ActivityBusinessOwnerQRScanner : AppCompatActivity() {
 
-    private lateinit var cameraExecutor: ExecutorService
-    private var businessOwnerId: String? = null
-    private var storeId: String? = null
-    private var isProcessingQR: Boolean = false // New flag to track if a QR code is being processed
-
+    private lateinit var binding: ActivityBusinessOwnerQrScannerBinding
     private val viewModel: ViewModelBusinessOwnerQRScanner by viewModels()
+
+    // Dialog variable for information popup
+    private lateinit var informationDialog: Dialog
+
+    // Sentinel to prevent redundant navigation
+    private var isNavigating = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_business_owner_qr_scanner)
 
-        businessOwnerId = intent.getStringExtra("businessOwnerId")
-        storeId = intent.getStringExtra("storeId")
+        setupBinding()
+        setupDialog()
+        setupObservers()
+    }
 
-        findViewById<ImageButton>(R.id.backButton).setOnClickListener {
-            finish()
+    private fun setupBinding() {
+        binding = ActivityBusinessOwnerQrScannerBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        binding.backButton.setOnClickListener {
+            navigateToActivity(ActivityBusinessOwnerLandingPage::class.java)
         }
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-            startCamera()
+        binding.previewView.post {
+            checkCameraPermission()
+        }
+    }
+
+    private fun setupDialog() {
+        informationDialog = Dialog(this)
+        informationDialog.setContentView(R.layout.businessowner_popup_information)
+        informationDialog.findViewById<Button>(R.id.okButton).setOnClickListener {
+            informationDialog.dismiss()
+        }
+        informationDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+    }
+
+    private fun setupObservers() {
+        // Observe navigation updates
+        viewModel.navigationDestination.observe(this) { destination ->
+            if (isNavigating) return@observe // Prevent redundant navigation
+
+            when (destination) {
+                NavigationDestination.LANDING_PAGE -> {
+                    navigateToActivity(ActivityBusinessOwnerLandingPage::class.java)
+                }
+                NavigationDestination.QR_SUCCESS -> {
+                    isNavigating = true // Prevent further navigation
+                    val intent = Intent(this, ActivityBusinessOwnerQRSuccess::class.java).apply {
+                        putExtra("USER_ID", viewModel.scannedUserId.value)
+                    }
+                    startActivity(intent)
+                    finish()
+                }
+                else -> Unit
+            }
+        }
+
+        // Observe information messages
+        viewModel.infoMessage.observe(this) { message ->
+            message?.let {
+                showInformationPopup(it)
+                viewModel.onInformationAcknowledged()
+            }
+        }
+    }
+
+    private fun navigateToActivity(activityClass: Class<*>) {
+        startActivity(Intent(this, activityClass))
+        finish()
+    }
+
+    private fun showInformationPopup(message: String) {
+        informationDialog.findViewById<TextView>(R.id.informationMessageTextView).text = message
+        informationDialog.show()
+    }
+
+    private fun checkCameraPermission() {
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA)
+            == PackageManager.PERMISSION_GRANTED) {
+            initializeCamera()
         } else {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), 101)
-        }
-
-        cameraExecutor = Executors.newSingleThreadExecutor()
-
-        observeViewModel()
-    }
-
-    private fun observeViewModel() {
-        viewModel.navigateToSuccess.observe(this, Observer { success ->
-            Log.d("QRScannerActivity", "Navigate to success observer triggered with value: $success")
-            if (success == true) {
-
-
-                // Navigate to the success page
-                val intent = Intent(this, ActivityBusinessOwnerQRSuccess::class.java)
-                intent.putExtra("businessOwnerId", businessOwnerId)
-                intent.putExtra("storeId", storeId)
-                intent.putExtra("userId", viewModel.userId.value)
-                Log.d("QRScannerActivity", "Navigating to success page")
-                startActivity(intent)
-                viewModel.onNavigated()
-                isProcessingQR = true // Re-enable scanning after processing is done
-            }
-        })
-
-        viewModel.errorMessage.observe(this, Observer { errorMessage ->
-            errorMessage?.let {
-                Toast.makeText(this, it, Toast.LENGTH_LONG).show()
-                isProcessingQR = false // Re-enable scanning after error
-            }
-        })
-    }
-
-    private fun startCamera() {
-        val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
-        cameraProviderFuture.addListener({
-            val cameraProvider = cameraProviderFuture.get()
-
-            val preview = androidx.camera.core.Preview.Builder().build().also {
-                it.setSurfaceProvider(findViewById<androidx.camera.view.PreviewView>(R.id.previewView).surfaceProvider)
-            }
-
-            val imageAnalyzer = ImageAnalysis.Builder().build().also {
-                it.setAnalyzer(cameraExecutor, QRCodeAnalyzer { result ->
-                    handleQRCodeResult(result)
-                })
-            }
-
-            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-
-            try {
-                cameraProvider.unbindAll()
-                cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageAnalyzer)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }, ContextCompat.getMainExecutor(this))
-    }
-
-    private fun handleQRCodeResult(result: String) {
-        if (!isProcessingQR) {
-            Log.d("QRScannerActivity", "QR code result: $result")
-            Log.d("QRScannerActivity", "BusinessOwnerID: $businessOwnerId, StoreID: $storeId")
-
-            isProcessingQR = true // Set the flag to prevent further scans until processing is done
-            lifecycleScope.launch {
-                viewModel.processQRCode(result)
-            }
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(android.Manifest.permission.CAMERA),
+                CAMERA_PERMISSION_REQUEST_CODE
+            )
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        cameraExecutor.shutdown()
+    private fun initializeCamera() {
+        viewModel.initializeCamera(binding.previewView, this)
     }
 
-    private class QRCodeAnalyzer(val onQRCodeScanned: (String) -> Unit) : ImageAnalysis.Analyzer {
-        override fun analyze(imageProxy: ImageProxy) {
-            val buffer = imageProxy.planes[0].buffer
-            val bytes = ByteArray(buffer.capacity())
-            buffer.get(bytes)
-            val source = PlanarYUVLuminanceSource(bytes, imageProxy.width, imageProxy.height, 0, 0, imageProxy.width, imageProxy.height, false)
-            val binaryBitmap = BinaryBitmap(HybridBinarizer(source))
-            try {
-                val result = MultiFormatReader().decode(binaryBitmap)
-                Log.d("QRCodeAnalyzer", "Scanned QR code: ${result.text}")
-                onQRCodeScanned(result.text)
-            } catch (e: NotFoundException) {
-                Log.e("QRCodeAnalyzer", "No QR code found")
-            } finally {
-                imageProxy.close()
-            }
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == CAMERA_PERMISSION_REQUEST_CODE &&
+            grantResults.isNotEmpty() &&
+            grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            initializeCamera()
+        } else {
+            Toast.makeText(this, "Camera permission is required to scan QR codes", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        informationDialog.dismiss() // Ensure dialog is dismissed when activity pauses
+    }
+
+    companion object {
+        private const val CAMERA_PERMISSION_REQUEST_CODE = 1001
     }
 }
