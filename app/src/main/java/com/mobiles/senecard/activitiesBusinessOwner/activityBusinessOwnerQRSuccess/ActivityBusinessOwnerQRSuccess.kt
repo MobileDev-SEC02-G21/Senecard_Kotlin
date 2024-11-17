@@ -3,114 +3,151 @@ package com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerQRSucc
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
-import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import com.mobiles.senecard.R
 import com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerLandingPage.ActivityBusinessOwnerLandingPage
-import com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerRedeemLoyalty.ActivityBusinessOwnerRedeemLoyalty
+import com.mobiles.senecard.activitiesInitial.activityInitial.ActivityInitial
+import com.mobiles.senecard.databinding.ActivityBusinessOwnerQrSuccessBinding
 
 class ActivityBusinessOwnerQRSuccess : AppCompatActivity() {
 
+    private lateinit var binding: ActivityBusinessOwnerQrSuccessBinding
     private val viewModel: ViewModelBusinessOwnerQRSuccess by viewModels()
-
-    private var businessOwnerId: String? = null
-    private var storeId: String? = null
-    private var userId: String? = null
-    private var hasNavigatedToRedeem: Boolean = false // Flag to prevent multiple navigations
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_business_owner_qr_success)
 
-        // Retrieve the businessOwnerId, storeId, and userId passed from the previous activity
-        businessOwnerId = intent.getStringExtra("businessOwnerId")
-        storeId = intent.getStringExtra("storeId")
-        userId = intent.getStringExtra("userId")
+        // Initialize view binding
+        binding = ActivityBusinessOwnerQrSuccessBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        // Observe ViewModel data and handle navigation when necessary
-        observeViewModel()
+        setupObservers()
+        setupUI()
 
-        // Load the current loyalty card and purchase info
-        if (storeId != null && userId != null) {
-            viewModel.getLoyaltyCardAndPurchases(storeId!!, userId!!)
-            viewModel.getUserName(userId!!) // Fetch the user name using userId
+        // Fetch the user ID passed from the QR scanner activity
+        val userId = intent.getStringExtra("USER_ID")
+        if (userId != null) {
+            viewModel.loadCustomerData(userId)
         } else {
-            Toast.makeText(this, "Missing required data", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Error: No user ID found.", Toast.LENGTH_SHORT).show()
+            finish()
+        }
+    }
+
+    private fun setupUI() {
+        // Back button logic
+        binding.backButton.setOnClickListener {
+            navigateToActivity(ActivityBusinessOwnerLandingPage::class.java)
         }
 
-        // Button to make the stamp (create purchase and update loyalty card)
-        findViewById<Button>(R.id.makeStampButton).setOnClickListener {
-            if (storeId != null && userId != null) {
-                viewModel.makeStamp(storeId!!, userId!!)
+        // Make Stamp button logic
+        binding.makeStampButton.setOnClickListener {
+            viewModel.addStamp()
+        }
+
+        // Redeem Loyalty Card button logic
+        binding.redeemLoyaltyCardButton.setOnClickListener {
+            viewModel.redeemLoyaltyCard()
+        }
+    }
+
+    private fun setupObservers() {
+        // Observe customer name
+        viewModel.customerName.observe(this) { name ->
+            binding.customerNameTextView.text = "Customer: $name"
+        }
+
+        // Observe loyalty cards redeemed
+        viewModel.loyaltyCards.observe(this) { count ->
+            binding.loyaltyCardsTextView.text = count.toString()
+        }
+
+        // Observe current and max stamps
+        viewModel.currentStamps.observe(this) { stamps ->
+            val maxStamps = viewModel.maxStamps.value ?: 0
+            binding.stampsAwardedTextView.text = "$stamps/$maxStamps"
+        }
+
+        viewModel.maxStamps.observe(this) { maxStamps ->
+            val currentStamps = viewModel.currentStamps.value ?: 0
+            binding.stampsAwardedTextView.text = "$currentStamps/$maxStamps"
+        }
+
+        // Observe redeemable status and button states
+        viewModel.isRedeemable.observe(this) { isRedeemable ->
+            if (isRedeemable) {
+                binding.redeemLoyaltyCardButton.isEnabled = true
+                binding.redeemLoyaltyCardButton.backgroundTintList =
+                    ContextCompat.getColorStateList(this, R.color.green_highlight)
+
+                binding.makeStampButton.isEnabled = false
+                binding.makeStampButton.backgroundTintList =
+                    ContextCompat.getColorStateList(this, R.color.secondary)
             } else {
-                Toast.makeText(this, "Missing required data", Toast.LENGTH_SHORT).show()
+                binding.makeStampButton.isEnabled = true
+                binding.makeStampButton.backgroundTintList =
+                    ContextCompat.getColorStateList(this, R.color.primary)
+
+                binding.redeemLoyaltyCardButton.isEnabled = false
+                binding.redeemLoyaltyCardButton.backgroundTintList =
+                    ContextCompat.getColorStateList(this, R.color.secondary)
             }
         }
 
-        // Handle back button functionality
-        findViewById<ImageButton>(R.id.backButton).setOnClickListener {
-            navigateToLandingPage()
-        }
-    }
-
-    private fun observeViewModel() {
-        // Observe loyalty card info and navigate if points meet the requirement
-        viewModel.loyaltyCardInfo.observe(this) { loyaltyCardInfo ->
-            loyaltyCardInfo?.let {
-                // Update the UI
-                findViewById<TextView>(R.id.loyaltyCardsTextView).text = it.loyaltyCardsRedeemed.toString()
-                findViewById<TextView>(R.id.stampsAwardedTextView).text = "${it.currentPoints}/${it.maxPoints}"
-
-                // Navigate to RedeemLoyalty view if points meet the requirement and prevent multiple navigations
-                if (it.currentPoints >= it.maxPoints && !hasNavigatedToRedeem) {
-                    hasNavigatedToRedeem = true // Set the flag to true to prevent re-triggering navigation
-                    navigateToRedeemLoyaltyCard()
+        // Observe UI state for information messages
+        viewModel.uiState.observe(this) { uiState ->
+            when (uiState) {
+                UiState.INFORMATION -> {
+                    viewModel.infoMessage.value?.let { message ->
+                        showInformationPopup(message)
+                        viewModel.onInformationAcknowledged()
+                    }
                 }
+
+                else -> Unit
             }
         }
 
-        // Observe purchase success and check points again after a purchase is registered
-        viewModel.purchaseSuccess.observe(this) { success ->
-            if (success == true) {
-                Toast.makeText(this, "Purchase registered successfully", Toast.LENGTH_SHORT).show()
-                // Reload loyalty card info after purchase
-                viewModel.getLoyaltyCardAndPurchases(storeId!!, userId!!)
+        // Observe navigation destination
+        viewModel.navigationDestination.observe(this) { destination ->
+            when (destination) {
+                NavigationDestination.LANDING_PAGE -> {
+                    navigateToActivity(ActivityBusinessOwnerLandingPage::class.java)
+                }
+                NavigationDestination.INITIAL -> {
+                    navigateToActivity(ActivityInitial::class.java)
+                }
+                else -> Unit
+            }
+        }
+    }
+
+    private fun navigateToActivity(activityClass: Class<*>) {
+        startActivity(Intent(this, activityClass))
+        finish()
+    }
+
+    private fun showInformationPopup(message: String) {
+        val dialog = AlertDialog.Builder(this)
+            .setView(R.layout.businessowner_popup_information)
+            .setCancelable(false)
+            .create()
+
+        dialog.setOnShowListener {
+            val messageTextView = dialog.findViewById<TextView>(R.id.informationMessageTextView)
+            val okButton = dialog.findViewById<Button>(R.id.okButton)
+
+            messageTextView?.text = message
+            okButton?.setOnClickListener {
+                dialog.dismiss()
             }
         }
 
-        // Observe error messages
-        viewModel.errorMessage.observe(this) { message ->
-            Toast.makeText(this, message, Toast.LENGTH_LONG).show()
-        }
-
-        // Observe user name and update the UI
-        viewModel.userName.observe(this) { name ->
-            findViewById<TextView>(R.id.customerNameTextView).text = "Customer: $name"
-        }
-    }
-
-    // Navigate to the RedeemLoyalty view if loyalty card points meet the requirement
-    private fun navigateToRedeemLoyaltyCard() {
-        val intent = Intent(this, ActivityBusinessOwnerRedeemLoyalty::class.java).apply {
-            putExtra("businessOwnerId", businessOwnerId)
-            putExtra("storeId", storeId)
-            putExtra("userId", userId)
-            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK // Clear activity stack
-        }
-        startActivity(intent)
-        finish() // End current activity to prevent returning to it
-    }
-
-    // Navigate to the landing page
-    private fun navigateToLandingPage() {
-        val intent = Intent(this, ActivityBusinessOwnerLandingPage::class.java).apply {
-            putExtra("businessOwnerId", businessOwnerId)
-            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK // Clear activity stack
-        }
-        startActivity(intent)
-        finish() // End current activity
+        dialog.show()
     }
 }

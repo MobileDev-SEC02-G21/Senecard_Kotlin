@@ -3,18 +3,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/tertiary"
     android:padding="16dp">
 
+    <!-- Back Button -->
     <ImageButton
         android:id="@+id/backButton"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:src="@drawable/arrow_back"
-        android:background="?attr/selectableItemBackgroundBorderless"
+        android:background="@drawable/circle_background"
+        android:contentDescription="Back"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_margin="16dp"
-        app:tint="@android:color/darker_gray" />
+        app:tint="@color/text_highlight" />
 
     <!-- Container for everything below the back button -->
     <LinearLayout
@@ -26,7 +29,7 @@
         app:layout_constraintTop_toBottomOf="@id/backButton"
         android:layout_marginTop="16dp">
 
-        <!-- Customer Info Container with Orange Background -->
+        <!-- Customer Info Container with Primary Background -->
         <LinearLayout
             android:id="@+id/customerInfoContainer"
             android:layout_width="match_parent"
@@ -34,15 +37,16 @@
             android:orientation="vertical"
             android:gravity="center"
             android:padding="16dp"
-            android:background="@drawable/custom_loyalty_info_background">
+            android:background="@drawable/custom_dialog_rounded_background"
+            android:backgroundTint="@color/primary">
 
             <TextView
                 android:id="@+id/customerNameTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Customer: "
+                android:text="Customer:"
                 android:textSize="18sp"
-                android:textStyle="bold"
+                android:fontFamily="@font/sen_bold"
                 android:textColor="@android:color/white" />
         </LinearLayout>
 
@@ -52,7 +56,7 @@
             android:layout_height="wrap_content"
             android:text="LOYALTY CARDS REDEEMED"
             android:textSize="14sp"
-            android:textStyle="bold"
+            android:fontFamily="@font/sen_bold"
             android:textColor="@color/text"
             android:layout_marginTop="16dp" />
 
@@ -62,7 +66,7 @@
             android:layout_height="wrap_content"
             android:text="0"
             android:textSize="14sp"
-            android:textStyle="bold"
+            android:fontFamily="@font/sen_bold"
             android:textColor="@color/text"
             android:layout_marginTop="4dp" />
 
@@ -71,7 +75,7 @@
             android:layout_height="wrap_content"
             android:text="CURRENT STAMPS AWARDED"
             android:textSize="14sp"
-            android:textStyle="bold"
+            android:fontFamily="@font/sen_bold"
             android:textColor="@color/text"
             android:layout_marginTop="16dp" />
 
@@ -79,9 +83,9 @@
             android:id="@+id/stampsAwardedTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="0/20"
+            android:text="0/0"
             android:textSize="14sp"
-            android:textStyle="bold"
+            android:fontFamily="@font/sen_bold"
             android:textColor="@color/text"
             android:layout_marginTop="4dp" />
 
@@ -91,9 +95,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="MAKE STAMP"
-            android:background="@drawable/custom_dialog_button_background"
+            android:background="@drawable/rounded_background"
+            android:backgroundTint="@color/primary"
             android:textColor="@android:color/white"
-            android:textStyle="bold"
+            android:fontFamily="@font/sen_bold"
             android:padding="16dp"
             android:layout_marginTop="24dp" />
 
@@ -103,9 +108,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="REDEEMED LOYALTY CARD"
-            android:background="@drawable/custom_disabled_button_background"
+            android:background="@drawable/rounded_background"
+            android:backgroundTint="@color/secondary"
             android:textColor="@android:color/white"
-            android:textStyle="bold"
+            android:fontFamily="@font/sen_bold"
             android:padding="16dp"
             android:layout_marginTop="16dp"
             android:enabled="false" />
@@ -117,6 +123,7 @@
             android:layout_height="wrap_content"
             android:text="IS NOT AVAILABLE TO REDEEM A LOYALTY CARD"
             android:textSize="12sp"
+            android:fontFamily="@font/sen_regular"
             android:textColor="@android:color/darker_gray"
             android:gravity="center"
             android:layout_marginTop="8dp" />

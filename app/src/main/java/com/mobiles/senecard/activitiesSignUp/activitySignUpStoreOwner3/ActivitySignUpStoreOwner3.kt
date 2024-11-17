@@ -10,7 +10,6 @@ import com.mobiles.senecard.CustomDialog
 import com.mobiles.senecard.R
 import com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerLandingPage.ActivityBusinessOwnerLandingPage
 import com.mobiles.senecard.activitiesSignUp.activitySignUpStoreOwner2.ActivitySignUpStoreOwner2
-import com.mobiles.senecard.activitiesHomeUniandesMember.activityHomeUniandesMember.ActivityHomeUniandesMember
 import com.mobiles.senecard.databinding.ActivitySignUpStoreOwner3Binding
 
 class ActivitySignUpStoreOwner3 : AppCompatActivity() {

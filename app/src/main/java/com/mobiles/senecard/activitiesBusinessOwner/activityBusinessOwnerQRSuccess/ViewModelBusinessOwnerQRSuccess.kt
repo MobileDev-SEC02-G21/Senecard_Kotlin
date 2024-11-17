@@ -1,160 +1,357 @@
 package com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerQRSuccess
 
+import android.util.Log
+import android.widget.TextView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mobiles.senecard.model.RepositoryLoyaltyCard
-import com.mobiles.senecard.model.RepositoryPurchase
-import com.mobiles.senecard.model.RepositoryUser
+import com.mobiles.senecard.NetworkUtils
+import com.mobiles.senecard.R
+import com.mobiles.senecard.model.RepositoryAuthentication
+import com.mobiles.senecard.model.cache.CacheRepositoryLoyaltyCard
+import com.mobiles.senecard.model.cache.CacheRepositoryPurchase
+import com.mobiles.senecard.model.cache.CacheRepositoryStore
+import com.mobiles.senecard.model.cache.CacheRepositoryUser
+import com.mobiles.senecard.model.cache.LoyaltyCardResult
+import com.mobiles.senecard.model.cache.StoreResult
+import com.mobiles.senecard.model.cache.UserResult
 import com.mobiles.senecard.model.entities.LoyaltyCard
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import android.util.Log
-import java.time.LocalDate
+import kotlinx.coroutines.withContext
+
 
 class ViewModelBusinessOwnerQRSuccess : ViewModel() {
 
-    private val repositoryLoyaltyCard = RepositoryLoyaltyCard.instance
-    private val repositoryPurchase = RepositoryPurchase.instance
-    private val repositoryUser = RepositoryUser.instance
+    private var fetchJob: Job? = null
 
-    private val _loyaltyCardInfo = MutableLiveData<LoyaltyCardInfo>()
-    val loyaltyCardInfo: LiveData<LoyaltyCardInfo> get() = _loyaltyCardInfo
+    // Reference the singleton instance of RepositoryAuthentication
+    private val repositoryAuthentication = RepositoryAuthentication.instance
 
-    private val _errorMessage = MutableLiveData<String>()
-    val errorMessage: LiveData<String> get() = _errorMessage
+    // Repositories needed to gather data
+    private val cacheRepositoryUser = CacheRepositoryUser.instance
+    private val cacheRepositoryStore = CacheRepositoryStore.instance
+    private val cacheRepositoryPurchase = CacheRepositoryPurchase.instance
+    private val cacheRepositoryLoyaltyCard = CacheRepositoryLoyaltyCard.instance
 
-    private val _navigateToRedeemLoyalty = MutableLiveData<Boolean>()
-    val navigateToRedeemLoyalty: LiveData<Boolean> get() = _navigateToRedeemLoyalty
+    private val _customerName = MutableLiveData<String>()
+    val customerName: LiveData<String> = _customerName
 
-    private val _purchaseSuccess = MutableLiveData<Boolean>()
-    val purchaseSuccess: LiveData<Boolean> get() = _purchaseSuccess
+    private val _loyaltyCards = MutableLiveData<Int>()
+    val loyaltyCards: LiveData<Int> = _loyaltyCards
 
-    private val _userName = MutableLiveData<String>()
-    val userName: LiveData<String> get() = _userName
+    private val _currentStamps = MutableLiveData<Int>()
+    val currentStamps: LiveData<Int> = _currentStamps
 
-    fun getLoyaltyCardAndPurchases(storeId: String, userId: String) {
-        viewModelScope.launch {
-            try {
-                // Retrieve all loyalty cards for the given store and user
-                val allLoyaltyCards = repositoryLoyaltyCard.getLoyaltyCardsByStoreIdAndUniandesMemberId(storeId, userId)
-                Log.d("QRSuccessViewModel", "Current all loyalty Cards: $allLoyaltyCards")
-                // Log the total number of loyalty cards retrieved
-                Log.d("QRSuccessViewModel", "Total Loyalty Cards Retrieved: ${allLoyaltyCards.size}")
+    private val _maxStamps = MutableLiveData<Int>()
+    val maxStamps: LiveData<Int> = _maxStamps
 
-                // Filter out the active card
-                val activeLoyaltyCard = allLoyaltyCards.firstOrNull { it.isCurrent!! }
+    private val _isRedeemable = MutableLiveData<Boolean>()
+    val isRedeemable: LiveData<Boolean> = _isRedeemable
 
-                if (activeLoyaltyCard != null) {
-                    // Get the purchases associated with the active loyalty card
-                    val purchases = repositoryPurchase.getPurchasesByLoyaltyCardId(activeLoyaltyCard.id!!)
+    private val _uiState = MutableLiveData<UiState>()
+    val uiState: LiveData<UiState> = _uiState
 
-                    Log.d("QRSuccessViewModel", "Current Active card: $activeLoyaltyCard")
-                    // Calculate the redeemed loyalty cards count (non-active and fully stamped)
-                    val redeemedLoyaltyCards = allLoyaltyCards.count {
-                        !it.isCurrent!! // Redeemed cards are non-active and fully stamped
-                    }
+    private val _navigationDestination = MutableLiveData<NavigationDestination?>()
+    val navigationDestination: LiveData<NavigationDestination?> = _navigationDestination
 
-                    Log.d("QRSuccessViewModel", "Total Redeemed Cards Count: $redeemedLoyaltyCards")
+    private val _errorMessage = MutableLiveData<String?>()
+    val errorMessage: LiveData<String?> = _errorMessage
 
-                    // Update the UI with loyalty card info
-                    _loyaltyCardInfo.value = LoyaltyCardInfo(
-                        loyaltyCardsRedeemed = redeemedLoyaltyCards,
-                        currentPoints = activeLoyaltyCard.points ?: 0,
-                        maxPoints = activeLoyaltyCard.maxPoints ?: 5
-                    )
+    private val _infoMessage = MutableLiveData<String?>()
+    val infoMessage: LiveData<String?> = _infoMessage
 
-                    // Check if the loyalty card points are enough to redeem, navigate to redeem loyalty
-                    if (activeLoyaltyCard.points!! >= activeLoyaltyCard.maxPoints!!) {
-                        _navigateToRedeemLoyalty.value = true
-                    }
+    private var currentUserId: String? = null // To store the current user ID
+    private var currentStoreId: String? = null // To store the current store ID
+    private var currentLoyaltyCardId: String? = null // To store the current loyalty card ID
 
-                } else {
-                    // No active loyalty card found, create a new one
-                    val newLoyaltyCard = LoyaltyCard(
-                        storeId = storeId,
-                        uniandesMemberId = userId,
-                        maxPoints = 5,
-                        points = 0,
-                        isCurrent = true
-                    )
-                    val success = repositoryLoyaltyCard.addLoyaltyCard(newLoyaltyCard)
+    fun loadCustomerData(userId: String) {
+        _uiState.value = UiState.LOADING // Show loading popup
 
-                    if (success) {
-                        _errorMessage.value = "Created new loyalty card."
-                        // Optionally, reload the newly created loyalty card
-                        getLoyaltyCardAndPurchases(storeId, userId)
-                    } else {
-                        _errorMessage.value = "Failed to create a new loyalty card."
-                    }
-                }
+        // Cancel any existing fetch operation
+        fetchJob?.cancel()
 
-            } catch (e: Exception) {
-                Log.e("QRSuccessViewModel", "An error occurred: ${e.message}")
-                _errorMessage.value = "An error occurred: ${e.message}"
+        // Start a new fetch operation
+        fetchJob = viewModelScope.launch {
+            val isOnline = withContext(Dispatchers.IO) { NetworkUtils.isInternetAvailable() }
+
+            if (isOnline) {
+                handleOnlineCustomerFetch(userId)
+            } else {
+                // Show error popup since the activity requires an online connection
+                _uiState.value = UiState.ERROR
+                _errorMessage.value = "This activity requires an active internet connection."
             }
         }
     }
 
-
-
-    fun getUserName(userId: String) {
-        viewModelScope.launch {
-            try {
-                val user = repositoryUser.getUserById(userId)
-                if (user != null) {
-                    // Check if the name is null and provide a default value if necessary
-                    _userName.value = user.name ?: "Unknown User" // Default value if name is null
-                } else {
-                    _errorMessage.value = "Failed to fetch user information."
-                }
-            } catch (e: Exception) {
-                _errorMessage.value = "Error fetching user information: ${e.message}"
+    private suspend fun handleOnlineCustomerFetch(userId: String) {
+        try {
+            // Step 1: Get the current logged-in user
+            val authenticatedUser = repositoryAuthentication.getCurrentUser()
+            if (authenticatedUser == null || authenticatedUser.email.isNullOrBlank()) {
+                showErrorPopup("Unable to fetch authenticated user.")
+                return
             }
+
+            // Save the current user ID
+            currentUserId = authenticatedUser.id
+
+            // Step 2: Fetch the user details from the cache repository
+            val userResult = cacheRepositoryUser.getUserById(userId)
+            if (userResult is UserResult.Success) {
+                _customerName.value = userResult.user.name ?: "Unknown"
+            } else {
+                showErrorPopup("Failed to fetch user details.")
+                return
+            }
+
+            // Step 3: Fetch the store data for the current logged-in user
+            val storeResult = cacheRepositoryStore.getStoreByBusinessOwnerId(authenticatedUser.id!!)
+            if (storeResult is StoreResult.Success && storeResult.stores.isNotEmpty()) {
+                val store = storeResult.stores.first()
+
+                // Save the current store ID
+                currentStoreId = store.id
+
+                handleLoyaltyCardFetch(userId, store.id!!)
+            } else {
+                showErrorPopup("Failed to fetch store details.")
+            }
+        } catch (e: Exception) {
+            Log.e("ViewModelBusinessOwnerQRSuccess", "Error during fetch: ${e.message}")
+            showErrorPopup("An unexpected error occurred while loading customer data.")
         }
     }
 
-    fun makeStamp(storeId: String, userId: String) {
-        viewModelScope.launch {
-            try {
-                // Retrieve the current active loyalty card
-                val loyaltyCard = repositoryLoyaltyCard.getCurrentLoyaltyCardByStoreIdAndUniandesMemberId(storeId, userId)
+    private suspend fun handleLoyaltyCardFetch(userId: String, storeId: String) {
+        try {
+            // Fetch loyalty cards for the user and store
+            val loyaltyCardResult = cacheRepositoryLoyaltyCard.getLoyaltyCardsByUserAndStore(userId, storeId)
 
-                if (loyaltyCard != null) {
-                    // Create a new purchase for the current loyalty card
-                    val purchaseSuccessful = repositoryPurchase.addPurchase(
-                        loyaltyCardId = loyaltyCard.id!!,
-                        date = LocalDate.now().toString(),
+            if (loyaltyCardResult is LoyaltyCardResult.Success) {
+                val loyaltyCards = loyaltyCardResult.loyaltyCards
+
+                // Find the first "current" loyalty card
+                val currentCard = loyaltyCards.find { it.isCurrent }
+
+                if (currentCard != null) {
+                    // Update LiveData with the current loyalty card's details
+                    _currentStamps.value = currentCard.points
+                    _maxStamps.value = currentCard.maxPoints
+
+                    // Save the current loyalty card ID
+                    currentLoyaltyCardId = currentCard.id
+                } else {
+                    // No current card exists; create a new one
+                    createNewLoyaltyCard(userId, storeId)
+                }
+
+                // Update LiveData with the total count of non-current cards (redeemed loyalty cards)
+                _loyaltyCards.value = loyaltyCards.count { !it.isCurrent }
+
+                updateButtonStates()
+                _uiState.value = UiState.SUCCESS // Mark fetch as successful
+            } else {
+                showErrorPopup("Failed to fetch loyalty card details.")
+            }
+        } catch (e: Exception) {
+            Log.e("ViewModelBusinessOwnerQRSuccess", "Error fetching loyalty cards: ${e.message}")
+            showErrorPopup("An unexpected error occurred while fetching loyalty card data.")
+        }
+    }
+
+    private suspend fun createNewLoyaltyCard(userId: String, storeId: String) {
+        try {
+            val newLoyaltyCard = LoyaltyCard(
+                storeId = storeId,
+                uniandesMemberId = userId,
+                maxPoints = 10, // Default maximum points
+                points = 0, // Starting points
+                isCurrent = true
+            )
+            val success = cacheRepositoryLoyaltyCard.addLoyaltyCard(newLoyaltyCard)
+
+            if (success) {
+                // Update LiveData with the newly created loyalty card's details
+                _currentStamps.value = newLoyaltyCard.points
+                _maxStamps.value = newLoyaltyCard.maxPoints
+            } else {
+                showErrorPopup("Failed to create a new loyalty card.")
+            }
+        } catch (e: Exception) {
+            Log.e("ViewModelBusinessOwnerQRSuccess", "Error creating new loyalty card: ${e.message}")
+            showErrorPopup("An unexpected error occurred while creating a loyalty card.")
+        }
+    }
+
+    fun addStamp() {
+        _uiState.value = UiState.LOADING // Show loading popup
+
+        viewModelScope.launch {
+            val isOnline = withContext(Dispatchers.IO) { NetworkUtils.isInternetAvailable() }
+
+            if (!isOnline) {
+                // Show error if offline
+                _uiState.value = UiState.ERROR
+                _errorMessage.value = "Stamps can only be added while online."
+                return@launch
+            }
+
+            try {
+                // Ensure necessary data is available
+                val loyaltyCardId = currentLoyaltyCardId
+                if (loyaltyCardId == null) {
+                    throw Exception("No active loyalty card available to update.")
+                }
+
+                val current = _currentStamps.value ?: 0
+                val max = _maxStamps.value ?: 0
+
+                if (current < max) {
+                    // Add a purchase using the repository
+                    val purchaseAdded = cacheRepositoryPurchase.addPurchase(
+                        loyaltyCardId = loyaltyCardId,
+                        date = getCurrentDate(),
                         isEligible = true,
-                        rating = 5.0
+                        rating = 0.0 // Default rating for stamp
                     )
 
-                    if (purchaseSuccessful) {
-                        // Update loyalty card points
-                        loyaltyCard.points = loyaltyCard.points!! + 1
-                        repositoryLoyaltyCard.updateLoyaltyCard(loyaltyCard)
+                    if (purchaseAdded) {
+                        // Increment the loyalty card points
+                        val updatedPoints = current + 1
+                        val loyaltyCardUpdated = cacheRepositoryLoyaltyCard.updateLoyaltyCardPoints(
+                            loyaltyCardId = loyaltyCardId,
+                            newPoints = updatedPoints
+                        )
 
-                        // Check if the loyalty card has reached max points
-                        if (loyaltyCard.points!! >= loyaltyCard.maxPoints!!) {
-                            _navigateToRedeemLoyalty.value = true
+                        if (loyaltyCardUpdated) {
+                            _currentStamps.value = updatedPoints // Update UI with new points
+                            updateButtonStates()
+                            _uiState.value = UiState.SUCCESS
+
+                            // Show information popup confirming stamp creation
+                            _infoMessage.value = "Stamp successfully added!"
+                        } else {
+                            throw Exception("Failed to update loyalty card points.")
                         }
-                        _purchaseSuccess.value = true
                     } else {
-                        _errorMessage.value = "Failed to register purchase"
+                        throw Exception("Failed to add purchase record.")
                     }
                 } else {
-                    _errorMessage.value = "No active loyalty card found"
+                    _infoMessage.value = "The maximum number of stamps has already been reached."
+                    _uiState.value = UiState.SUCCESS
                 }
             } catch (e: Exception) {
-                _errorMessage.value = "An error occurred: ${e.message}"
+                Log.e("ViewModelBusinessOwnerQRSuccess", "Error adding stamp: ${e.message}")
+                _errorMessage.value = e.message ?: "Failed to add stamp. Please try again."
+                _uiState.value = UiState.ERROR
             }
         }
     }
-}
 
-// Data class to represent loyalty card information in the UI
-data class LoyaltyCardInfo(
-    val loyaltyCardsRedeemed: Int,
-    val currentPoints: Int,
-    val maxPoints: Int
-)
+    fun redeemLoyaltyCard() {
+        if (_isRedeemable.value == true) {
+            _uiState.value = UiState.LOADING // Show loading popup
+
+            viewModelScope.launch {
+                val isOnline = withContext(Dispatchers.IO) { NetworkUtils.isInternetAvailable() }
+
+                if (!isOnline) {
+                    // Show error if offline
+                    _uiState.value = UiState.ERROR
+                    _errorMessage.value = "Loyalty card redemption is only available while online."
+                    return@launch
+                }
+
+                try {
+                    // Ensure necessary data is available
+                    val loyaltyCardId = currentLoyaltyCardId
+                    val storeId = currentStoreId
+                    val userId = currentUserId
+
+                    if (loyaltyCardId == null || storeId == null || userId == null) {
+                        throw Exception("Missing required information to redeem the loyalty card.")
+                    }
+
+                    // Step 1: Update the current loyalty card to set `isCurrent` to false
+                    val loyaltyCardUpdated = cacheRepositoryLoyaltyCard.updateLoyaltyCardIsCurrent(
+                        loyaltyCardId = loyaltyCardId,
+                        isCurrent = false
+                    )
+
+                    if (loyaltyCardUpdated) {
+                        // Step 2: Create a new loyalty card to set as the current one
+                        val newLoyaltyCard = LoyaltyCard(
+                            storeId = storeId,
+                            uniandesMemberId = userId,
+                            maxPoints = 10, // Default max points
+                            points = 0, // Reset points
+                            isCurrent = true
+                        )
+                        val newCardAdded = cacheRepositoryLoyaltyCard.addLoyaltyCard(newLoyaltyCard)
+
+                        if (newCardAdded) {
+                            // Update LiveData to reflect changes
+                            _loyaltyCards.value = (_loyaltyCards.value ?: 0) + 1 // Increment redeemed cards
+                            _currentStamps.value = 0 // Reset stamps
+                            _maxStamps.value = newLoyaltyCard.maxPoints // Update max stamps for the new card
+                            currentLoyaltyCardId = newLoyaltyCard.id // Update current loyalty card ID
+
+                            updateButtonStates()
+                            _uiState.value = UiState.SUCCESS
+
+                            // Show information popup confirming redemption
+                            _infoMessage.value = "Loyalty card successfully redeemed!"
+                        } else {
+                            throw Exception("Failed to create a new loyalty card.")
+                        }
+                    } else {
+                        throw Exception("Failed to update the current loyalty card.")
+                    }
+                } catch (e: Exception) {
+                    Log.e("ViewModelBusinessOwnerQRSuccess", "Error redeeming loyalty card: ${e.message}")
+                    _errorMessage.value = e.message ?: "Failed to redeem loyalty card. Please try again."
+                    _uiState.value = UiState.ERROR
+                }
+            }
+        }
+    }
+
+    private fun updateButtonStates() {
+        val stamps = _currentStamps.value ?: 0
+        val max = _maxStamps.value ?: 0
+        _isRedeemable.value = stamps >= max
+    }
+
+    private fun getCurrentDate(): String {
+        val dateFormat = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault())
+        return dateFormat.format(java.util.Date())
+    }
+
+    fun navigateTo(destination: NavigationDestination) {
+        _navigationDestination.value = destination
+    }
+
+    fun clearError() {
+        _errorMessage.value = null
+    }
+
+    fun onInformationAcknowledged() {
+        _infoMessage.value = null
+        _uiState.value = UiState.SUCCESS
+    }
+
+    private fun showInfoPopup(message: String) {
+        _infoMessage.value = message
+        _uiState.value = UiState.INFORMATION
+    }
+
+    private fun showErrorPopup(message: String) {
+        _uiState.value = UiState.ERROR
+        _errorMessage.value = message
+    }
+
+}

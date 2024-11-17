@@ -1,0 +1,41 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:minWidth="280dp"
+    android:background="@drawable/custom_dialog_rounded_background"
+    android:gravity="center">
+
+    <!-- Information Icon -->
+    <ImageView
+        android:id="@+id/informationIcon"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@drawable/ic_information" />
+
+    <!-- Description Text -->
+    <TextView
+        android:id="@+id/informationMessageTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Information message"
+        android:textColor="@color/text"
+        android:fontFamily="@font/sen_bold"
+        android:textSize="16sp" />
+
+    <!-- OK Button -->
+    <Button
+        android:id="@+id/okButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="@color/primary"
+        android:fontFamily="@font/sen_bold"
+        android:text="OK"
+        android:textColor="@color/white"
+        android:background="@drawable/rounded_background"
+        android:textSize="14sp" />
+</LinearLayout>

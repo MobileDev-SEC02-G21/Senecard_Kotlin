@@ -110,5 +110,4 @@ class ActivityBusinessOwnerAdvertisementsCreate : AppCompatActivity() {
             Toast.makeText(this, "An error occurred: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
-
 }
