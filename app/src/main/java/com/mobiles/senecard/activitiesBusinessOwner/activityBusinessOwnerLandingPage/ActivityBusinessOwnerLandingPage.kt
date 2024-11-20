@@ -156,26 +156,31 @@ class ActivityBusinessOwnerLandingPage : AppCompatActivity() {
     }
 
     private fun showInformationPopup(message: String) {
-        informationDialog.findViewById<TextView>(R.id.informationMessageTextView).text = message
+        val messageTextView = informationDialog.findViewById<TextView>(R.id.informationMessageTextView)
+        val okButton = informationDialog.findViewById<Button>(R.id.okButton)
 
-        informationDialog.findViewById<Button>(R.id.okButton).setOnClickListener {
+        messageTextView?.text = message
+        okButton?.setOnClickListener {
             informationDialog.dismiss()
-            viewModel.onInformationAcknowledged() // Proceed with the next action in the ViewModel
+            viewModel.onInformationAcknowledged()
         }
 
         informationDialog.show()
     }
 
     private fun showErrorPopup(message: String) {
-        errorDialog.findViewById<TextView>(R.id.errorMessageTextView).text = message
+        val messageTextView = errorDialog.findViewById<TextView>(R.id.errorMessageTextView)
+        val retryButton = errorDialog.findViewById<Button>(R.id.retryButton)
+        val cancelButton = errorDialog.findViewById<Button>(R.id.cancelButton)
 
-        errorDialog.findViewById<Button>(R.id.retryButton).setOnClickListener {
+        messageTextView?.text = message
+        retryButton?.setOnClickListener {
             errorDialog.dismiss()
             viewModel.clearErrorMessage()
             viewModel.getInformation() // Retry Get Information
         }
 
-        errorDialog.findViewById<Button>(R.id.cancelButton).setOnClickListener {
+        cancelButton?.setOnClickListener {
             errorDialog.dismiss()
             viewModel.clearErrorMessage()
             redirectToInitial() // Optional logout option
@@ -183,6 +188,5 @@ class ActivityBusinessOwnerLandingPage : AppCompatActivity() {
 
         errorDialog.show()
     }
-
 
 }
