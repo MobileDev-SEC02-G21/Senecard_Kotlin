@@ -119,32 +119,19 @@ class ActivityBusinessOwnerLandingPage : AppCompatActivity() {
         // Setup Loading Dialog
         loadingDialog = Dialog(this)
         loadingDialog.setContentView(R.layout.businessowner_popup_loading)
-        loadingDialog.setCancelable(false) // Prevents user from dismissing the dialog
+        loadingDialog.setCancelable(false)
         loadingDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
         // Setup Information Dialog
         informationDialog = Dialog(this)
         informationDialog.setContentView(R.layout.businessowner_popup_information)
-        informationDialog.findViewById<Button>(R.id.okButton).setOnClickListener {
-            informationDialog.dismiss()
-        }
+        informationDialog.setCancelable(false)
         informationDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
         // Setup Error Dialog
         errorDialog = Dialog(this)
         errorDialog.setContentView(R.layout.businessowner_popup_error)
-        errorDialog.findViewById<Button>(R.id.retryButton).setOnClickListener {
-            viewModel.clearErrorMessage() // Reset error message
-            viewModel.getInformation()    // Retry logic
-            errorDialog.dismiss()         // Dismiss the error popup
-        }
-
-        errorDialog.findViewById<Button>(R.id.cancelButton).setOnClickListener {
-            viewModel.cancelFetchJob()    // Cancel the ongoing fetch
-            viewModel.logOut()            // Log out the user
-            errorDialog.dismiss()         // Dismiss the error popup
-        }
-
+        errorDialog.setCancelable(false)
         errorDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
     }
 
@@ -179,17 +166,18 @@ class ActivityBusinessOwnerLandingPage : AppCompatActivity() {
         informationDialog.show()
     }
 
-
     private fun showErrorPopup(message: String) {
         errorDialog.findViewById<TextView>(R.id.errorMessageTextView).text = message
 
         errorDialog.findViewById<Button>(R.id.retryButton).setOnClickListener {
-            viewModel.getInformation() // Retry action in ViewModel
             errorDialog.dismiss()
+            viewModel.clearErrorMessage()
+            viewModel.getInformation() // Retry Get Information
         }
 
         errorDialog.findViewById<Button>(R.id.cancelButton).setOnClickListener {
             errorDialog.dismiss()
+            viewModel.clearErrorMessage()
             redirectToInitial() // Optional logout option
         }
 

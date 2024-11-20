@@ -14,6 +14,7 @@ import androidx.core.content.ContextCompat
 import com.mobiles.senecard.R
 import com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerLandingPage.ActivityBusinessOwnerLandingPage
 import com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerQRSuccess.ActivityBusinessOwnerQRSuccess
+import com.mobiles.senecard.activitiesInitial.activityInitial.ActivityInitial
 import com.mobiles.senecard.databinding.ActivityBusinessOwnerQrScannerBinding
 
 class ActivityBusinessOwnerQRScanner : AppCompatActivity() {
@@ -21,8 +22,10 @@ class ActivityBusinessOwnerQRScanner : AppCompatActivity() {
     private lateinit var binding: ActivityBusinessOwnerQrScannerBinding
     private val viewModel: ViewModelBusinessOwnerQRScanner by viewModels()
 
-    // Dialog variable for information popup
+    // Dialog variables
+    private lateinit var loadingDialog: Dialog
     private lateinit var informationDialog: Dialog
+    private lateinit var errorDialog: Dialog
 
     // Sentinel to prevent redundant navigation
     private var isNavigating = false
@@ -78,23 +81,26 @@ class ActivityBusinessOwnerQRScanner : AppCompatActivity() {
             }
         }
 
-        // Observe information messages
-        viewModel.infoMessage.observe(this) { message ->
-            message?.let {
-                showInformationPopup(it)
-                viewModel.onInformationAcknowledged()
+        viewModel.uiState.observe(this) { state ->
+            when (state) {
+                UiState.LOADING -> showLoadingPopup()
+                UiState.SUCCESS -> hideLoadingPopup()
+                UiState.ERROR -> {
+                    hideLoadingPopup()
+                    showErrorPopup(viewModel.errorMessage.value ?: "An unknown error occurred")
+                }
+                UiState.INFORMATION -> {
+                    hideLoadingPopup()
+                    showInformationPopup(viewModel.infoMessage.value ?: "Information message")
+                }
             }
         }
+
     }
 
     private fun navigateToActivity(activityClass: Class<*>) {
         startActivity(Intent(this, activityClass))
         finish()
-    }
-
-    private fun showInformationPopup(message: String) {
-        informationDialog.findViewById<TextView>(R.id.informationMessageTextView).text = message
-        informationDialog.show()
     }
 
     private fun checkCameraPermission() {
@@ -137,4 +143,48 @@ class ActivityBusinessOwnerQRScanner : AppCompatActivity() {
     companion object {
         private const val CAMERA_PERMISSION_REQUEST_CODE = 1001
     }
+    // Popup functions
+    private fun showLoadingPopup() {
+        loadingDialog.show()
+    }
+
+    private fun hideLoadingPopup() {
+        loadingDialog.dismiss()
+    }
+
+    private fun showInformationPopup(message: String) {
+        informationDialog.findViewById<TextView>(R.id.informationMessageTextView).text = message
+
+        informationDialog.findViewById<Button>(R.id.okButton).setOnClickListener {
+            informationDialog.dismiss()
+            viewModel.onInformationAcknowledged() // Proceed with the next action in the ViewModel
+        }
+
+        informationDialog.show()
+    }
+
+
+    private fun showErrorPopup(message: String) {
+        errorDialog.findViewById<TextView>(R.id.errorMessageTextView).text = message
+
+        errorDialog.findViewById<Button>(R.id.retryButton).setOnClickListener {
+            errorDialog.dismiss()
+
+        }
+
+        errorDialog.findViewById<Button>(R.id.cancelButton).setOnClickListener {
+            errorDialog.dismiss()
+            redirectToInitial() // Optional logout option
+        }
+
+        errorDialog.show()
+    }
+
+    private fun redirectToInitial() {
+        val initialIntent = Intent(this, ActivityInitial::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        startActivity(initialIntent)
+    }
+
 }

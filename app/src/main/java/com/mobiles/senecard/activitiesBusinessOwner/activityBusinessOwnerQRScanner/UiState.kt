@@ -3,5 +3,6 @@ package com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerQRScan
 enum class UiState {
     LOADING,
     SUCCESS,
+    ERROR,
     INFORMATION
 }
