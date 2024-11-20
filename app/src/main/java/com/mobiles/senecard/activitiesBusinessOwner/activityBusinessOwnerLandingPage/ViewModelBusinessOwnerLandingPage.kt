@@ -20,6 +20,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 class  ViewModelBusinessOwnerLandingPage : ViewModel() {
 
@@ -167,15 +168,21 @@ class  ViewModelBusinessOwnerLandingPage : ViewModel() {
 
         when (purchaseResult) {
             is PurchaseResult.Success -> {
-                val today = LocalDate.now().toString()
+                val today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+
+                // Count purchases with a date matching today
                 val todayCount = purchaseResult.purchases.count { it.date == today }
+
                 todayCustomers.value = todayCount
+
+                // Show information popup
                 showInfoPopup("You are viewing ${if (isOnline) "an online" else "an offline"} version.")
             }
             is PurchaseResult.Failure -> {
                 showErrorPopup("Failed to fetch purchases.")
             }
         }
+
     }
 
     private fun showErrorPopup(message: String) {
