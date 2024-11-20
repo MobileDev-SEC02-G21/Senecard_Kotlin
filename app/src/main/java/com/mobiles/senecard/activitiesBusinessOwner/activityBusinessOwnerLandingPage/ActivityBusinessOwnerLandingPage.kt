@@ -173,7 +173,8 @@ class ActivityBusinessOwnerLandingPage : AppCompatActivity() {
         val retryButton = errorDialog.findViewById<Button>(R.id.retryButton)
         val cancelButton = errorDialog.findViewById<Button>(R.id.cancelButton)
 
-        messageTextView?.text = message
+        messageTextView?.text = message ?: "An error occurred"
+
         retryButton?.setOnClickListener {
             errorDialog.dismiss()
             viewModel.clearErrorMessage()
