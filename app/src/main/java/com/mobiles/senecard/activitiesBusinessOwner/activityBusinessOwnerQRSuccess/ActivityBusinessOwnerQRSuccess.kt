@@ -22,6 +22,9 @@ class ActivityBusinessOwnerQRSuccess : AppCompatActivity() {
     // Dialog variables
     private lateinit var loadingDialog: Dialog
     private lateinit var informationDialog: Dialog
+    private lateinit var errorDialog: Dialog
+
+    private lateinit var clientId: String // Variable to store client ID
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,7 +36,8 @@ class ActivityBusinessOwnerQRSuccess : AppCompatActivity() {
         // Fetch the user ID passed from the QR scanner activity
         val userId = intent.getStringExtra("USER_ID")
         if (userId != null) {
-            viewModel.loadCustomerData(userId)
+            clientId = userId // Save the user ID to the class property
+            viewModel.loadCustomerData(clientId) // Use the client ID here
         } else {
             Toast.makeText(this, "Error: No user ID found.", Toast.LENGTH_SHORT).show()
             finish()
@@ -72,6 +76,12 @@ class ActivityBusinessOwnerQRSuccess : AppCompatActivity() {
         informationDialog.setContentView(R.layout.businessowner_popup_information)
         informationDialog.setCancelable(false)
         informationDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        // Setup Error Dialog
+        errorDialog = Dialog(this)
+        errorDialog.setContentView(R.layout.businessowner_popup_error)
+        errorDialog.setCancelable(false)
+        errorDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
     }
 
     private fun setupObservers() {
@@ -129,18 +139,24 @@ class ActivityBusinessOwnerQRSuccess : AppCompatActivity() {
             }
         }
 
-
-        // Observe UI state for information messages
-        viewModel.uiState.observe(this) { uiState ->
-            when (uiState) {
+        // Logic to show popups
+        viewModel.uiState.observe(this) { state ->
+            when (state) {
                 UiState.LOADING -> showLoadingPopup()
-                UiState.INFORMATION -> showInformationPopup(viewModel.infoMessage.value ?: "")
-                else -> hideLoadingPopup()
+                UiState.SUCCESS -> hideLoadingPopup()
+                UiState.ERROR -> {
+                    hideLoadingPopup()
+                    showErrorPopup(viewModel.errorMessage.value ?: "An unknown error occurred")
+                }
+                UiState.INFORMATION -> {
+                    hideLoadingPopup()
+                    showInformationPopup(viewModel.infoMessage.value ?: "Information message")
+                }
             }
         }
 
         // Observe navigation destination
-        viewModel.navigationDestination.observe(this) { destination ->
+        viewModel.navigateTo.observe(this) { destination ->
             when (destination) {
                 NavigationDestination.LANDING_PAGE -> navigateToActivity(ActivityBusinessOwnerLandingPage::class.java)
                 NavigationDestination.INITIAL -> navigateToActivity(ActivityInitial::class.java)
@@ -173,5 +189,33 @@ class ActivityBusinessOwnerQRSuccess : AppCompatActivity() {
         }
 
         informationDialog.show()
+    }
+    private fun showErrorPopup(message: String) {
+        val messageTextView = errorDialog.findViewById<TextView>(R.id.errorMessageTextView)
+        val retryButton = errorDialog.findViewById<Button>(R.id.retryButton)
+        val cancelButton = errorDialog.findViewById<Button>(R.id.cancelButton)
+
+        messageTextView?.text = message ?: "An error occurred"
+
+        retryButton?.setOnClickListener {
+            errorDialog.dismiss()
+            viewModel.clearErrorMessage()
+            viewModel.loadCustomerData(clientId) // Retry Get Information
+        }
+
+        cancelButton?.setOnClickListener {
+            errorDialog.dismiss()
+            viewModel.clearErrorMessage()
+            redirectToInitial() // Optional logout option
+        }
+
+        errorDialog.show()
+    }
+
+    private fun redirectToInitial() {
+        val initialIntent = Intent(this, ActivityInitial::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        startActivity(initialIntent)
     }
 }

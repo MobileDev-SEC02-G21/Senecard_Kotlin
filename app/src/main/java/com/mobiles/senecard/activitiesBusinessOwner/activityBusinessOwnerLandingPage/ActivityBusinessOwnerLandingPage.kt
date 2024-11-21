@@ -93,7 +93,7 @@ class ActivityBusinessOwnerLandingPage : AppCompatActivity() {
                 UiState.SUCCESS -> hideLoadingPopup()
                 UiState.ERROR -> {
                     hideLoadingPopup()
-                    showErrorPopup(viewModel.errorMessage.value ?: "An unknown error occurred")
+                    showErrorPopup(viewModel.errorMessage.value ?: "Activity: An unknown error occurred")
                 }
                 UiState.INFORMATION -> {
                     hideLoadingPopup()

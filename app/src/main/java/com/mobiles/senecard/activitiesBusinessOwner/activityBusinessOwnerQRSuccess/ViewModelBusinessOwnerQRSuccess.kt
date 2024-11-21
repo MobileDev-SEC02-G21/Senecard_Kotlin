@@ -39,8 +39,9 @@ class ViewModelBusinessOwnerQRSuccess : ViewModel() {
     private val _uiState = MutableLiveData<UiState>()
     val uiState: LiveData<UiState> = _uiState
 
-    private val _navigationDestination = MutableLiveData<NavigationDestination?>()
-    val navigationDestination: LiveData<NavigationDestination?> = _navigationDestination
+    // LiveData for navigation destination
+    private val _navigateTo = MutableLiveData<NavigationDestination?>()
+    val navigateTo: LiveData<NavigationDestination?> get() = _navigateTo
 
     private val _errorMessage = MutableLiveData<String?>()
     val errorMessage: LiveData<String?> = _errorMessage
@@ -58,14 +59,25 @@ class ViewModelBusinessOwnerQRSuccess : ViewModel() {
         viewModelScope.launch {
             try {
                 val isOnline = withContext(Dispatchers.IO) { NetworkUtils.isInternetAvailable() }
-                fetchAuthenticatedUser(userId, isOnline)
+
+                // Check if the application is offline
+                if (!isOnline) {
+                    showErrorPopup("This functionality requires an internet connection.")
+                    _uiState.value = UiState.ERROR
+                    return@launch
+                }
+
+                // Proceed to fetch authenticated user only if online
+                fetchAuthenticatedUser(userId)
             } catch (e: Exception) {
                 showErrorPopup("An unexpected error occurred: ${e.message}")
+                _uiState.value = UiState.ERROR
             }
         }
     }
 
-    private suspend fun fetchAuthenticatedUser(userId: String, isOnline: Boolean) {
+
+    private suspend fun fetchAuthenticatedUser(userId: String) {
         val authenticatedUser = repositoryAuthentication.getCurrentUser()
         if (authenticatedUser == null || authenticatedUser.email.isNullOrBlank()) {
             showErrorPopup("Failed to authenticate the user.")
@@ -73,41 +85,68 @@ class ViewModelBusinessOwnerQRSuccess : ViewModel() {
         }
         currentUserId = authenticatedUser.id
 
-        fetchUserDetails(userId, authenticatedUser.id!!, isOnline)
+        fetchUserDetails(userId, authenticatedUser.id!!)
     }
 
-    private suspend fun fetchUserDetails(userId: String, businessOwnerId: String, isOnline: Boolean) {
+    private suspend fun fetchUserDetails(userId: String, businessOwnerId: String) {
         val userResult = cacheRepositoryUser.getUserById(userId)
+
         if (userResult is UserResult.Success) {
+            if (userResult.isFromCache) {
+                showErrorPopup("This functionality is not available without an internet connection.")
+                return
+            }
+
             _customerName.value = userResult.user.name ?: "Unknown"
-            fetchStoreDetails(businessOwnerId, userId, isOnline)
+            fetchStoreDetails(businessOwnerId, userId)
         } else {
             showErrorPopup("Failed to load customer details.")
         }
     }
 
-    private suspend fun fetchStoreDetails(businessOwnerId: String, userId: String, isOnline: Boolean) {
+
+    private suspend fun fetchStoreDetails(businessOwnerId: String, userId: String) {
         val storeResult = cacheRepositoryStore.getStoreByBusinessOwnerId(businessOwnerId)
+
         if (storeResult is StoreResult.Success && storeResult.stores.isNotEmpty()) {
+            if (storeResult.isFromCache) {
+                showErrorPopup("This functionality is not available without an internet connection.")
+                return
+            }
+
             val store = storeResult.stores.first()
             currentStoreId = store.id
-            fetchLoyaltyCards(userId, store.id!!, isOnline)
+            fetchLoyaltyCards(userId, store.id!!)
         } else {
             showErrorPopup("Failed to fetch store details.")
         }
     }
 
-    private suspend fun fetchLoyaltyCards(userId: String, storeId: String, isOnline: Boolean) {
+
+    private suspend fun fetchLoyaltyCards(userId: String, storeId: String) {
+        Log.d("ViewModel", "fetchLoyaltyCards called: userId=$userId, storeId=$storeId")
         val loyaltyCardResult = cacheRepositoryLoyaltyCard.getLoyaltyCardsByUserAndStore(userId, storeId)
+
         if (loyaltyCardResult is LoyaltyCardResult.Success) {
+            if (loyaltyCardResult.isFromCache) {
+                Log.e("ViewModel", "Data fetched from cache, which is not allowed for this functionality.")
+                showErrorPopup("This functionality is not available without an internet connection.")
+                return
+            }
+
             val loyaltyCards = loyaltyCardResult.loyaltyCards
+            Log.d("ViewModel", "Loyalty cards fetched: count=${loyaltyCards.size}")
+
+            // Check for the current loyalty card
             val currentCard = loyaltyCards.find { it.isCurrent }
 
             if (currentCard != null) {
+                Log.d("ViewModel", "Current loyalty card found: id=${currentCard.id}")
                 currentLoyaltyCardId = currentCard.id
                 _currentStamps.value = currentCard.points
                 _maxStamps.value = currentCard.maxPoints
             } else {
+                Log.d("ViewModel", "No current loyalty card found. Creating a new one.")
                 createNewLoyaltyCard(userId, storeId)
             }
 
@@ -115,9 +154,14 @@ class ViewModelBusinessOwnerQRSuccess : ViewModel() {
             updateButtonStates()
             _uiState.value = UiState.SUCCESS
         } else {
-            showErrorPopup("Failed to load loyalty card details.")
+            // Handle non-success case: create a new loyalty card
+            Log.w("ViewModel", "No loyalty cards found or failed to fetch. Creating a new loyalty card.")
+            createNewLoyaltyCard(userId, storeId)
+            _uiState.value = UiState.SUCCESS
         }
     }
+
+
 
     private suspend fun createNewLoyaltyCard(userId: String, storeId: String) {
         val newLoyaltyCard = LoyaltyCard(
@@ -226,5 +270,21 @@ class ViewModelBusinessOwnerQRSuccess : ViewModel() {
     fun onInformationAcknowledged() {
         _infoMessage.value = null
         _uiState.value = UiState.SUCCESS
+    }
+    // Function to reset the navigation event after it's handled
+    fun onNavigationHandled() {
+        _navigateTo.value = null
+    }
+
+    // Log out logic
+    fun logOut() {
+        viewModelScope.launch {
+            repositoryAuthentication.logOut()
+            _navigateTo.value = NavigationDestination.INITIAL
+        }
+    }
+
+    fun clearErrorMessage() {
+        _errorMessage.value = null
     }
 }
