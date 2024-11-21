@@ -102,6 +102,8 @@ dependencies {
     // Guava for Caching
     implementation("com.google.guava:guava:32.1.2-jre")
 
+    implementation("androix.swiperefreshlayout:swiperefreshlayout:1.1.0")
+
     implementation(libs.lottie)
     implementation(libs.glide)
 
