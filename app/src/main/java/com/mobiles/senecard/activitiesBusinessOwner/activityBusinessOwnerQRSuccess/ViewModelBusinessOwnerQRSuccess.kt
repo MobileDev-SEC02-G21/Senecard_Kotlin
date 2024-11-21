@@ -52,9 +52,11 @@ class ViewModelBusinessOwnerQRSuccess : ViewModel() {
     private var currentUserId: String? = null
     private var currentStoreId: String? = null
     private var currentLoyaltyCardId: String? = null
+    private var currentClientId: String? = null
 
     fun loadCustomerData(userId: String) {
         _uiState.value = UiState.LOADING
+        currentClientId = userId
 
         viewModelScope.launch {
             try {
@@ -98,14 +100,14 @@ class ViewModelBusinessOwnerQRSuccess : ViewModel() {
             }
 
             _customerName.value = userResult.user.name ?: "Unknown"
-            fetchStoreDetails(businessOwnerId, userId)
+            fetchStoreDetails(businessOwnerId)
         } else {
             showErrorPopup("Failed to load customer details.")
         }
     }
 
 
-    private suspend fun fetchStoreDetails(businessOwnerId: String, userId: String) {
+    private suspend fun fetchStoreDetails(businessOwnerId: String) {
         val storeResult = cacheRepositoryStore.getStoreByBusinessOwnerId(businessOwnerId)
 
         if (storeResult is StoreResult.Success && storeResult.stores.isNotEmpty()) {
@@ -116,51 +118,75 @@ class ViewModelBusinessOwnerQRSuccess : ViewModel() {
 
             val store = storeResult.stores.first()
             currentStoreId = store.id
-            fetchLoyaltyCards(userId, store.id!!)
+            fetchLoyaltyCards(currentClientId!!, store.id!!)
         } else {
             showErrorPopup("Failed to fetch store details.")
         }
     }
 
-
     private suspend fun fetchLoyaltyCards(userId: String, storeId: String) {
         Log.d("ViewModel", "fetchLoyaltyCards called: userId=$userId, storeId=$storeId")
-        val loyaltyCardResult = cacheRepositoryLoyaltyCard.getLoyaltyCardsByUserAndStore(userId, storeId)
 
-        if (loyaltyCardResult is LoyaltyCardResult.Success) {
-            if (loyaltyCardResult.isFromCache) {
-                Log.e("ViewModel", "Data fetched from cache, which is not allowed for this functionality.")
-                showErrorPopup("This functionality is not available without an internet connection.")
-                return
+        // Fetch the current loyalty card
+        val loyaltyCardResult = cacheRepositoryLoyaltyCard.getCurrentLoyaltyCard(userId, storeId)
+
+        when (loyaltyCardResult) {
+            is LoyaltyCardResult.Success -> {
+                if (loyaltyCardResult.isFromCache) {
+                    Log.e("ViewModel", "Data fetched from cache, which is not allowed for this functionality.")
+                    showErrorPopup("This functionality is not available without an internet connection.")
+                    return
+                }
+
+                val currentCard = loyaltyCardResult.loyaltyCards.firstOrNull()
+
+                if (currentCard != null) {
+                    Log.d("ViewModel", "Current loyalty card found: id=${currentCard.id}")
+                    currentLoyaltyCardId = currentCard.id
+                    _currentStamps.value = currentCard.points
+                    _maxStamps.value = currentCard.maxPoints
+
+                    // Fetch all loyalty cards for counting redeemed ones
+                    val allCardsResult = cacheRepositoryLoyaltyCard.getLoyaltyCardsByUserAndStore(userId, storeId)
+                    when (allCardsResult) {
+                        is LoyaltyCardResult.Success -> {
+                            if (allCardsResult.isFromCache) {
+                                Log.w("ViewModel", "Loyalty cards fetched from cache for counting redeemed ones.")
+                            }
+                            val allCards = allCardsResult.loyaltyCards
+                            _loyaltyCards.value = allCards.size - 1 // Subtract 1 for the active card
+                            Log.d("ViewModel", "Total loyalty cards redeemed: ${allCards.size - 1}")
+                        }
+                        is LoyaltyCardResult.Failure -> {
+                            _loyaltyCards.value = 0
+                            Log.w("ViewModel", "Failed to fetch all loyalty cards for counting redeemed ones: ${allCardsResult.error}")
+                        }
+                    }
+
+                    updateButtonStates()
+                    _uiState.value = UiState.SUCCESS
+                } else {
+                    Log.w("ViewModel", "No current loyalty card found. Creating a new one.")
+                    createNewLoyaltyCard(userId, storeId)
+                    _uiState.value = UiState.SUCCESS
+                }
             }
 
-            val loyaltyCards = loyaltyCardResult.loyaltyCards
-            Log.d("ViewModel", "Loyalty cards fetched: count=${loyaltyCards.size}")
+            is LoyaltyCardResult.Failure -> {
+                Log.w("ViewModel", "Failed to fetch current loyalty card: ${loyaltyCardResult.error}")
 
-            // Check for the current loyalty card
-            val currentCard = loyaltyCards.find { it.isCurrent }
+                // Differentiating between no data and failure
+                if (loyaltyCardResult.error.contains("No active loyalty card found")) {
+                    Log.d("ViewModel", "No loyalty card found in the database or cache. Creating a new one.")
+                } else {
+                    Log.d("ViewModel", "Unexpected failure while fetching loyalty card: ${loyaltyCardResult.error}")
+                }
 
-            if (currentCard != null) {
-                Log.d("ViewModel", "Current loyalty card found: id=${currentCard.id}")
-                currentLoyaltyCardId = currentCard.id
-                _currentStamps.value = currentCard.points
-                _maxStamps.value = currentCard.maxPoints
-            } else {
-                Log.d("ViewModel", "No current loyalty card found. Creating a new one.")
                 createNewLoyaltyCard(userId, storeId)
+                _uiState.value = UiState.SUCCESS
             }
-
-            _loyaltyCards.value = loyaltyCards.count { !it.isCurrent }
-            updateButtonStates()
-            _uiState.value = UiState.SUCCESS
-        } else {
-            // Handle non-success case: create a new loyalty card
-            Log.w("ViewModel", "No loyalty cards found or failed to fetch. Creating a new loyalty card.")
-            createNewLoyaltyCard(userId, storeId)
-            _uiState.value = UiState.SUCCESS
         }
     }
-
 
 
     private suspend fun createNewLoyaltyCard(userId: String, storeId: String) {
@@ -228,6 +254,7 @@ class ViewModelBusinessOwnerQRSuccess : ViewModel() {
                 val isOnline = withContext(Dispatchers.IO) { NetworkUtils.isInternetAvailable() }
                 if (!isOnline) {
                     showErrorPopup("Redemption requires an active internet connection.")
+                    _uiState.value = UiState.SUCCESS // Reset UI state
                     return@launch
                 }
 
@@ -235,18 +262,25 @@ class ViewModelBusinessOwnerQRSuccess : ViewModel() {
                 val storeId = currentStoreId ?: throw Exception("Store details are missing.")
                 val userId = currentUserId ?: throw Exception("User details are missing.")
 
+                // Mark the current loyalty card as redeemed
                 if (cacheRepositoryLoyaltyCard.updateLoyaltyCardIsCurrent(loyaltyCardId, false)) {
-                    createNewLoyaltyCard(userId, storeId)
-                    _loyaltyCards.value = (_loyaltyCards.value ?: 0) + 1
+                    // Update button states and notify the user
+                    fetchLoyaltyCards(currentClientId!!, storeId) // Refresh data for UI consistency
+                    updateButtonStates()
                     showInfoPopup("Loyalty card redeemed successfully!")
                 } else {
                     throw Exception("Failed to mark loyalty card as redeemed.")
                 }
             } catch (e: Exception) {
+                Log.e("ViewModel", "Error redeeming loyalty card: ${e.message}", e)
                 showErrorPopup("Error redeeming loyalty card: ${e.message}")
+            } finally {
+                _uiState.value = UiState.SUCCESS // Ensure UI state is reset
             }
         }
     }
+
+
 
     private fun updateButtonStates() {
         _isRedeemable.value = (_currentStamps.value ?: 0) >= (_maxStamps.value ?: 0)
