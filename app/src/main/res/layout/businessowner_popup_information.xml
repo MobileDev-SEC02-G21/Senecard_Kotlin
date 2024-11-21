@@ -24,7 +24,9 @@
         android:text="Information message"
         android:textColor="@color/text"
         android:fontFamily="@font/sen_bold"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:layout_gravity="center"
+        android:gravity="center" />
 
     <!-- OK Button -->
     <Button

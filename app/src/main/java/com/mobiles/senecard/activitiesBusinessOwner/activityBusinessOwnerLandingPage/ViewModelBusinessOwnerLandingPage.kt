@@ -1,5 +1,6 @@
 package com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerLandingPage
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,17 +10,21 @@ import com.mobiles.senecard.model.entities.User
 import com.mobiles.senecard.model.RepositoryAuthentication
 import com.mobiles.senecard.model.cache.AdvertisementResult
 import com.mobiles.senecard.model.cache.CacheRepositoryAdvertisement
+import com.mobiles.senecard.model.cache.CacheRepositoryLoyaltyCard
 import com.mobiles.senecard.model.cache.CacheRepositoryPurchase
 import com.mobiles.senecard.model.cache.CacheRepositoryStore
 import com.mobiles.senecard.model.cache.CacheRepositoryUser
+import com.mobiles.senecard.model.cache.LoyaltyCardResult
 import com.mobiles.senecard.model.cache.PurchaseResult
 import com.mobiles.senecard.model.cache.StoreResult
 import com.mobiles.senecard.model.cache.UserResult
+import com.mobiles.senecard.model.entities.Purchase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 class  ViewModelBusinessOwnerLandingPage : ViewModel() {
 
@@ -33,6 +38,7 @@ class  ViewModelBusinessOwnerLandingPage : ViewModel() {
     private val cacheRepositoryStore = CacheRepositoryStore.instance
     private val cacheRepositoryAdvertisement = CacheRepositoryAdvertisement.instance
     private val cacheRepositoryPurchase = CacheRepositoryPurchase.instance
+    private val cacheRepositoryLoyaltyCard = CacheRepositoryLoyaltyCard.instance
 
     // LiveData to hold the user information
     private val _isUser = MutableLiveData<User?>()
@@ -57,6 +63,7 @@ class  ViewModelBusinessOwnerLandingPage : ViewModel() {
     val navigateTo: LiveData<NavigationDestination?> get() = _navigateTo
 
     fun getInformation() {
+        Log.d("ViewModel", "getInformation called")
         _uiState.value = UiState.LOADING // Show loading popup
 
         // Cancel any existing fetch operation
@@ -65,6 +72,7 @@ class  ViewModelBusinessOwnerLandingPage : ViewModel() {
         // Start a new fetch operation
         fetchJob = viewModelScope.launch {
             val isOnline = withContext(Dispatchers.IO) { NetworkUtils.isInternetAvailable() }
+            Log.d("ViewModel", "Network status: isOnline = $isOnline")
 
             if (isOnline) {
                 handleOnlineCase()
@@ -76,43 +84,46 @@ class  ViewModelBusinessOwnerLandingPage : ViewModel() {
 
     // Handles the case when the app is online
     private suspend fun handleOnlineCase() {
+        Log.d("ViewModel", "handleOnlineCase called")
         val authenticatedUser = repositoryAuthentication.getCurrentUser()
 
         if (authenticatedUser != null && !authenticatedUser.email.isNullOrBlank()) {
-            val email = authenticatedUser.email
-            handleUserFetch(email, isOnline = true)
+            Log.d("ViewModel", "Authenticated user found: ${authenticatedUser.email}")
+            handleUserFetch(authenticatedUser.email!!, isOnline = true)
         } else {
+            Log.e("ViewModel", "Failed to authenticate user")
             showErrorPopup("Unable to fetch user data.")
         }
     }
 
     // Handles the case when the app is offline
     private suspend fun handleOfflineCase() {
+        Log.d("ViewModel", "handleOfflineCase called")
         val authenticatedUser = repositoryAuthentication.getCurrentUser()
 
         if (authenticatedUser != null && !authenticatedUser.email.isNullOrBlank()) {
-            val email = authenticatedUser.email
-            handleUserFetch(email, isOnline = false)
+            Log.d("ViewModel", "Authenticated user found offline: ${authenticatedUser.email}")
+            handleUserFetch(authenticatedUser.email!!, isOnline = false)
         } else {
+            Log.e("ViewModel", "Offline view unavailable: User not authenticated")
             showErrorPopup("Offline view unavailable.")
         }
     }
 
     // Handles user data fetch for both online and offline cases
     private suspend fun handleUserFetch(email: String, isOnline: Boolean) {
-        val userResult = if (isOnline) {
-            cacheRepositoryUser.getUserByEmail(email) // Simulate network-first strategy
-        } else {
-            cacheRepositoryUser.getUserByEmail(email)
-        }
+        Log.d("ViewModel", "handleUserFetch called: email=$email, isOnline=$isOnline")
+        val userResult = cacheRepositoryUser.getUserByEmail(email)
 
         when (userResult) {
             is UserResult.Success -> {
+                Log.d("ViewModel", "User fetched successfully: ${userResult.user}")
                 _isUser.value = userResult.user
                 val businessOwnerId = userResult.user.id
                 handleStoreFetch(businessOwnerId!!, isOnline)
             }
             is UserResult.Failure -> {
+                Log.e("ViewModel", "Failed to fetch user details: ${userResult.error}")
                 showErrorPopup("Failed to load user details.")
             }
         }
@@ -120,19 +131,18 @@ class  ViewModelBusinessOwnerLandingPage : ViewModel() {
 
     // Handles store data fetch for both online and offline cases
     private suspend fun handleStoreFetch(businessOwnerId: String, isOnline: Boolean) {
-        val storeResult = if (isOnline) {
-            cacheRepositoryStore.getStoreByBusinessOwnerId(businessOwnerId)
-        } else {
-            cacheRepositoryStore.getStoreByBusinessOwnerId(businessOwnerId)
-        }
+        Log.d("ViewModel", "handleStoreFetch called: businessOwnerId=$businessOwnerId, isOnline=$isOnline")
+        val storeResult = cacheRepositoryStore.getStoreByBusinessOwnerId(businessOwnerId)
 
         when (storeResult) {
             is StoreResult.Success -> {
+                Log.d("ViewModel", "Store fetched successfully: ${storeResult.stores.first()}")
                 val store = storeResult.stores.first()
                 averageRating.value = store.rating ?: 0.0
                 handleAdvertisementsFetch(store.id!!, isOnline)
             }
             is StoreResult.Failure -> {
+                Log.e("ViewModel", "Failed to fetch store data")
                 showErrorPopup("Failed to fetch store data.")
             }
         }
@@ -140,41 +150,69 @@ class  ViewModelBusinessOwnerLandingPage : ViewModel() {
 
     // Handles advertisements data fetch for both online and offline cases
     private suspend fun handleAdvertisementsFetch(storeId: String, isOnline: Boolean) {
-        val adResult = if (isOnline) {
-            cacheRepositoryAdvertisement.getAdvertisementsByStoreId(storeId)
-        } else {
-            cacheRepositoryAdvertisement.getAdvertisementsByStoreId(storeId)
-        }
+        Log.d("ViewModel", "handleAdvertisementsFetch called: storeId=$storeId, isOnline=$isOnline")
+        val adResult = cacheRepositoryAdvertisement.getAdvertisementsByStoreId(storeId)
 
         when (adResult) {
             is AdvertisementResult.Success -> {
+                Log.d("ViewModel", "Advertisements fetched successfully: count=${adResult.advertisements.size}")
                 advertisementsCount.value = adResult.advertisements.size
                 handlePurchasesFetch(storeId, isOnline)
             }
             is AdvertisementResult.Failure -> {
+                Log.e("ViewModel", "Failed to fetch advertisements")
                 showErrorPopup("Failed to fetch advertisements.")
             }
         }
     }
 
-    // Handles purchases data fetch for both online and offline cases
     private suspend fun handlePurchasesFetch(storeId: String, isOnline: Boolean) {
-        val purchaseResult = if (isOnline) {
-            cacheRepositoryPurchase.getPurchasesByStoreId(storeId)
-        } else {
-            cacheRepositoryPurchase.getPurchasesByStoreId(storeId)
-        }
+        Log.d("ViewModel", "handlePurchasesFetch called: storeId=$storeId, isOnline=$isOnline")
+        try {
+            // Step 1: Get all loyalty cards for the store
+            val loyaltyCardResult = cacheRepositoryLoyaltyCard.getLoyaltyCardsByStore(storeId)
 
-        when (purchaseResult) {
-            is PurchaseResult.Success -> {
-                val today = LocalDate.now().toString()
-                val todayCount = purchaseResult.purchases.count { it.date == today }
-                todayCustomers.value = todayCount
+            if (loyaltyCardResult is LoyaltyCardResult.Success) {
+                val loyaltyCards = loyaltyCardResult.loyaltyCards
+                Log.d("ViewModel", "Loyalty cards fetched successfully: count=${loyaltyCards.size}")
+
+                if (loyaltyCards.isEmpty()) {
+                    Log.d("ViewModel", "No loyalty cards found for the store.")
+                    todayCustomers.value = 0
+                    return
+                }
+
+                // Step 2: Fetch purchases for each loyalty card
+                val allPurchases = mutableListOf<Purchase>()
+                for (loyaltyCard in loyaltyCards) {
+                    val purchaseResult = cacheRepositoryPurchase.getPurchasesByLoyaltyCardId(loyaltyCard.id!!)
+                    if (purchaseResult is PurchaseResult.Success) {
+                        Log.d("ViewModel", "Purchases fetched for loyaltyCardId=${loyaltyCard.id}")
+                        allPurchases.addAll(purchaseResult.purchases)
+                    }
+                }
+
+                // Step 3: Filter purchases for today's date
+                val today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                val todayPurchases = allPurchases.filter { it.date == today }
+                Log.d("ViewModel", "Today's purchases count: ${todayPurchases.size}")
+
+                // Update the today customers count
+                todayCustomers.value = todayPurchases.size
+
+                // Show information popup
+                showInfoPopup("You are viewing ${if (isOnline) "an online" else "an offline"} version.")
+            } else {
+                Log.e("ViewModel", "Failed to fetch loyalty cards for the store")
+                // Update the today customers count
+                todayCustomers.value = 0
+
+                // Show information popup
                 showInfoPopup("You are viewing ${if (isOnline) "an online" else "an offline"} version.")
             }
-            is PurchaseResult.Failure -> {
-                showErrorPopup("Failed to fetch purchases.")
-            }
+        } catch (e: Exception) {
+            Log.e("ViewModel", "Error while fetching purchases: ${e.message}", e)
+            showErrorPopup("Error: An unexpected error occurred while fetching purchases.")
         }
     }
 

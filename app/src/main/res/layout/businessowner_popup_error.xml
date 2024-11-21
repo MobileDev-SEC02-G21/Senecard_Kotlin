@@ -24,7 +24,9 @@
         android:text="Error occurred"
         android:textColor="@color/text"
         android:fontFamily="@font/sen_bold"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:layout_gravity="center"
+        android:gravity="center" />
 
     <!-- Horizontal LinearLayout for Buttons -->
     <LinearLayout

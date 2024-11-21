@@ -138,7 +138,31 @@ class ViewModelBusinessOwnerQRScanner : ViewModel() {
         _infoMessage.value = null
     }
 
+    fun setLoadingState() {
+        _uiState.value = UiState.LOADING
+    }
+
+    fun setErrorState(message: String) {
+        _errorMessage.value = message
+        _uiState.value = UiState.ERROR
+    }
+
+    fun onNavigationHandled() {
+        _navigationDestination.value = null
+    }
+
     fun navigateBack() {
         _navigationDestination.value = NavigationDestination.LANDING_PAGE
+    }
+
+    fun clearErrorMessage() {
+        _errorMessage.value = null
+    }
+
+    fun fiveSecConnectionTest() {
+        if (!NetworkUtils.isInternetAvailable()) {
+            _uiState.value = UiState.INFORMATION
+            _infoMessage.value = "QR Scanning is only available when online."
+        }
     }
 }

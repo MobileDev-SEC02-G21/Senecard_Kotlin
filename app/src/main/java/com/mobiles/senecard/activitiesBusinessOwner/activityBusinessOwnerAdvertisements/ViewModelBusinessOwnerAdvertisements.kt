@@ -192,4 +192,9 @@ class ViewModelBusinessOwnerAdvertisements : ViewModel() {
         }
     }
 
+    fun onInformationAcknowledged() {
+        _infoMessage.value = null
+        _uiState.value = UiState.SUCCESS
+    }
+
 }

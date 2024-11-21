@@ -21,13 +21,13 @@ class CacheRepositoryLoyaltyCard private constructor() {
         val instance: CacheRepositoryLoyaltyCard by lazy { CacheRepositoryLoyaltyCard() }
     }
 
-    // Fetch all loyalty cards for a specific user and store
     suspend fun getLoyaltyCardsByUserAndStore(uniandesMemberId: String, storeId: String): LoyaltyCardResult {
+        Log.d("CacheRepositoryLoyaltyCard", "Fetching loyalty cards for user: $uniandesMemberId, store: $storeId")
         val loyaltyCards = mutableListOf<LoyaltyCard>()
+        var fetchedFromDatabase = false // Flag to track if data was fetched from Firestore
 
         if (NetworkUtils.isInternetAvailable()) {
             try {
-                // Fetch loyalty cards from Firestore
                 val querySnapshot = firebase.firestore.collection("loyaltyCards")
                     .whereEqualTo("uniandesMemberId", uniandesMemberId)
                     .whereEqualTo("storeId", storeId)
@@ -35,42 +35,26 @@ class CacheRepositoryLoyaltyCard private constructor() {
                     .await()
 
                 for (document in querySnapshot.documents) {
-                    val loyaltyCard = document.toObject<LoyaltyCard>()?.apply {
-                        id = document.id
-                    }
+                    val loyaltyCard = document.toObject<LoyaltyCard>()?.apply { id = document.id }
                     if (loyaltyCard != null) {
-                        loyaltyCardCache.put(loyaltyCard.id!!, loyaltyCard)
+                        loyaltyCardCache.put(loyaltyCard.id!!, loyaltyCard) // Cache the fetched loyalty card
                         loyaltyCards.add(loyaltyCard)
                     }
                 }
 
-                // If no loyalty cards found, create the first one
-                if (loyaltyCards.isEmpty()) {
-                    val newLoyaltyCard = LoyaltyCard(
-                        storeId = storeId,
-                        uniandesMemberId = uniandesMemberId,
-                        maxPoints = 10, // Default maximum points
-                        points = 0, // Starting points
-                        isCurrent = true
-                    )
-                    val success = addLoyaltyCard(newLoyaltyCard)
+                fetchedFromDatabase = true // Set the flag if we successfully queried Firestore
 
-                    if (success) {
-                        loyaltyCards.add(newLoyaltyCard)
-                        return LoyaltyCardResult.Success(loyaltyCards, isFromCache = false)
-                    } else {
-                        return LoyaltyCardResult.Failure("Failed to create a new loyalty card for the user and store.")
-                    }
+                Log.d("CacheRepositoryLoyaltyCard", "Fetched ${loyaltyCards.size} loyalty cards from Firestore.")
+                if (loyaltyCards.isNotEmpty()) {
+                    return LoyaltyCardResult.Success(loyaltyCards, isFromCache = false)
                 }
-
-                return LoyaltyCardResult.Success(loyaltyCards, isFromCache = false)
             } catch (e: Exception) {
-                Log.e("CacheRepositoryLoyaltyCard", "Error fetching LoyaltyCards: ${e.message}")
+                Log.e("CacheRepositoryLoyaltyCard", "Error fetching loyalty cards from Firestore: ${e.message}")
             }
         }
 
-        // Fallback to cache if no cards were fetched
-        if (loyaltyCards.isEmpty()) {
+        if (!fetchedFromDatabase) {
+            Log.d("CacheRepositoryLoyaltyCard", "Falling back to cache.")
             loyaltyCardCache.getAll()?.filter {
                 it.uniandesMemberId == uniandesMemberId && it.storeId == storeId
             }?.let { cachedCards ->
@@ -84,12 +68,102 @@ class CacheRepositoryLoyaltyCard private constructor() {
             }
         }
 
-        return LoyaltyCardResult.Failure("Failed to fetch loyalty cards from both network and cache.")
+        // If we queried Firestore and it returned no results
+        return LoyaltyCardResult.Failure("No loyalty cards found in the database.")
     }
 
 
-    // Add a new loyalty card
+    suspend fun getLoyaltyCardsByStore(storeId: String): LoyaltyCardResult {
+        Log.d("CacheRepositoryLoyaltyCard", "Fetching all loyalty cards for store: $storeId")
+        val loyaltyCards = mutableListOf<LoyaltyCard>()
+
+        if (NetworkUtils.isInternetAvailable()) {
+            try {
+                val querySnapshot = firebase.firestore.collection("loyaltyCards")
+                    .whereEqualTo("storeId", storeId)
+                    .get()
+                    .await()
+
+                for (document in querySnapshot.documents) {
+                    val loyaltyCard = document.toObject<LoyaltyCard>()?.apply { id = document.id }
+                    if (loyaltyCard != null) {
+                        loyaltyCardCache.put(loyaltyCard.id!!, loyaltyCard)
+                        loyaltyCards.add(loyaltyCard)
+                    }
+                }
+
+                Log.d("CacheRepositoryLoyaltyCard", "Fetched ${loyaltyCards.size} loyalty cards from Firestore.")
+                if (loyaltyCards.isNotEmpty()) {
+                    return LoyaltyCardResult.Success(loyaltyCards, isFromCache = false)
+                }
+            } catch (e: Exception) {
+                Log.e("CacheRepositoryLoyaltyCard", "Error fetching loyalty cards from Firestore: ${e.message}")
+            }
+        }
+
+        Log.d("CacheRepositoryLoyaltyCard", "Falling back to cache.")
+        loyaltyCardCache.getAll()?.filter { it.storeId == storeId }?.let { cachedCards ->
+            loyaltyCards.addAll(cachedCards)
+        }
+
+        return if (loyaltyCards.isNotEmpty()) {
+            LoyaltyCardResult.Success(loyaltyCards, isFromCache = true)
+        } else {
+            LoyaltyCardResult.Failure("No loyalty cards found for the specified store.")
+        }
+    }
+
+    suspend fun getCurrentLoyaltyCard(uniandesMemberId: String, storeId: String): LoyaltyCardResult {
+        Log.d("CacheRepositoryLoyaltyCard", "Fetching current loyalty card for user: $uniandesMemberId, store: $storeId")
+        val isOnline = NetworkUtils.isInternetAvailable() // Check connectivity upfront
+
+        return try {
+            if (isOnline) {
+                // Attempt to fetch from Firestore
+                val querySnapshot = firebase.firestore.collection("loyaltyCards")
+                    .whereEqualTo("uniandesMemberId", uniandesMemberId)
+                    .whereEqualTo("storeId", storeId)
+                    .whereEqualTo("isCurrent", true)
+                    .get()
+                    .await()
+
+                if (querySnapshot.documents.isNotEmpty()) {
+                    val documentSnapshot = querySnapshot.documents.first()
+                    val loyaltyCard = documentSnapshot.toObject<LoyaltyCard>()?.apply { id = documentSnapshot.id }
+
+                    loyaltyCard?.let {
+                        loyaltyCardCache.put(it.id!!, it) // Cache the fetched loyalty card
+                        Log.d("CacheRepositoryLoyaltyCard", "Current loyalty card fetched from Firestore: $it")
+                        return LoyaltyCardResult.Success(listOf(it), isFromCache = false)
+                    }
+                }
+                Log.d("CacheRepositoryLoyaltyCard", "No active loyalty card found in Firestore.")
+                return LoyaltyCardResult.Failure("No active loyalty card found in the database.")
+            } else {
+                // Fallback to cache only when offline
+                Log.d("CacheRepositoryLoyaltyCard", "Offline mode: falling back to cache.")
+                val cachedCard = loyaltyCardCache.getAll()?.find {
+                    it.uniandesMemberId == uniandesMemberId &&
+                            it.storeId == storeId &&
+                            it.isCurrent
+                }
+
+                cachedCard?.let {
+                    Log.w("CacheRepositoryLoyaltyCard", "Using cached current loyalty card: $it")
+                    return LoyaltyCardResult.Success(listOf(it), isFromCache = true)
+                }
+
+                Log.d("CacheRepositoryLoyaltyCard", "No active loyalty card found in the cache.")
+                return LoyaltyCardResult.Failure("No active loyalty card found in the cache.")
+            }
+        } catch (e: Exception) {
+            Log.e("CacheRepositoryLoyaltyCard", "Error fetching current loyalty card: ${e.message}", e)
+            LoyaltyCardResult.Failure("Unexpected error occurred while fetching the loyalty card: ${e.message}")
+        }
+    }
+
     suspend fun addLoyaltyCard(loyaltyCardObject: LoyaltyCard): Boolean {
+        Log.d("CacheRepositoryLoyaltyCard", "Adding loyalty card: $loyaltyCardObject")
         return try {
             val loyaltyCardData = hashMapOf(
                 "storeId" to loyaltyCardObject.storeId,
@@ -106,15 +180,16 @@ class CacheRepositoryLoyaltyCard private constructor() {
             loyaltyCardObject.id = documentReference.id
             loyaltyCardCache.put(loyaltyCardObject.id!!, loyaltyCardObject)
 
+            Log.d("CacheRepositoryLoyaltyCard", "Loyalty card added successfully with ID: ${loyaltyCardObject.id}")
             true
         } catch (e: Exception) {
-            Log.e("CacheRepositoryLoyaltyCard", "Error adding LoyaltyCard: ${e.message}")
+            Log.e("CacheRepositoryLoyaltyCard", "Error adding loyalty card: ${e.message}")
             false
         }
     }
 
-    // Update an existing loyalty card
     suspend fun updateLoyaltyCard(loyaltyCard: LoyaltyCard): Boolean {
+        Log.d("CacheRepositoryLoyaltyCard", "Updating loyalty card: ${loyaltyCard.id}")
         return try {
             val loyaltyCardData = hashMapOf(
                 "storeId" to loyaltyCard.storeId,
@@ -131,140 +206,61 @@ class CacheRepositoryLoyaltyCard private constructor() {
 
             loyaltyCardCache.put(loyaltyCard.id!!, loyaltyCard)
 
-            Log.d("CacheRepositoryLoyaltyCard", "LoyaltyCard updated successfully.")
+            Log.d("CacheRepositoryLoyaltyCard", "Loyalty card updated successfully.")
             true
         } catch (e: Exception) {
-            Log.e("CacheRepositoryLoyaltyCard", "Error updating LoyaltyCard: ${e.message}")
+            Log.e("CacheRepositoryLoyaltyCard", "Error updating loyalty card: ${e.message}")
             false
         }
     }
 
-    // Fetch loyalty cards by user ID
-    suspend fun getLoyaltyCardsByUserId(uniandesMemberId: String): LoyaltyCardResult {
-        val loyaltyCards = mutableListOf<LoyaltyCard>()
-
-        if (NetworkUtils.isInternetAvailable()) {
-            try {
-                val querySnapshot = firebase.firestore.collection("loyaltyCards")
-                    .whereEqualTo("uniandesMemberId", uniandesMemberId)
-                    .get()
-                    .await()
-
-                for (document in querySnapshot.documents) {
-                    val loyaltyCard = document.toObject<LoyaltyCard>()?.apply {
-                        id = document.id
-                    }
-                    if (loyaltyCard != null) {
-                        loyaltyCardCache.put(loyaltyCard.id!!, loyaltyCard)
-                        loyaltyCards.add(loyaltyCard)
-                    }
-                }
-
-                return LoyaltyCardResult.Success(loyaltyCards, isFromCache = false)
-            } catch (e: Exception) {
-                Log.e("CacheRepositoryLoyaltyCard", "Error fetching LoyaltyCards: ${e.message}")
-            }
-        }
-
-        // Fallback to cache if no cards were fetched
-        if (loyaltyCards.isEmpty()) {
-            loyaltyCardCache.getAll()?.filter {
-                it.uniandesMemberId == uniandesMemberId
-            }?.let { cachedCards ->
-                loyaltyCards.addAll(cachedCards)
-            }
-
-            return if (loyaltyCards.isNotEmpty()) {
-                LoyaltyCardResult.Success(loyaltyCards, isFromCache = true)
-            } else {
-                LoyaltyCardResult.Failure("No loyalty cards found for the specified user.")
-            }
-        }
-
-        return LoyaltyCardResult.Failure("Failed to fetch loyalty cards from both network and cache.")
-    }
-
     suspend fun updateLoyaltyCardPoints(loyaltyCardId: String, newPoints: Int): Boolean {
+        Log.d("CacheRepositoryLoyaltyCard", "Updating points for loyalty card: $loyaltyCardId to $newPoints")
         return try {
+            loyaltyCardCache[loyaltyCardId]?.let { card ->
+                if (newPoints > card.maxPoints) {
+                    Log.e("CacheRepositoryLoyaltyCard", "Error: New points exceed the maximum allowed.")
+                    return false
+                }
+            }
+
             firebase.firestore.collection("loyaltyCards")
                 .document(loyaltyCardId)
                 .update("points", newPoints)
                 .await()
 
-            // Update the cached version
             loyaltyCardCache[loyaltyCardId]?.let {
                 it.points = newPoints
                 loyaltyCardCache.put(loyaltyCardId, it)
             }
 
+            Log.d("CacheRepositoryLoyaltyCard", "Points updated successfully for loyalty card: $loyaltyCardId")
             true
         } catch (e: Exception) {
             Log.e("CacheRepositoryLoyaltyCard", "Error updating loyalty card points: ${e.message}")
             false
         }
     }
-    suspend fun getCurrentLoyaltyCard(uniandesMemberId: String, storeId: String): LoyaltyCardResult {
-        return try {
-            if (NetworkUtils.isInternetAvailable()) {
-                // Fetch the current active loyalty card from Firestore
-                val querySnapshot = firebase.firestore.collection("loyaltyCards")
-                    .whereEqualTo("uniandesMemberId", uniandesMemberId)
-                    .whereEqualTo("storeId", storeId)
-                    .whereEqualTo("isCurrent", true) // Filter for the active card
-                    .get()
-                    .await()
 
-                if (querySnapshot.documents.isNotEmpty()) {
-                    val documentSnapshot = querySnapshot.documents.first()
-                    val loyaltyCard = documentSnapshot.toObject<LoyaltyCard>()?.apply {
-                        id = documentSnapshot.id
-                    }
 
-                    loyaltyCard?.let {
-                        loyaltyCardCache.put(it.id!!, it) // Cache the active card
-                        return LoyaltyCardResult.Success(listOf(it), isFromCache = false)
-                    }
-                }
-
-                // No active card found
-                LoyaltyCardResult.Failure("No active loyalty card found for the user and store.")
-            } else {
-                // Fallback to cache
-                val cachedCard = loyaltyCardCache.getAll()?.find {
-                    it.uniandesMemberId == uniandesMemberId &&
-                            it.storeId == storeId &&
-                            it.isCurrent
-                }
-
-                cachedCard?.let {
-                    return LoyaltyCardResult.Success(listOf(it), isFromCache = true)
-                }
-
-                LoyaltyCardResult.Failure("No active loyalty card found in cache.")
-            }
-        } catch (e: Exception) {
-            Log.e("CacheRepositoryLoyaltyCard", "Error fetching current loyalty card: ${e.message}")
-            LoyaltyCardResult.Failure("An error occurred while fetching the current loyalty card.")
-        }
-    }
     suspend fun updateLoyaltyCardIsCurrent(loyaltyCardId: String, isCurrent: Boolean): Boolean {
+        Log.d("CacheRepositoryLoyaltyCard", "Updating current status for loyalty card: $loyaltyCardId to $isCurrent")
         return try {
             firebase.firestore.collection("loyaltyCards")
                 .document(loyaltyCardId)
                 .update("isCurrent", isCurrent)
                 .await()
 
-            // Update the cached version
             loyaltyCardCache[loyaltyCardId]?.let {
                 it.isCurrent = isCurrent
                 loyaltyCardCache.put(loyaltyCardId, it)
             }
 
+            Log.d("CacheRepositoryLoyaltyCard", "Current status updated successfully for loyalty card: $loyaltyCardId")
             true
         } catch (e: Exception) {
             Log.e("CacheRepositoryLoyaltyCard", "Error updating loyalty card's current status: ${e.message}")
             false
         }
     }
-
 }
