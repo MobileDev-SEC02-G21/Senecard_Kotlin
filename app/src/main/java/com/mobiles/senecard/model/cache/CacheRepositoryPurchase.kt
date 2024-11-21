@@ -50,40 +50,6 @@ class CacheRepositoryPurchase private constructor() {
         }
     }
 
-    // Get Purchases By Store ID
-    suspend fun getPurchasesByStoreId(storeId: String): PurchaseResult {
-        val purchasesList = mutableListOf<Purchase>()
-
-        if (NetworkUtils.isInternetAvailable()) {
-            try {
-                val querySnapshot = firebase.firestore.collection("purchases")
-                    .whereEqualTo("storeId", storeId)
-                    .get(Source.SERVER)
-                    .await()
-
-                querySnapshot.documents.forEach { documentSnapshot ->
-                    documentSnapshot.toObject<Purchase>()?.copy(id = documentSnapshot.id)?.let { purchase ->
-                        purchasesList.add(purchase)
-                        purchaseCache.put(purchase.id!!, purchase) // Cache the purchase
-                    }
-                }
-                return PurchaseResult.Success(purchasesList, isFromCache = false)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-
-        // Fallback to cache
-        purchaseCache.getAll()?.let {
-            purchasesList.addAll(it.filter { purchase -> purchase.loyaltyCardId == storeId })
-        }
-
-        return if (purchasesList.isNotEmpty()) {
-            PurchaseResult.Success(purchasesList, isFromCache = true)
-        } else {
-            PurchaseResult.Failure("Failed to fetch purchases for Store ID: $storeId from both network and cache.")
-        }
-    }
 
     // Get Purchases By Loyalty Card ID
     suspend fun getPurchasesByLoyaltyCardId(loyaltyCardId: String): PurchaseResult {

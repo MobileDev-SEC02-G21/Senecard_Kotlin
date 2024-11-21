@@ -64,6 +64,47 @@ class CacheRepositoryLoyaltyCard private constructor() {
         }
     }
 
+    suspend fun getLoyaltyCardsByStore(storeId: String): LoyaltyCardResult {
+        Log.d("CacheRepositoryLoyaltyCard", "Fetching all loyalty cards for store: $storeId")
+        val loyaltyCards = mutableListOf<LoyaltyCard>()
+
+        if (NetworkUtils.isInternetAvailable()) {
+            try {
+                val querySnapshot = firebase.firestore.collection("loyaltyCards")
+                    .whereEqualTo("storeId", storeId)
+                    .get()
+                    .await()
+
+                for (document in querySnapshot.documents) {
+                    val loyaltyCard = document.toObject<LoyaltyCard>()?.apply { id = document.id }
+                    if (loyaltyCard != null) {
+                        loyaltyCardCache.put(loyaltyCard.id!!, loyaltyCard)
+                        loyaltyCards.add(loyaltyCard)
+                    }
+                }
+
+                Log.d("CacheRepositoryLoyaltyCard", "Fetched ${loyaltyCards.size} loyalty cards from Firestore.")
+                if (loyaltyCards.isNotEmpty()) {
+                    return LoyaltyCardResult.Success(loyaltyCards, isFromCache = false)
+                }
+            } catch (e: Exception) {
+                Log.e("CacheRepositoryLoyaltyCard", "Error fetching loyalty cards from Firestore: ${e.message}")
+            }
+        }
+
+        Log.d("CacheRepositoryLoyaltyCard", "Falling back to cache.")
+        loyaltyCardCache.getAll()?.filter { it.storeId == storeId }?.let { cachedCards ->
+            loyaltyCards.addAll(cachedCards)
+        }
+
+        return if (loyaltyCards.isNotEmpty()) {
+            LoyaltyCardResult.Success(loyaltyCards, isFromCache = true)
+        } else {
+            LoyaltyCardResult.Failure("No loyalty cards found for the specified store.")
+        }
+    }
+
+
     suspend fun getCurrentLoyaltyCard(uniandesMemberId: String, storeId: String): LoyaltyCardResult {
         Log.d("CacheRepositoryLoyaltyCard", "Fetching current loyalty card for user: $uniandesMemberId, store: $storeId")
         return try {

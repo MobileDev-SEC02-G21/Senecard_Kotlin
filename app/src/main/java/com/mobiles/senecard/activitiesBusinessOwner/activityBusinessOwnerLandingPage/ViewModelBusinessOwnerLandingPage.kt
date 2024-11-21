@@ -9,12 +9,15 @@ import com.mobiles.senecard.model.entities.User
 import com.mobiles.senecard.model.RepositoryAuthentication
 import com.mobiles.senecard.model.cache.AdvertisementResult
 import com.mobiles.senecard.model.cache.CacheRepositoryAdvertisement
+import com.mobiles.senecard.model.cache.CacheRepositoryLoyaltyCard
 import com.mobiles.senecard.model.cache.CacheRepositoryPurchase
 import com.mobiles.senecard.model.cache.CacheRepositoryStore
 import com.mobiles.senecard.model.cache.CacheRepositoryUser
+import com.mobiles.senecard.model.cache.LoyaltyCardResult
 import com.mobiles.senecard.model.cache.PurchaseResult
 import com.mobiles.senecard.model.cache.StoreResult
 import com.mobiles.senecard.model.cache.UserResult
+import com.mobiles.senecard.model.entities.Purchase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -34,6 +37,7 @@ class  ViewModelBusinessOwnerLandingPage : ViewModel() {
     private val cacheRepositoryStore = CacheRepositoryStore.instance
     private val cacheRepositoryAdvertisement = CacheRepositoryAdvertisement.instance
     private val cacheRepositoryPurchase = CacheRepositoryPurchase.instance
+    private val cacheRepositoryLoyaltyCard = CacheRepositoryLoyaltyCard.instance
 
     // LiveData to hold the user information
     private val _isUser = MutableLiveData<User?>()
@@ -158,32 +162,43 @@ class  ViewModelBusinessOwnerLandingPage : ViewModel() {
         }
     }
 
-    // Handles purchases data fetch for both online and offline cases
     private suspend fun handlePurchasesFetch(storeId: String, isOnline: Boolean) {
-        val purchaseResult = if (isOnline) {
-            cacheRepositoryPurchase.getPurchasesByStoreId(storeId)
-        } else {
-            cacheRepositoryPurchase.getPurchasesByStoreId(storeId)
-        }
+        try {
+            // Step 1: Get all loyalty cards for the store
+            val loyaltyCardResult = cacheRepositoryLoyaltyCard.getLoyaltyCardsByStore(storeId)
 
-        when (purchaseResult) {
-            is PurchaseResult.Success -> {
+            if (loyaltyCardResult is LoyaltyCardResult.Success) {
+                val loyaltyCards = loyaltyCardResult.loyaltyCards
+
+                // Step 2: Fetch purchases for each loyalty card
+                val allPurchases = mutableListOf<Purchase>()
+                for (loyaltyCard in loyaltyCards) {
+                    val purchaseResult = cacheRepositoryPurchase.getPurchasesByLoyaltyCardId(loyaltyCard.id!!)
+
+                    if (purchaseResult is PurchaseResult.Success) {
+                        allPurchases.addAll(purchaseResult.purchases)
+                    }
+                }
+
+                // Step 3: Filter purchases for today's date
                 val today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                val todayPurchases = allPurchases.filter { it.date == today }
 
-                // Count purchases with a date matching today
-                val todayCount = purchaseResult.purchases.count { it.date == today }
-
-                todayCustomers.value = todayCount
+                // Update the today customers count
+                todayCustomers.value = todayPurchases.size
 
                 // Show information popup
                 showInfoPopup("You are viewing ${if (isOnline) "an online" else "an offline"} version.")
+            } else {
+                // Handle failure in fetching loyalty cards
+                showErrorPopup("Failed to fetch loyalty cards for the store.")
             }
-            is PurchaseResult.Failure -> {
-                showErrorPopup("Failed to fetch purchases.")
-            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            showErrorPopup("An unexpected error occurred while fetching purchases.")
         }
-
     }
+
 
     private fun showErrorPopup(message: String) {
         _uiState.value = UiState.ERROR
