@@ -4,6 +4,8 @@ import android.app.Dialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
@@ -11,11 +13,14 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.mobiles.senecard.R
 import com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerLandingPage.ActivityBusinessOwnerLandingPage
 import com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerQRSuccess.ActivityBusinessOwnerQRSuccess
 import com.mobiles.senecard.activitiesInitial.activityInitial.ActivityInitial
 import com.mobiles.senecard.databinding.ActivityBusinessOwnerQrScannerBinding
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class ActivityBusinessOwnerQRScanner : AppCompatActivity() {
 
@@ -30,12 +35,29 @@ class ActivityBusinessOwnerQRScanner : AppCompatActivity() {
     // Sentinel to prevent redundant navigation
     private var isNavigating = false
 
+    private var isActive = true
+
+    private var isInformationPopupVisible = false
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        setupDialogs()
         setupBinding()
-        setupDialog()
         setupObservers()
+
+        // Start the repeated connection check
+        startRepeatingConnectionCheck()
+    }
+
+    private fun startRepeatingConnectionCheck() {
+        lifecycleScope.launch {
+            while (isActive) {
+                viewModel.fiveSecConnectionTest() // Call the ViewModel method
+                delay(60000) // Wait for 1 minute
+            }
+        }
     }
 
     private fun setupBinding() {
@@ -51,13 +73,24 @@ class ActivityBusinessOwnerQRScanner : AppCompatActivity() {
         }
     }
 
-    private fun setupDialog() {
+    private fun setupDialogs() {
+        // Setup Loading Dialog
+        loadingDialog = Dialog(this)
+        loadingDialog.setContentView(R.layout.businessowner_popup_loading)
+        loadingDialog.setCancelable(false)
+        loadingDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        // Setup Information Dialog
         informationDialog = Dialog(this)
         informationDialog.setContentView(R.layout.businessowner_popup_information)
-        informationDialog.findViewById<Button>(R.id.okButton).setOnClickListener {
-            informationDialog.dismiss()
-        }
+        informationDialog.setCancelable(false)
         informationDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        // Setup Error Dialog
+        errorDialog = Dialog(this)
+        errorDialog.setContentView(R.layout.businessowner_popup_error)
+        errorDialog.setCancelable(false)
+        errorDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
     }
 
     private fun setupObservers() {
@@ -66,9 +99,7 @@ class ActivityBusinessOwnerQRScanner : AppCompatActivity() {
             if (isNavigating) return@observe // Prevent redundant navigation
 
             when (destination) {
-                NavigationDestination.LANDING_PAGE -> {
-                    navigateToActivity(ActivityBusinessOwnerLandingPage::class.java)
-                }
+                NavigationDestination.LANDING_PAGE -> navigateToActivity(ActivityBusinessOwnerLandingPage::class.java)
                 NavigationDestination.QR_SUCCESS -> {
                     isNavigating = true // Prevent further navigation
                     val intent = Intent(this, ActivityBusinessOwnerQRSuccess::class.java).apply {
@@ -81,6 +112,7 @@ class ActivityBusinessOwnerQRScanner : AppCompatActivity() {
             }
         }
 
+        // Observe UI state updates for popups
         viewModel.uiState.observe(this) { state ->
             when (state) {
                 UiState.LOADING -> showLoadingPopup()
@@ -95,7 +127,6 @@ class ActivityBusinessOwnerQRScanner : AppCompatActivity() {
                 }
             }
         }
-
     }
 
     private fun navigateToActivity(activityClass: Class<*>) {
@@ -105,7 +136,8 @@ class ActivityBusinessOwnerQRScanner : AppCompatActivity() {
 
     private fun checkCameraPermission() {
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA)
-            == PackageManager.PERMISSION_GRANTED) {
+            == PackageManager.PERMISSION_GRANTED
+        ) {
             initializeCamera()
         } else {
             ActivityCompat.requestPermissions(
@@ -128,7 +160,8 @@ class ActivityBusinessOwnerQRScanner : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == CAMERA_PERMISSION_REQUEST_CODE &&
             grantResults.isNotEmpty() &&
-            grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            grantResults[0] == PackageManager.PERMISSION_GRANTED
+        ) {
             initializeCamera()
         } else {
             Toast.makeText(this, "Camera permission is required to scan QR codes", Toast.LENGTH_SHORT).show()
@@ -137,12 +170,15 @@ class ActivityBusinessOwnerQRScanner : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        informationDialog.dismiss() // Ensure dialog is dismissed when activity pauses
+        loadingDialog.dismiss()
+        informationDialog.dismiss()
+        errorDialog.dismiss() // Ensure dialogs are dismissed when activity pauses
     }
 
     companion object {
         private const val CAMERA_PERMISSION_REQUEST_CODE = 1001
     }
+
     // Popup functions
     private fun showLoadingPopup() {
         loadingDialog.show()
@@ -153,28 +189,38 @@ class ActivityBusinessOwnerQRScanner : AppCompatActivity() {
     }
 
     private fun showInformationPopup(message: String) {
-        informationDialog.findViewById<TextView>(R.id.informationMessageTextView).text = message
+        if (isInformationPopupVisible) return
 
-        informationDialog.findViewById<Button>(R.id.okButton).setOnClickListener {
+        isInformationPopupVisible = true
+        val messageTextView = informationDialog.findViewById<TextView>(R.id.informationMessageTextView)
+        val okButton = informationDialog.findViewById<Button>(R.id.okButton)
+
+        messageTextView?.text = message
+        okButton?.setOnClickListener {
             informationDialog.dismiss()
-            viewModel.onInformationAcknowledged() // Proceed with the next action in the ViewModel
+            isInformationPopupVisible = false // Reset visibility tracker
+            viewModel.onInformationAcknowledged()
         }
 
         informationDialog.show()
     }
 
-
     private fun showErrorPopup(message: String) {
-        errorDialog.findViewById<TextView>(R.id.errorMessageTextView).text = message
+        val messageTextView = errorDialog.findViewById<TextView>(R.id.errorMessageTextView)
+        val retryButton = errorDialog.findViewById<Button>(R.id.retryButton)
+        val cancelButton = errorDialog.findViewById<Button>(R.id.cancelButton)
 
-        errorDialog.findViewById<Button>(R.id.retryButton).setOnClickListener {
+        messageTextView?.text = message ?: "An error occurred"
+
+        retryButton?.setOnClickListener {
             errorDialog.dismiss()
-
+            viewModel.clearErrorMessage()
+            navigateToActivity(ActivityBusinessOwnerLandingPage::class.java)
         }
 
-        errorDialog.findViewById<Button>(R.id.cancelButton).setOnClickListener {
+        cancelButton?.setOnClickListener {
             errorDialog.dismiss()
-            redirectToInitial() // Optional logout option
+            redirectToInitial() // Navigate to initial activity
         }
 
         errorDialog.show()
@@ -187,4 +233,8 @@ class ActivityBusinessOwnerQRScanner : AppCompatActivity() {
         startActivity(initialIntent)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        isActive = false // Stop the loop when the activity ends
+    }
 }
