@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -35,7 +34,6 @@ class ActivityBusinessOwnerAdvertisements : AppCompatActivity() {
     }
 
     private fun setupBinding() {
-        // Initialize the binding
         binding = ActivityBusinessOwnerAdvertisementsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -49,6 +47,26 @@ class ActivityBusinessOwnerAdvertisements : AppCompatActivity() {
         binding.btnBack.setOnClickListener {
             finish()
         }
+    }
+
+    private fun setupDialogs() {
+        // Setup Loading Dialog
+        loadingDialog = Dialog(this)
+        loadingDialog.setContentView(R.layout.businessowner_popup_loading)
+        loadingDialog.setCancelable(false)
+        loadingDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        // Setup Information Dialog
+        informationDialog = Dialog(this)
+        informationDialog.setContentView(R.layout.businessowner_popup_information)
+        informationDialog.setCancelable(false)
+        informationDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        // Setup Error Dialog
+        errorDialog = Dialog(this)
+        errorDialog.setContentView(R.layout.businessowner_popup_error)
+        errorDialog.setCancelable(false)
+        errorDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
     }
 
     private fun setupObservers() {
@@ -78,41 +96,11 @@ class ActivityBusinessOwnerAdvertisements : AppCompatActivity() {
             destination?.let {
                 when (it) {
                     NavigationDestination.ADVERTISEMENT_CREATE -> navigateToCreateAdvertisement()
-                    NavigationDestination.INITIAL -> redirectToLogin()
+                    NavigationDestination.INITIAL -> redirectToInitial()
                 }
                 viewModel.onNavigationHandled()
             }
         }
-    }
-
-    private fun setupDialogs() {
-        // Setup Loading Dialog
-        loadingDialog = Dialog(this)
-        loadingDialog.setContentView(R.layout.businessowner_popup_loading)
-        loadingDialog.setCancelable(false)
-        loadingDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-
-        // Setup Information Dialog
-        informationDialog = Dialog(this)
-        informationDialog.setContentView(R.layout.businessowner_popup_information)
-        informationDialog.findViewById<Button>(R.id.okButton).setOnClickListener {
-            informationDialog.dismiss()
-        }
-        informationDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-
-        // Setup Error Dialog
-        errorDialog = Dialog(this)
-        errorDialog.setContentView(R.layout.businessowner_popup_error)
-        errorDialog.findViewById<Button>(R.id.retryButton).setOnClickListener {
-            viewModel.getAdvertisements() // Retry fetching advertisements
-            errorDialog.dismiss()
-        }
-            errorDialog.findViewById<Button>(R.id.cancelButton).setOnClickListener {
-                errorDialog.dismiss()
-                viewModel.logOut() // Log out the user
-                redirectToLogin()   // Redirect to the login screen
-            }
-        errorDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
     }
 
     private fun setupRecyclerView(advertisements: List<Advertisement>) {
@@ -132,12 +120,34 @@ class ActivityBusinessOwnerAdvertisements : AppCompatActivity() {
     }
 
     private fun showInformationPopup(message: String) {
-        informationDialog.findViewById<TextView>(R.id.informationMessageTextView).text = message
+        val messageTextView = informationDialog.findViewById<TextView>(R.id.informationMessageTextView)
+        val okButton = informationDialog.findViewById<Button>(R.id.okButton)
+
+        messageTextView?.text = message
+        okButton?.setOnClickListener {
+            informationDialog.dismiss()
+            viewModel.onInformationAcknowledged()
+        }
+
         informationDialog.show()
     }
 
     private fun showErrorPopup(message: String) {
-        errorDialog.findViewById<TextView>(R.id.errorMessageTextView).text = message
+        val messageTextView = errorDialog.findViewById<TextView>(R.id.errorMessageTextView)
+        val retryButton = errorDialog.findViewById<Button>(R.id.retryButton)
+        val cancelButton = errorDialog.findViewById<Button>(R.id.cancelButton)
+
+        messageTextView?.text = message
+        retryButton?.setOnClickListener {
+            errorDialog.dismiss()
+            viewModel.getAdvertisements() // Retry fetching advertisements
+        }
+        cancelButton?.setOnClickListener {
+            errorDialog.dismiss()
+            viewModel.logOut() // Log out the user
+            redirectToInitial()
+        }
+
         errorDialog.show()
     }
 
@@ -146,11 +156,10 @@ class ActivityBusinessOwnerAdvertisements : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun redirectToLogin() {
+    private fun redirectToInitial() {
         val initialIntent = Intent(this, ActivityInitial::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
         startActivity(initialIntent)
     }
-
 }
