@@ -5,9 +5,11 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.mobiles.senecard.activityQRCodeUniandesMember.ViewModelQRCodeUniandesMember
+import com.mobiles.senecard.activityQRCodeUniandesMember.ViewModelQRCodeUniandesMemberFactory
 import com.mobiles.senecard.databinding.ActivityQrCodeUniandesMemberBinding
 import kotlinx.coroutines.launch
-
 class ActivityQRCodeUniandesMember : AppCompatActivity() {
 
     private lateinit var binding: ActivityQrCodeUniandesMemberBinding
@@ -25,6 +27,12 @@ class ActivityQRCodeUniandesMember : AppCompatActivity() {
     }
 
     private fun setElements() {
+        // Configura el SwipeRefreshLayout
+        binding.swipeRefresh.setOnRefreshListener {
+            refreshQRCode()
+        }
+
+        // Intenta cargar el QR desde el caché o lo genera
         lifecycleScope.launch {
             val currentUserId = viewModelQRCodeUniandesMember.getCurrentUserId()
 
@@ -43,8 +51,29 @@ class ActivityQRCodeUniandesMember : AppCompatActivity() {
             }
         }
 
+        // Botón de retroceso
         binding.optionsImageView2.setOnClickListener {
             onBackPressed()
+        }
+    }
+
+    private fun refreshQRCode() {
+        lifecycleScope.launch {
+            val currentUserId = viewModelQRCodeUniandesMember.getCurrentUserId()
+
+            if (currentUserId != null) {
+                // Fuerza la regeneración del QR ignorando el caché
+                viewModelQRCodeUniandesMember.generateQRCode(currentUserId)
+            } else {
+                Toast.makeText(
+                    this@ActivityQRCodeUniandesMember,
+                    "No se pudo obtener el ID del usuario",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+
+            // Detiene la animación del SwipeRefresh
+            binding.swipeRefresh.isRefreshing = false
         }
     }
 
@@ -56,9 +85,8 @@ class ActivityQRCodeUniandesMember : AppCompatActivity() {
         viewModelQRCodeUniandesMember.error.observe(this) { errorMessage ->
             errorMessage?.let {
                 Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+                binding.swipeRefresh.isRefreshing = false
             }
         }
     }
-
-
 }
