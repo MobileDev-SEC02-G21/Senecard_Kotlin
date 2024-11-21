@@ -151,17 +151,22 @@ class ViewModelBusinessOwnerQRSuccess : ViewModel() {
                     when (allCardsResult) {
                         is LoyaltyCardResult.Success -> {
                             if (allCardsResult.isFromCache) {
-                                Log.w("ViewModel", "Loyalty cards fetched from cache for counting redeemed ones.")
+                                Log.w("ViewModel", "Loyalty cards fetched from cache, which is not allowed.")
+                                showErrorPopup("This functionality requires an active internet connection.")
+                                return
                             }
+
                             val allCards = allCardsResult.loyaltyCards
                             _loyaltyCards.value = allCards.size - 1 // Subtract 1 for the active card
-                            Log.d("ViewModel", "Total loyalty cards redeemed: ${allCards.size - 1}")
+                            Log.d("ViewModel", "Total loyalty cards redeemed: ${allCards.size}")
                         }
+
                         is LoyaltyCardResult.Failure -> {
                             _loyaltyCards.value = 0
                             Log.w("ViewModel", "Failed to fetch all loyalty cards for counting redeemed ones: ${allCardsResult.error}")
                         }
                     }
+
 
                     updateButtonStates()
                     _uiState.value = UiState.SUCCESS
@@ -183,6 +188,28 @@ class ViewModelBusinessOwnerQRSuccess : ViewModel() {
                 }
 
                 createNewLoyaltyCard(userId, storeId)
+
+                // Fetch all loyalty cards for counting redeemed ones
+                val allCardsResult = cacheRepositoryLoyaltyCard.getLoyaltyCardsByUserAndStore(userId, storeId)
+                when (allCardsResult) {
+                    is LoyaltyCardResult.Success -> {
+                        if (allCardsResult.isFromCache) {
+                            Log.w("ViewModel", "Loyalty cards fetched from cache, which is not allowed.")
+                            showErrorPopup("This functionality requires an active internet connection.")
+                            return
+                        }
+
+                        val allCards = allCardsResult.loyaltyCards
+                        _loyaltyCards.value = allCards.size - 1 // Subtract 1 for the active card
+                        Log.d("ViewModel", "Total loyalty cards redeemed: ${allCards.size}")
+                    }
+
+                    is LoyaltyCardResult.Failure -> {
+                        _loyaltyCards.value = 0
+                        Log.w("ViewModel", "Failed to fetch all loyalty cards for counting redeemed ones: ${allCardsResult.error}")
+                    }
+                }
+
                 _uiState.value = UiState.SUCCESS
             }
         }
