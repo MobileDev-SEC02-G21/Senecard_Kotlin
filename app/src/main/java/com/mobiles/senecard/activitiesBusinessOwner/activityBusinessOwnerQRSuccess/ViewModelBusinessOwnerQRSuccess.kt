@@ -241,7 +241,7 @@ class ViewModelBusinessOwnerQRSuccess : ViewModel() {
             try {
                 val isOnline = withContext(Dispatchers.IO) { NetworkUtils.isInternetAvailable() }
                 if (!isOnline) {
-                    showErrorPopup("Stamps can only be added while online.")
+                    showInfoPopup("Stamps can only be added while Online")
                     return@launch
                 }
 
@@ -280,7 +280,7 @@ class ViewModelBusinessOwnerQRSuccess : ViewModel() {
             try {
                 val isOnline = withContext(Dispatchers.IO) { NetworkUtils.isInternetAvailable() }
                 if (!isOnline) {
-                    showErrorPopup("Redemption requires an active internet connection.")
+                    showInfoPopup("Redemption requires an active internet connection.")
                     _uiState.value = UiState.SUCCESS // Reset UI state
                     return@launch
                 }
