@@ -41,7 +41,6 @@ zxingAndroidEmbedded = "4.3.0"
 core = "3.5.3"
 firebaseCrashlyticsBuildtools = "3.0.2"
 playServicesMlkitBarcodeScanning = "18.3.1"
-swiperefreshlayout = "1.1.0"
 
 [libraries]
 androidx-activity-activity-compose-v180-x5 = { module = "androidx.activity:activity-compose", version.ref = "androidxActivityActivityCompose4" }
@@ -94,7 +93,6 @@ zxing-android-embedded = { group = "com.journeyapps", name = "zxing-android-embe
 core = { group = "com.google.zxing", name = "core", version.ref = "core" }
 firebase-crashlytics-buildtools = { group = "com.google.firebase", name = "firebase-crashlytics-buildtools", version.ref = "firebaseCrashlyticsBuildtools" }
 play-services-mlkit-barcode-scanning = { group = "com.google.android.gms", name = "play-services-mlkit-barcode-scanning", version.ref = "playServicesMlkitBarcodeScanning" }
-androidx-swiperefreshlayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swiperefreshlayout" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
