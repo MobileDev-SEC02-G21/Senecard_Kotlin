@@ -55,7 +55,7 @@ class ActivityBusinessOwnerQRScanner : AppCompatActivity() {
         lifecycleScope.launch {
             while (isActive) {
                 viewModel.fiveSecConnectionTest() // Call the ViewModel method
-                delay(60000) // Wait for 1 minute
+                delay(15000)
             }
         }
     }
@@ -123,7 +123,7 @@ class ActivityBusinessOwnerQRScanner : AppCompatActivity() {
                 }
                 UiState.INFORMATION -> {
                     hideLoadingPopup()
-                    showInformationPopup(viewModel.infoMessage.value ?: "Information message")
+                    showInformationPopup(viewModel.infoMessage.value ?: "Remember: QR Scanner requires an internet connection to work")
                 }
             }
         }

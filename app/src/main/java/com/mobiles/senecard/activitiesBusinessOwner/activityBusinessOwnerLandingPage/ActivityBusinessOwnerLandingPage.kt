@@ -4,10 +4,13 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.widget.Button
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.mobiles.senecard.R
 import com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerQRScanner.ActivityBusinessOwnerQRScanner
 import com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerAdvertisements.ActivityBusinessOwnerAdvertisements
@@ -18,6 +21,8 @@ class ActivityBusinessOwnerLandingPage : AppCompatActivity() {
 
     private lateinit var binding: ActivityBusinessOwnerLandingPageBinding
     private val viewModel: ViewModelBusinessOwnerLandingPage by viewModels()
+
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
     // Dialog variables
     private lateinit var loadingDialog: Dialog
@@ -30,6 +35,23 @@ class ActivityBusinessOwnerLandingPage : AppCompatActivity() {
         setupDialogs()
         setupBinding()
         setupObservers()
+        // Initialize SwipeRefreshLayout
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout)
+
+        // Set up refresh listener
+        swipeRefreshLayout.setOnRefreshListener {
+            refreshData()
+        }
+    }
+
+    private fun refreshData() {
+        // Simulate data refresh
+        Handler(Looper.getMainLooper()).postDelayed({
+            // Stop refresh animation
+            swipeRefreshLayout.isRefreshing = false
+            // Update your UI or fetch new data here
+            viewModel.getInformation()
+        }, 2000) // Delay to simulate network request
     }
 
     private fun setupBinding() {
@@ -93,7 +115,7 @@ class ActivityBusinessOwnerLandingPage : AppCompatActivity() {
                 UiState.SUCCESS -> hideLoadingPopup()
                 UiState.ERROR -> {
                     hideLoadingPopup()
-                    showErrorPopup(viewModel.errorMessage.value ?: "Activity: An unknown error occurred")
+                    showErrorPopup(viewModel.errorMessage.value ?: "Unable to Show Offline View, Please check your connection")
                 }
                 UiState.INFORMATION -> {
                     hideLoadingPopup()
