@@ -1,7 +1,6 @@
 package com.mobiles.senecard.utils
 
 import android.content.Context
-import android.content.SharedPreferences
 
 object UserSessionManager {
     private const val PREFERENCES_FILE = "UserSessionPreferences"

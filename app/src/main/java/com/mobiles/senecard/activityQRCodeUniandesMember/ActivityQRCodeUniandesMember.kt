@@ -1,16 +1,15 @@
 package com.mobiles.senecard.activityQRCodeUniandesMember
 
-import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.mobiles.senecard.activityQRCodeUniandesMember.ViewModelQRCodeUniandesMember
+import com.mobiles.senecard.activityQRCodeUniandesMember.ViewModelQRCodeUniandesMemberFactory
 import com.mobiles.senecard.databinding.ActivityQrCodeUniandesMemberBinding
 import kotlinx.coroutines.launch
-
 class ActivityQRCodeUniandesMember : AppCompatActivity() {
 
     private lateinit var binding: ActivityQrCodeUniandesMemberBinding
@@ -28,20 +27,53 @@ class ActivityQRCodeUniandesMember : AppCompatActivity() {
     }
 
     private fun setElements() {
-        // Intentamos siempre generar el QR usando el ID del usuario, ya sea de Firebase o caché
+        // Configura el SwipeRefreshLayout
+        binding.swipeRefresh.setOnRefreshListener {
+            refreshQRCode()
+        }
+
+        // Intenta cargar el QR desde el caché o lo genera
         lifecycleScope.launch {
             val currentUserId = viewModelQRCodeUniandesMember.getCurrentUserId()
 
             if (currentUserId != null) {
-                viewModelQRCodeUniandesMember.generateQRCode(currentUserId)
+                val isLoadedFromCache = viewModelQRCodeUniandesMember.loadQRCodeFromCache()
+
+                if (!isLoadedFromCache) {
+                    viewModelQRCodeUniandesMember.generateQRCode(currentUserId)
+                }
             } else {
-                // Si no se pudo obtener el ID del usuario (ni desde Firebase ni del caché)
-                Toast.makeText(this@ActivityQRCodeUniandesMember, "No se pudo obtener el ID del usuario", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this@ActivityQRCodeUniandesMember,
+                    "No se pudo obtener el ID del usuario",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
 
+        // Botón de retroceso
         binding.optionsImageView2.setOnClickListener {
             onBackPressed()
+        }
+    }
+
+    private fun refreshQRCode() {
+        lifecycleScope.launch {
+            val currentUserId = viewModelQRCodeUniandesMember.getCurrentUserId()
+
+            if (currentUserId != null) {
+                // Fuerza la regeneración del QR ignorando el caché
+                viewModelQRCodeUniandesMember.generateQRCode(currentUserId)
+            } else {
+                Toast.makeText(
+                    this@ActivityQRCodeUniandesMember,
+                    "No se pudo obtener el ID del usuario",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+
+            // Detiene la animación del SwipeRefresh
+            binding.swipeRefresh.isRefreshing = false
         }
     }
 
@@ -53,14 +85,8 @@ class ActivityQRCodeUniandesMember : AppCompatActivity() {
         viewModelQRCodeUniandesMember.error.observe(this) { errorMessage ->
             errorMessage?.let {
                 Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+                binding.swipeRefresh.isRefreshing = false
             }
         }
-    }
-
-    private fun isInternetAvailable(): Boolean {
-        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val network = connectivityManager.activeNetwork ?: return false
-        val capabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
-        return capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) || capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
     }
 }
