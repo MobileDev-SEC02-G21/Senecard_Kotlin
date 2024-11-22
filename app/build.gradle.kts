@@ -75,6 +75,7 @@ dependencies {
     implementation(libs.core)
     implementation(libs.firebase.crashlytics.buildtools)
     implementation(libs.play.services.mlkit.barcode.scanning)
+    implementation(libs.androidx.swiperefreshlayout)
 
     // Dependencies of tests
     testImplementation(libs.junit)
@@ -101,6 +102,8 @@ dependencies {
 
     // Guava for Caching
     implementation("com.google.guava:guava:32.1.2-jre")
+
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 
     implementation(libs.lottie)
     implementation(libs.glide)
