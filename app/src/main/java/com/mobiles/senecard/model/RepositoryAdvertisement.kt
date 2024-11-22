@@ -1,8 +1,10 @@
 package com.mobiles.senecard.model
 
 import kotlinx.coroutines.withTimeout
+import com.mobiles.senecard.NetworkUtils
 import kotlinx.coroutines.TimeoutCancellationException
 import android.net.Uri
+import com.google.firebase.firestore.Source
 import com.google.firebase.firestore.toObject
 import com.mobiles.senecard.model.entities.Advertisement
 import kotlinx.coroutines.tasks.await
@@ -47,19 +49,39 @@ class RepositoryAdvertisement private constructor() {
 
     suspend fun getAllAdvertisements(): List<Advertisement> {
         val advertisementsList = mutableListOf<Advertisement>()
-        try {
-            val querySnapshot = firebase.firestore.collection("advertisements")
-                .get()
-                .await()
 
-            for (documentSnapshot in querySnapshot.documents) {
-                val advertisement = documentSnapshot.toObject<Advertisement>()?.copy(id = documentSnapshot.id)
-                if (advertisement != null) {
-                    advertisementsList.add(advertisement)
+        if (NetworkUtils.isInternetAvailable()) {
+            try {
+                withTimeout(5000) {
+                    val querySnapshot = firebase.firestore.collection("advertisements")
+                        .get(Source.SERVER)
+                        .await()
+
+                    querySnapshot.documents.forEach { documentSnapshot ->
+                        documentSnapshot.toObject<Advertisement>()?.copy(id = documentSnapshot.id)?.let { advertisement ->
+                            advertisementsList.add(advertisement)
+                        }
+                    }
                 }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
+        }
+
+        if (advertisementsList.isEmpty()) {
+            try {
+                val cachedSnapshot = firebase.firestore.collection("advertisements")
+                    .get(Source.CACHE)
+                    .await()
+
+                cachedSnapshot.documents.forEach { documentSnapshot ->
+                    documentSnapshot.toObject<Advertisement>()?.copy(id = documentSnapshot.id)?.let { advertisement ->
+                        advertisementsList.add(advertisement)
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
 
         val advertisementsWithStatus = advertisementsList.map { advertisement ->
@@ -73,6 +95,7 @@ class RepositoryAdvertisement private constructor() {
 
         return sortedAdvertisements
     }
+
 
     suspend fun getRecommendedAdvertisementsByUniandesMemberId(uniandesMemberId: String): List<Advertisement> {
         return try {

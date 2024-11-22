@@ -6,6 +6,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.Button
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
@@ -31,7 +32,15 @@ class ActivityHomeUniandesMemberStoreList : AppCompatActivity() {
 
         setElements()
         setObservers()
+    }
+
+    override fun onResume() {
+        super.onResume()
         viewModelHomeUniandesMemberStoreList.getAllStores()
+        binding.errorConnectionStores.visibility = View.GONE
+        binding.messageNoConnectionStores.visibility = View.GONE
+        binding.storeRecyclerView.visibility = View.GONE
+        binding.loadingAnimation.visibility = View.VISIBLE
     }
 
     private fun setElements() {
@@ -84,6 +93,7 @@ class ActivityHomeUniandesMemberStoreList : AppCompatActivity() {
             binding.swipeRefreshLayout.isRefreshing = false
         }
         viewModelHomeUniandesMemberStoreList.filteredStoreList.observe(this) { filteredStores ->
+            binding.storeRecyclerView.visibility = View.VISIBLE
             binding.storeRecyclerView.adapter = StoreAdapter(filteredStores) { store ->
                 viewModelHomeUniandesMemberStoreList.onClickedItemStore(store)
             }

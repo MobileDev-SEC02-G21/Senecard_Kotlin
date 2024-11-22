@@ -39,7 +39,20 @@ class ActivityHomeUniandesMember : AppCompatActivity() {
         setObservers()
         setElementsMenu()
         setObserversMenu()
+    }
+
+    override fun onResume() {
+        super.onResume()
         viewModelHomeUniandesMember.getInformation()
+        binding.errorConnectionStores.visibility = View.GONE
+        binding.messageNoConnectionStores.visibility = View.GONE
+        binding.storeRecyclerView.visibility = View.GONE
+        binding.storesLoadingAnimation.visibility = View.VISIBLE
+
+        binding.errorConnectionAdvertisements.visibility = View.GONE
+        binding.messageNoConnectionAdvertisements.visibility = View.GONE
+        binding.advertisementRecyclerView.visibility = View.GONE
+        binding.advertisementsLoadingAnimation.visibility = View.VISIBLE
     }
 
     private fun setElements() {
@@ -118,6 +131,7 @@ class ActivityHomeUniandesMember : AppCompatActivity() {
             if (stores.size == 2) {
                 binding.errorConnectionStores.visibility = View.GONE
                 binding.messageNoConnectionStores.visibility = View.GONE
+                binding.storeRecyclerView.visibility = View.VISIBLE
                 binding.storeRecyclerView.adapter = StoreAdapter(stores) { store ->
                     viewModelHomeUniandesMember.storeItemClicked(store)
                 }
@@ -132,11 +146,11 @@ class ActivityHomeUniandesMember : AppCompatActivity() {
             if (advertisements.size == 2) {
                 binding.errorConnectionAdvertisements.visibility = View.GONE
                 binding.messageNoConnectionAdvertisements.visibility = View.GONE
+                binding.advertisementRecyclerView.visibility = View.VISIBLE
                 binding.advertisementRecyclerView.adapter = AdvertisementAdapter(advertisements) { advertisement ->
                     viewModelHomeUniandesMember.advertisementItemClicked(advertisement)
                 }
             } else {
-                Toast.makeText(this, "You are offline", Toast.LENGTH_SHORT).show()
                 binding.errorConnectionAdvertisements.visibility = View.VISIBLE
                 binding.messageNoConnectionAdvertisements.visibility = View.VISIBLE
             }

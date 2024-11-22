@@ -51,7 +51,7 @@ class RepositoryStore private constructor() {
 
         if (NetworkUtils.isInternetAvailable()) {
             try {
-                withTimeout(3000) {
+                withTimeout(5000) {
                     val querySnapshot = firebase.firestore.collection("stores")
                         .get(Source.SERVER)
                         .await()
@@ -68,6 +68,7 @@ class RepositoryStore private constructor() {
         }
 
         if (storesList.isEmpty()) {
+
             try {
                 val cachedSnapshot = firebase.firestore.collection("stores")
                     .get(Source.CACHE)
@@ -81,6 +82,7 @@ class RepositoryStore private constructor() {
             } catch (e: Exception) {
                 e.printStackTrace()
             }
+
         }
 
         return storesList.sortedBy { store ->

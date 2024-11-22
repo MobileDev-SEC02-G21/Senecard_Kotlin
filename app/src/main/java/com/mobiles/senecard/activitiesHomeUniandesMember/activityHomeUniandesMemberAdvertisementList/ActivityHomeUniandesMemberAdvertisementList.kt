@@ -6,6 +6,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.Button
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
@@ -31,7 +32,15 @@ class ActivityHomeUniandesMemberAdvertisementList : AppCompatActivity() {
 
         setElements()
         setObservers()
+    }
+
+    override fun onResume() {
+        super.onResume()
         viewModelHomeUniandesMemberAdvertisementList.getAllAdvertisements()
+        binding.errorConnectionAdvertisements.visibility = View.GONE
+        binding.messageNoConnectionAdvertisements.visibility = View.GONE
+        binding.advertisementRecyclerView.visibility = View.GONE
+        binding.loadingAnimation.visibility = View.VISIBLE
     }
 
     private fun setElements() {
@@ -85,6 +94,7 @@ class ActivityHomeUniandesMemberAdvertisementList : AppCompatActivity() {
             binding.swipeRefreshLayout.isRefreshing = false
         }
         viewModelHomeUniandesMemberAdvertisementList.filteredAdvertisementList.observe(this) { filteredAdvertisements ->
+            binding.advertisementRecyclerView.visibility = View.VISIBLE
             binding.advertisementRecyclerView.adapter = AdvertisementAdapter(filteredAdvertisements) { advertisement ->
                 viewModelHomeUniandesMemberAdvertisementList.onClickedItemAdvertisement(advertisement)
             }
