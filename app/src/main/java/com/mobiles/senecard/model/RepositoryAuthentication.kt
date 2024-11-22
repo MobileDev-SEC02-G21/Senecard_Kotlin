@@ -2,6 +2,8 @@ package com.mobiles.senecard.model
 
 import com.mobiles.senecard.model.entities.User
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.TimeoutCancellationException
 
 class RepositoryAuthentication private constructor() {
 
@@ -32,13 +34,19 @@ class RepositoryAuthentication private constructor() {
     }
 
     suspend fun getCurrentUser(): User? {
-        if (currentUser == null) {
-            val firebaseUser = firebase.auth.currentUser
-            if (firebaseUser != null) {
-                currentUser = repositoryUser.getUserByEmail(firebaseUser.email!!)
+        return try {
+            withTimeout(5000L) {
+                if (currentUser == null) {
+                    val firebaseUser = firebase.auth.currentUser
+                    if (firebaseUser != null) {
+                        currentUser = repositoryUser.getUserByEmail(firebaseUser.email!!)
+                    }
+                }
+                currentUser
             }
+        } catch (e: TimeoutCancellationException) {
+            null
         }
-        return currentUser
     }
 
     fun logOut() {

@@ -2,6 +2,7 @@ package com.mobiles.senecard.model
 
 import android.net.Uri
 import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.TimeoutCancellationException
 import com.google.firebase.firestore.Source
 import com.google.firebase.firestore.toObject
 import com.mobiles.senecard.NetworkUtils
@@ -88,30 +89,36 @@ class RepositoryStore private constructor() {
     }
 
     suspend fun getRecommendedStoresByUniandesMemberId(uniandesMemberId: String): List<Store> {
-        val storesList = getAllStores()
-        val loyaltyCardList = repositoryLoyaltyCard.getLoyaltyCardsByUniandesMemberId(uniandesMemberId)
+        return try {
+            withTimeout(10000L) {
+                val storesList = getAllStores()
+                val loyaltyCardList = repositoryLoyaltyCard.getLoyaltyCardsByUniandesMemberId(uniandesMemberId)
 
-        val storeIdsWithPurchases = loyaltyCardList.mapNotNull { it.storeId }
+                val storeIdsWithPurchases = loyaltyCardList.mapNotNull { it.storeId }
 
-        val frequentCategories = storesList
-            .filter { it.id in storeIdsWithPurchases && it.category != null }
-            .groupingBy { it.category }
-            .eachCount()
-            .toList()
-            .sortedByDescending { (_, count) -> count }
-            .map { it.first }
+                val frequentCategories = storesList
+                    .filter { it.id in storeIdsWithPurchases && it.category != null }
+                    .groupingBy { it.category }
+                    .eachCount()
+                    .toList()
+                    .sortedByDescending { (_, count) -> count }
+                    .map { it.first }
 
-        val recommendedStores = storesList
-            .filter { store ->
-                store.id != null &&
-                        store.id !in storeIdsWithPurchases &&
-                        !isStoreClosed(store) &&
-                        store.category != null
+                val recommendedStores = storesList
+                    .filter { store ->
+                        store.id != null &&
+                                store.id !in storeIdsWithPurchases &&
+                                !isStoreClosed(store) &&
+                                store.category != null
+                    }
+                    .sortedWith(compareByDescending<Store> { it.rating ?: 0.0 }
+                        .thenComparing { store -> frequentCategories.indexOf(store.category).takeIf { it >= 0 } ?: Int.MAX_VALUE })
+
+                recommendedStores.take(2)
             }
-            .sortedWith(compareByDescending<Store> { it.rating ?: 0.0 }
-                .thenComparing { store -> frequentCategories.indexOf(store.category).takeIf { it >= 0 } ?: Int.MAX_VALUE })
-
-        return recommendedStores.take(2)
+        } catch (e: TimeoutCancellationException) {
+            emptyList()
+        }
     }
 
     suspend fun getStoreById(storeId: String): Store? {

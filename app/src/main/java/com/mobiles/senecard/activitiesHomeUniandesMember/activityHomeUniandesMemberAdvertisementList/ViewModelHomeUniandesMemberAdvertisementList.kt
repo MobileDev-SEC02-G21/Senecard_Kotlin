@@ -41,7 +41,6 @@ class ViewModelHomeUniandesMemberAdvertisementList : ViewModel() {
         viewModelScope.launch {
             val advertisements = repositoryAdvertisement.getAllAdvertisements()
             _advertisementList.value = advertisements
-            _filteredAdvertisementList.value = advertisements
         }
     }
 
@@ -59,7 +58,7 @@ class ViewModelHomeUniandesMemberAdvertisementList : ViewModel() {
         }
     }
 
-    private fun applyFilters() {
+    fun applyFilters() {
         viewModelScope.launch {
             val validCategories = listOf("Bakeries", "Bar", "Coffee", "Electronic", "Pizzeria", "Restaurant", "Stationery")
 
