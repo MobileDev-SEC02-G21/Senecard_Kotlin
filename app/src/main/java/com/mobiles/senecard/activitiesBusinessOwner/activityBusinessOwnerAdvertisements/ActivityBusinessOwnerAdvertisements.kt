@@ -3,10 +3,14 @@ package com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerAdvert
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.widget.Button
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mobiles.senecard.R
 import com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerAdvertisementsCreate.ActivityBusinessOwnerAdvertisementsCreate
@@ -25,24 +29,28 @@ class ActivityBusinessOwnerAdvertisements : AppCompatActivity() {
     private lateinit var informationDialog: Dialog
     private lateinit var errorDialog: Dialog
 
+    // SwipeRefreshLayout
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setupDialogs()
         setupBinding()
         setupObservers()
+        setupSwipeRefresh()
     }
 
     private fun setupBinding() {
         binding = ActivityBusinessOwnerAdvertisementsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Call getAdvertisements to fetch advertisements
+        // Fetch advertisements
         viewModel.getAdvertisements()
 
         // Set up click listeners
         binding.btnAdd.setOnClickListener {
-            viewModel.onAddAdvertisementClicked()
+            checkOnlineAndNavigateToCreateAdvertisement()
         }
         binding.btnBack.setOnClickListener {
             finish()
@@ -69,6 +77,25 @@ class ActivityBusinessOwnerAdvertisements : AppCompatActivity() {
         errorDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
     }
 
+    private fun setupSwipeRefresh() {
+        // Initialize SwipeRefreshLayout
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout)
+
+        // Set up refresh listener
+        swipeRefreshLayout.setOnRefreshListener {
+            refreshData()
+        }
+    }
+
+    private fun refreshData() {
+        Handler(Looper.getMainLooper()).postDelayed({
+            // Stop refresh animation
+            swipeRefreshLayout.isRefreshing = false
+            // Fetch advertisements
+            viewModel.getAdvertisements()
+        }, 2000) // Simulate a delay
+    }
+
     private fun setupObservers() {
         // Observe advertisements and update RecyclerView
         viewModel.advertisements.observe(this) { advertisements ->
@@ -86,7 +113,8 @@ class ActivityBusinessOwnerAdvertisements : AppCompatActivity() {
                 }
                 UiState.INFORMATION -> {
                     hideLoadingPopup()
-                    showInformationPopup(viewModel.infoMessage.value ?: "Information message")
+                    val infoMessage = viewModel.infoMessage.value
+                    showInformationPopup(infoMessage ?: "Unknown information.")
                 }
             }
         }
@@ -149,6 +177,17 @@ class ActivityBusinessOwnerAdvertisements : AppCompatActivity() {
         }
 
         errorDialog.show()
+    }
+
+    private fun checkOnlineAndNavigateToCreateAdvertisement() {
+        viewModel.checkOnlineStatus()
+        viewModel.isOnline.observe(this) { isOnline ->
+            if (isOnline) {
+                navigateToCreateAdvertisement()
+            } else {
+                showInformationPopup("This functionality requires an internet connection. Please connect to the internet and try again.")
+            }
+        }
     }
 
     private fun navigateToCreateAdvertisement() {
