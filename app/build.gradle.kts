@@ -75,6 +75,7 @@ dependencies {
     implementation(libs.core)
     implementation(libs.firebase.crashlytics.buildtools)
     implementation(libs.play.services.mlkit.barcode.scanning)
+    implementation(libs.androidx.swiperefreshlayout)
 
     // Dependencies of tests
     testImplementation(libs.junit)

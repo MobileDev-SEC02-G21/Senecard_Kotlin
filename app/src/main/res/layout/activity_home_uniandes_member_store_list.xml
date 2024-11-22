@@ -211,24 +211,62 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp" />
 
-    <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/loading_animation"
-        app:lottie_rawRes="@raw/loading"
-        app:lottie_autoPlay="true"
-        app:lottie_loop="true"
-
-        android:layout_marginTop="20dp"
-        android:layout_gravity="center"
-        android:layout_width="100dp"
-        android:layout_height="100dp" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/store_recycler_view"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:paddingStart="35dp"
-        android:paddingEnd="35dp"
-        android:paddingBottom="35dp" />
+        android:layout_height="match_parent"
+        android:layout_marginTop="10dp">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/loading_animation"
+                app:lottie_rawRes="@raw/loading"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"
+
+                android:layout_marginTop="20dp"
+                android:layout_gravity="center"
+                android:layout_width="100dp"
+                android:layout_height="100dp" />
+
+            <ImageView
+                android:visibility="gone"
+                android:id="@+id/error_connection_stores"
+                android:src="@mipmap/icon_no_connection"
+                android:contentDescription="@string/icon_options"
+                android:layout_marginTop="20dp"
+                android:layout_gravity="center"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                tools:ignore="ImageContrastCheck" />
+
+            <TextView
+                android:visibility="gone"
+                android:id="@+id/message_no_connection_stores"
+                android:text="Please check your internet connection and try again"
+                android:fontFamily="@font/sen_regular"
+                android:textColor="@color/text"
+                android:textSize="14sp"
+                android:gravity="center"
+                android:paddingStart="70dp"
+                android:paddingEnd="70dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/store_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:paddingStart="35dp"
+                android:paddingEnd="35dp"
+                android:paddingBottom="35dp" />
+        </LinearLayout>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </LinearLayout>

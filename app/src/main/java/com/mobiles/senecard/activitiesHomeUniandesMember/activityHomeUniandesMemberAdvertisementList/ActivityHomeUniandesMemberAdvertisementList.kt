@@ -9,6 +9,7 @@ import android.widget.Button
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mobiles.senecard.AdvertisementAdapter
 import com.mobiles.senecard.R
@@ -49,6 +50,12 @@ class ActivityHomeUniandesMemberAdvertisementList : AppCompatActivity() {
         binding.backImageView.setOnClickListener {
             viewModelHomeUniandesMemberAdvertisementList.backImageViewClicked()
         }
+        binding.swipeRefreshLayout.setColorSchemeResources(R.color.white)
+        binding.swipeRefreshLayout.setProgressBackgroundColorSchemeColor(ContextCompat.getColor(this, R.color.primary))
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            viewModelHomeUniandesMemberAdvertisementList.getAllAdvertisements()
+        }
+
     }
 
     private fun setObservers() {
@@ -67,9 +74,15 @@ class ActivityHomeUniandesMemberAdvertisementList : AppCompatActivity() {
         }
         viewModelHomeUniandesMemberAdvertisementList.advertisementList.observe(this) { advertisements ->
             binding.loadingAnimation.visibility = View.GONE
-            binding.advertisementRecyclerView.adapter = AdvertisementAdapter(advertisements) { advertisement ->
-                viewModelHomeUniandesMemberAdvertisementList.onClickedItemAdvertisement(advertisement)
+            if (advertisements.isNotEmpty()) {
+                binding.errorConnectionAdvertisements.visibility = View.GONE
+                binding.messageNoConnectionAdvertisements.visibility = View.GONE
+                viewModelHomeUniandesMemberAdvertisementList.applyFilters()
+            } else {
+                binding.errorConnectionAdvertisements.visibility = View.VISIBLE
+                binding.messageNoConnectionAdvertisements.visibility = View.VISIBLE
             }
+            binding.swipeRefreshLayout.isRefreshing = false
         }
         viewModelHomeUniandesMemberAdvertisementList.filteredAdvertisementList.observe(this) { filteredAdvertisements ->
             binding.advertisementRecyclerView.adapter = AdvertisementAdapter(filteredAdvertisements) { advertisement ->

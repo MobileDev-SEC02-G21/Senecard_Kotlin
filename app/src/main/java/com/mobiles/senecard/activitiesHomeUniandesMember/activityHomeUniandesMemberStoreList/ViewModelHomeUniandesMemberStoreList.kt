@@ -39,7 +39,6 @@ class ViewModelHomeUniandesMemberStoreList : ViewModel() {
         viewModelScope.launch {
             val stores = repositoryStore.getAllStores()
             _storeList.value = stores
-            _filteredStoreList.value = stores
         }
     }
 
@@ -53,7 +52,7 @@ class ViewModelHomeUniandesMemberStoreList : ViewModel() {
         applyFilters()
     }
 
-    private fun applyFilters() {
+    fun applyFilters() {
         val validCategories = listOf("Bakeries", "Bar", "Coffee", "Electronic", "Pizzeria", "Restaurant", "Stationery")
 
         val allStores = _storeList.value ?: return

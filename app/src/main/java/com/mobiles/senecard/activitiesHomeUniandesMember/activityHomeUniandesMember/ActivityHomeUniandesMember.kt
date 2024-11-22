@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mobiles.senecard.AdvertisementAdapter
@@ -56,6 +57,11 @@ class ActivityHomeUniandesMember : AppCompatActivity() {
         }
         binding.advertisementsEditText.setOnClickListener {
             viewModelHomeUniandesMember.advertisementsEditTextClicked()
+        }
+        binding.swipeRefreshLayout.setColorSchemeResources(R.color.white)
+        binding.swipeRefreshLayout.setProgressBackgroundColorSchemeColor(ContextCompat.getColor(this, R.color.primary))
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            viewModelHomeUniandesMember.getInformation()
         }
     }
 
@@ -109,14 +115,30 @@ class ActivityHomeUniandesMember : AppCompatActivity() {
         }
         viewModelHomeUniandesMember.storeListRecommended.observe(this) { stores ->
             binding.storesLoadingAnimation.visibility = View.GONE
-            binding.storeRecyclerView.adapter = StoreAdapter(stores) { store ->
-                viewModelHomeUniandesMember.storeItemClicked(store)
+            if (stores.size == 2) {
+                binding.errorConnectionStores.visibility = View.GONE
+                binding.messageNoConnectionStores.visibility = View.GONE
+                binding.storeRecyclerView.adapter = StoreAdapter(stores) { store ->
+                    viewModelHomeUniandesMember.storeItemClicked(store)
+                }
+            } else {
+                binding.errorConnectionStores.visibility = View.VISIBLE
+                binding.messageNoConnectionStores.visibility = View.VISIBLE
             }
         }
         viewModelHomeUniandesMember.advertisementListRecommended.observe(this) { advertisements ->
             binding.advertisementsLoadingAnimation.visibility = View.GONE
-            binding.advertisementRecyclerView.adapter = AdvertisementAdapter(advertisements) { advertisement ->
-                viewModelHomeUniandesMember.advertisementItemClicked(advertisement)
+            binding.swipeRefreshLayout.isRefreshing = false
+            if (advertisements.size == 2) {
+                binding.errorConnectionAdvertisements.visibility = View.GONE
+                binding.messageNoConnectionAdvertisements.visibility = View.GONE
+                binding.advertisementRecyclerView.adapter = AdvertisementAdapter(advertisements) { advertisement ->
+                    viewModelHomeUniandesMember.advertisementItemClicked(advertisement)
+                }
+            } else {
+                Toast.makeText(this, "You are offline", Toast.LENGTH_SHORT).show()
+                binding.errorConnectionAdvertisements.visibility = View.VISIBLE
+                binding.messageNoConnectionAdvertisements.visibility = View.VISIBLE
             }
         }
         viewModelHomeUniandesMember.navigateToActivityHomeUniandesMemberStoreDetail.observe(this) { store ->

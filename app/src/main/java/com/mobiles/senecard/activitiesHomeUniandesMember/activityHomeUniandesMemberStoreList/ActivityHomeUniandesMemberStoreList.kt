@@ -9,6 +9,7 @@ import android.widget.Button
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mobiles.senecard.R
 import com.mobiles.senecard.StoreAdapter
@@ -49,10 +50,14 @@ class ActivityHomeUniandesMemberStoreList : AppCompatActivity() {
         binding.backImageView.setOnClickListener {
             viewModelHomeUniandesMemberStoreList.backImageViewClicked()
         }
+        binding.swipeRefreshLayout.setColorSchemeResources(R.color.white)
+        binding.swipeRefreshLayout.setProgressBackgroundColorSchemeColor(ContextCompat.getColor(this, R.color.primary))
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            viewModelHomeUniandesMemberStoreList.getAllStores()
+        }
     }
 
     private fun setObservers() {
-
         viewModelHomeUniandesMemberStoreList.navigateToActivityHomeUniandesMember.observe(this) { navigate ->
             if (navigate) {
                 val intent = Intent(this, ActivityHomeUniandesMember::class.java)
@@ -68,9 +73,15 @@ class ActivityHomeUniandesMemberStoreList : AppCompatActivity() {
         }
         viewModelHomeUniandesMemberStoreList.storeList.observe(this) { stores ->
             binding.loadingAnimation.visibility = View.GONE
-            binding.storeRecyclerView.adapter = StoreAdapter(stores) { store ->
-                viewModelHomeUniandesMemberStoreList.onClickedItemStore(store)
+            if (stores.isNotEmpty()) {
+                binding.errorConnectionStores.visibility = View.GONE
+                binding.messageNoConnectionStores.visibility = View.GONE
+                viewModelHomeUniandesMemberStoreList.applyFilters()
+            } else {
+                binding.errorConnectionStores.visibility = View.VISIBLE
+                binding.messageNoConnectionStores.visibility = View.VISIBLE
             }
+            binding.swipeRefreshLayout.isRefreshing = false
         }
         viewModelHomeUniandesMemberStoreList.filteredStoreList.observe(this) { filteredStores ->
             binding.storeRecyclerView.adapter = StoreAdapter(filteredStores) { store ->

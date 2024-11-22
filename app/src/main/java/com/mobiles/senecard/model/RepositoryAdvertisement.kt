@@ -1,5 +1,7 @@
 package com.mobiles.senecard.model
 
+import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.TimeoutCancellationException
 import android.net.Uri
 import com.google.firebase.firestore.toObject
 import com.mobiles.senecard.model.entities.Advertisement
@@ -73,42 +75,44 @@ class RepositoryAdvertisement private constructor() {
     }
 
     suspend fun getRecommendedAdvertisementsByUniandesMemberId(uniandesMemberId: String): List<Advertisement> {
-        // Get the list of all advertisements and member loyalty cards
-        val advertisementsList = getAllAdvertisements()
-        val loyaltyCardList = repositoryLoyaltyCard.getLoyaltyCardsByUniandesMemberId(uniandesMemberId)
-        val storesList = repositoryStore.getAllStores()
+        return try {
+            withTimeout(10000L) {
+                val advertisementsList = getAllAdvertisements()
+                val loyaltyCardList = repositoryLoyaltyCard.getLoyaltyCardsByUniandesMemberId(uniandesMemberId)
+                val storesList = repositoryStore.getAllStores()
 
-        // Get the store IDs where the member has made purchases
-        val storeIdsWithPurchases = loyaltyCardList.mapNotNull { it.storeId }
+                val storeIdsWithPurchases = loyaltyCardList.mapNotNull { it.storeId }
 
-        // Identify the most frequent categories in member purchases
-        val frequentCategories = storesList
-            .filter { it.id in storeIdsWithPurchases && it.category != null }
-            .groupingBy { it.category }
-            .eachCount()
-            .toList()
-            .sortedByDescending { (_, count) -> count }
-            .map { it.first }
+                val frequentCategories = storesList
+                    .filter { it.id in storeIdsWithPurchases && it.category != null }
+                    .groupingBy { it.category }
+                    .eachCount()
+                    .toList()
+                    .sortedByDescending { (_, count) -> count }
+                    .map { it.first }
 
-        // Filter out ads that belong to non-purchased stores and are in frequent categories
-        val recommendedAdvertisements = advertisementsList
-            .filter { advertisement ->
-                val store = storesList.find { it.id == advertisement.storeId }
-                store != null &&
-                        advertisement.id != null &&
-                        store.id !in storeIdsWithPurchases &&
-                        store.category != null &&
-                        !isAdvertisementStoreClosed(advertisement)
+                val recommendedAdvertisements = advertisementsList
+                    .filter { advertisement ->
+                        val store = storesList.find { it.id == advertisement.storeId }
+                        store != null &&
+                                advertisement.id != null &&
+                                store.id !in storeIdsWithPurchases &&
+                                store.category != null &&
+                                !isAdvertisementStoreClosed(advertisement)
+                    }
+                    .sortedWith(compareByDescending<Advertisement> { advertisement ->
+                        val store = storesList.find { it.id == advertisement.storeId }
+                        store?.rating ?: 0.0
+                    }.thenComparing { advertisement ->
+                        val store = storesList.find { it.id == advertisement.storeId }
+                        frequentCategories.indexOf(store?.category).takeIf { it >= 0 } ?: Int.MAX_VALUE
+                    })
+
+                recommendedAdvertisements.take(2)
             }
-            .sortedWith(compareByDescending<Advertisement> { advertisement ->
-                val store = storesList.find { it.id == advertisement.storeId }
-                store?.rating ?: 0.0
-            }.thenComparing { advertisement ->
-                val store = storesList.find { it.id == advertisement.storeId }
-                frequentCategories.indexOf(store?.category).takeIf { it >= 0 } ?: Int.MAX_VALUE
-            })
-
-        return recommendedAdvertisements.take(2)
+        } catch (e: TimeoutCancellationException) {
+            emptyList()
+        }
     }
 
     suspend fun getAdvertisementById(id: String): Advertisement? {

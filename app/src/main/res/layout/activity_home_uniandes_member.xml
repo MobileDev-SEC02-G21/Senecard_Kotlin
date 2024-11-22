@@ -6,27 +6,25 @@
     android:background="@color/white"
     android:id="@+id/drawer_layout"
     tools:context=".activitiesHomeUniandesMember.activityHomeUniandesMember.ActivityHomeUniandesMember"
-
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
-        
+        android:layout_height="match_parent">
+
         <LinearLayout
             android:orientation="horizontal"
             android:gravity="center_horizontal"
             android:layout_marginTop="20dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content">
 
             <ImageView
                 android:id="@+id/options_image_view"
                 android:src="@mipmap/icon_options"
                 android:contentDescription="@string/icon_options"
-
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 tools:ignore="ImageContrastCheck" />
@@ -44,7 +42,6 @@
                     android:fontFamily="@font/sen_regular"
                     android:textColor="@color/text_highlight"
                     android:textSize="18sp"
-
                     android:layout_gravity="center"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
@@ -55,7 +52,6 @@
                     android:fontFamily="@font/sen_bold"
                     android:textColor="@color/text_highlight"
                     android:textSize="18sp"
-
                     android:layout_gravity="center"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
@@ -65,24 +61,20 @@
                 android:id="@+id/qr_code_image_view"
                 android:src="@mipmap/icon_qr_code"
                 android:contentDescription="@string/icon_options"
-
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 tools:ignore="ImageContrastCheck" />
-
         </LinearLayout>
 
         <LinearLayout
             android:orientation="vertical"
             android:background="@color/primary"
-
             android:gravity="center"
             android:paddingStart="50dp"
             android:paddingEnd="50dp"
             android:layout_marginTop="20dp"
-
             android:layout_width="match_parent"
-            android:layout_height="70dp" >
+            android:layout_height="70dp">
 
             <TextView
                 android:id="@+id/recommendations_text_view"
@@ -90,110 +82,167 @@
                 android:fontFamily="@font/sen_semibold"
                 android:textColor="@color/white"
                 android:textSize="18sp"
-
                 android:textAlignment="center"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
-
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_gravity="center"
-            android:orientation="horizontal"
-            android:layout_marginTop="20dp"
-            android:layout_width="310dp"
-            android:layout_height="wrap_content" >
-
-            <TextView
-                android:text="Stores"
-                android:fontFamily="@font/sen_regular"
-                android:textColor="@color/text"
-                android:textSize="16sp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <TextView
-                android:id="@+id/stores_edit_text"
-                android:text="See All >"
-                android:fontFamily="@font/sen_regular"
-                android:textColor="@color/text"
-                android:textSize="16sp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
-
-        <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/stores_loading_animation"
-            app:lottie_rawRes="@raw/loading"
-            app:lottie_autoPlay="true"
-            app:lottie_loop="true"
-
-            android:layout_marginTop="20dp"
-            android:layout_gravity="center"
-            android:layout_width="100dp"
-            android:layout_height="100dp" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/store_recycler_view"
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipe_refresh_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:paddingStart="35dp"
-            android:paddingEnd="35dp" />
+            android:layout_height="match_parent">
 
-        <LinearLayout
-            android:layout_gravity="center"
-            android:orientation="horizontal"
-            android:layout_marginTop="20dp"
-            android:layout_width="310dp"
-            android:layout_height="wrap_content" >
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-            <TextView
-                android:text="Advertisements"
-                android:fontFamily="@font/sen_regular"
-                android:textColor="@color/text"
-                android:textSize="16sp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                <LinearLayout
+                    android:layout_gravity="center"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="20dp"
+                    android:layout_width="310dp"
+                    android:layout_height="wrap_content">
 
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
+                    <TextView
+                        android:text="Stores"
+                        android:fontFamily="@font/sen_regular"
+                        android:textColor="@color/text"
+                        android:textSize="16sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
 
-            <TextView
-                android:id="@+id/advertisements_edit_text"
-                android:text="See All >"
-                android:fontFamily="@font/sen_regular"
-                android:textColor="@color/text"
-                android:textSize="16sp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
 
-        <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/advertisements_loading_animation"
-            app:lottie_rawRes="@raw/loading"
-            app:lottie_autoPlay="true"
-            app:lottie_loop="true"
+                    <TextView
+                        android:id="@+id/stores_edit_text"
+                        android:text="See All >"
+                        android:fontFamily="@font/sen_regular"
+                        android:textColor="@color/text"
+                        android:textSize="16sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
 
-            android:layout_marginTop="20dp"
-            android:layout_gravity="center"
-            android:layout_width="100dp"
-            android:layout_height="100dp" />
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/stores_loading_animation"
+                    app:lottie_rawRes="@raw/loading"
+                    app:lottie_autoPlay="true"
+                    app:lottie_loop="true"
+                    android:layout_marginTop="20dp"
+                    android:layout_gravity="center"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/advertisement_recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:paddingStart="35dp"
-            android:paddingEnd="35dp" />
+                <ImageView
+                    android:visibility="gone"
+                    android:id="@+id/error_connection_stores"
+                    android:src="@mipmap/icon_no_connection"
+                    android:contentDescription="@string/icon_options"
+                    android:layout_marginTop="20dp"
+                    android:layout_gravity="center"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    tools:ignore="ImageContrastCheck" />
+
+                <TextView
+                    android:visibility="gone"
+                    android:id="@+id/message_no_connection_stores"
+                    android:text="Please check your internet connection and try again"
+                    android:fontFamily="@font/sen_regular"
+                    android:textColor="@color/text"
+                    android:textSize="14sp"
+                    android:gravity="center"
+                    android:paddingStart="70dp"
+                    android:paddingEnd="70dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/store_recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:paddingStart="35dp"
+                    android:paddingEnd="35dp" />
+
+                <LinearLayout
+                    android:layout_gravity="center"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="20dp"
+                    android:layout_width="310dp"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:text="Advertisements"
+                        android:fontFamily="@font/sen_regular"
+                        android:textColor="@color/text"
+                        android:textSize="16sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <TextView
+                        android:id="@+id/advertisements_edit_text"
+                        android:text="See All >"
+                        android:fontFamily="@font/sen_regular"
+                        android:textColor="@color/text"
+                        android:textSize="16sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/advertisements_loading_animation"
+                    app:lottie_rawRes="@raw/loading"
+                    app:lottie_autoPlay="true"
+                    app:lottie_loop="true"
+                    android:layout_marginTop="20dp"
+                    android:layout_gravity="center"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp" />
+
+                <ImageView
+                    android:visibility="gone"
+                    android:id="@+id/error_connection_advertisements"
+                    android:src="@mipmap/icon_no_connection"
+                    android:contentDescription="@string/icon_options"
+                    android:layout_marginTop="20dp"
+                    android:layout_gravity="center"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    tools:ignore="ImageContrastCheck" />
+
+                <TextView
+                    android:visibility="gone"
+                    android:id="@+id/message_no_connection_advertisements"
+                    android:text="Please check your internet connection and try again"
+                    android:fontFamily="@font/sen_regular"
+                    android:textColor="@color/text"
+                    android:textSize="14sp"
+                    android:gravity="center"
+                    android:paddingStart="70dp"
+                    android:paddingEnd="70dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/advertisement_recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:paddingStart="35dp"
+                    android:paddingEnd="35dp" />
+
+            </LinearLayout>
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     </LinearLayout>
 
