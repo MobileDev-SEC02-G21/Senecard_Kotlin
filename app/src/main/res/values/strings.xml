@@ -114,7 +114,7 @@
     <string name="sign_up_uniandes_member_password_empty">Please enter a valid password to sign up</string>
     <string name="sign_up_uniandes_member_confirm_password_empty">Please enter a valid confirm password to sign up</string>
     <string name="sign_up_uniandes_member_email_invalid">The email is not valid</string>
-    <string name="sign_up_uniandes_member_password_short">Please enter a password more large to sign up</string>
+    <string name="sign_up_uniandes_member_password_short">Please enter a password longer than 7 characters to sign up</string>
     <string name="sign_up_uniandes_member_passwords_not_equals">The passwords are not equals</string>
     <string name="sign_up_uniandes_member_user_exists">The email are used by other user</string>
     <string name="sign_up_uniandes_member_error_firebase_auth">We were unable to register your user</string>

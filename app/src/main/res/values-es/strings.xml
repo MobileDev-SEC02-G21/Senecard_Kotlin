@@ -107,7 +107,7 @@
     <string name="sign_up_uniandes_member_password_empty">Por favor ingresa una contraseña válida para registrarte</string>
     <string name="sign_up_uniandes_member_confirm_password_empty">Por favor ingresa una confirmación de contraseña válida para registrarte</string>
     <string name="sign_up_uniandes_member_email_invalid">El correo electrónico no es válido</string>
-    <string name="sign_up_uniandes_member_password_short">Por favor ingresa una contraseña más larga para registrarte</string>
+    <string name="sign_up_uniandes_member_password_short">Por favor ingresa una contraseña de más de 7 caracteres para registrarte</string>
     <string name="sign_up_uniandes_member_passwords_not_equals">Las contraseñas no coinciden</string>
     <string name="sign_up_uniandes_member_user_exists">El correo ya está siendo usado por otro usuario</string>
     <string name="sign_up_uniandes_member_error_firebase_auth">No pudimos registrar tu usuario</string>
