@@ -4,8 +4,6 @@ import android.app.Dialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
@@ -13,7 +11,9 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.mobiles.senecard.R
 import com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerLandingPage.ActivityBusinessOwnerLandingPage
 import com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerQRSuccess.ActivityBusinessOwnerQRSuccess
@@ -27,23 +27,41 @@ class ActivityBusinessOwnerQRScanner : AppCompatActivity() {
     private lateinit var binding: ActivityBusinessOwnerQrScannerBinding
     private val viewModel: ViewModelBusinessOwnerQRScanner by viewModels()
 
-    // Dialog variables
-    private lateinit var loadingDialog: Dialog
-    private lateinit var informationDialog: Dialog
-    private lateinit var errorDialog: Dialog
+    // Dialog variables with lazy initialization
+    private val loadingDialog: Dialog by lazy {
+        Dialog(this).apply {
+            setContentView(R.layout.businessowner_popup_loading)
+            setCancelable(false)
+            window?.setBackgroundDrawableResource(android.R.color.transparent)
+        }
+    }
+
+    private val informationDialog: Dialog by lazy {
+        Dialog(this).apply {
+            setContentView(R.layout.businessowner_popup_information)
+            setCancelable(false)
+            window?.setBackgroundDrawableResource(android.R.color.transparent)
+        }
+    }
+
+    private val errorDialog: Dialog by lazy {
+        Dialog(this).apply {
+            setContentView(R.layout.businessowner_popup_error)
+            setCancelable(false)
+            window?.setBackgroundDrawableResource(android.R.color.transparent)
+        }
+    }
 
     // Sentinel to prevent redundant navigation
     private var isNavigating = false
 
     private var isActive = true
-
     private var isInformationPopupVisible = false
-
+    private var isCameraInitialized = false // Tracks camera initialization
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setupDialogs()
         setupBinding()
         setupObservers()
 
@@ -53,9 +71,11 @@ class ActivityBusinessOwnerQRScanner : AppCompatActivity() {
 
     private fun startRepeatingConnectionCheck() {
         lifecycleScope.launch {
-            while (isActive) {
-                viewModel.fiveSecConnectionTest() // Call the ViewModel method
-                delay(15000)
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                while (isActive) {
+                    viewModel.fiveSecConnectionTest()
+                    delay(15000)
+                }
             }
         }
     }
@@ -73,26 +93,6 @@ class ActivityBusinessOwnerQRScanner : AppCompatActivity() {
         }
     }
 
-    private fun setupDialogs() {
-        // Setup Loading Dialog
-        loadingDialog = Dialog(this)
-        loadingDialog.setContentView(R.layout.businessowner_popup_loading)
-        loadingDialog.setCancelable(false)
-        loadingDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-
-        // Setup Information Dialog
-        informationDialog = Dialog(this)
-        informationDialog.setContentView(R.layout.businessowner_popup_information)
-        informationDialog.setCancelable(false)
-        informationDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-
-        // Setup Error Dialog
-        errorDialog = Dialog(this)
-        errorDialog.setContentView(R.layout.businessowner_popup_error)
-        errorDialog.setCancelable(false)
-        errorDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-    }
-
     private fun setupObservers() {
         // Observe navigation updates
         viewModel.navigationDestination.observe(this) { destination ->
@@ -101,7 +101,7 @@ class ActivityBusinessOwnerQRScanner : AppCompatActivity() {
             when (destination) {
                 NavigationDestination.LANDING_PAGE -> navigateToActivity(ActivityBusinessOwnerLandingPage::class.java)
                 NavigationDestination.QR_SUCCESS -> {
-                    isNavigating = true // Prevent further navigation
+                    isNavigating = true
                     val intent = Intent(this, ActivityBusinessOwnerQRSuccess::class.java).apply {
                         putExtra("USER_ID", viewModel.scannedUserId.value)
                     }
@@ -149,7 +149,9 @@ class ActivityBusinessOwnerQRScanner : AppCompatActivity() {
     }
 
     private fun initializeCamera() {
+        if (isCameraInitialized) return
         viewModel.initializeCamera(binding.previewView, this)
+        isCameraInitialized = true
     }
 
     override fun onRequestPermissionsResult(
@@ -170,22 +172,17 @@ class ActivityBusinessOwnerQRScanner : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        loadingDialog.dismiss()
-        informationDialog.dismiss()
-        errorDialog.dismiss() // Ensure dialogs are dismissed when activity pauses
+        if (loadingDialog.isShowing) loadingDialog.dismiss()
+        if (informationDialog.isShowing) informationDialog.dismiss()
+        if (errorDialog.isShowing) errorDialog.dismiss()
     }
 
-    companion object {
-        private const val CAMERA_PERMISSION_REQUEST_CODE = 1001
-    }
-
-    // Popup functions
     private fun showLoadingPopup() {
         loadingDialog.show()
     }
 
     private fun hideLoadingPopup() {
-        loadingDialog.dismiss()
+        if (loadingDialog.isShowing) loadingDialog.dismiss()
     }
 
     private fun showInformationPopup(message: String) {
@@ -198,7 +195,7 @@ class ActivityBusinessOwnerQRScanner : AppCompatActivity() {
         messageTextView?.text = message
         okButton?.setOnClickListener {
             informationDialog.dismiss()
-            isInformationPopupVisible = false // Reset visibility tracker
+            isInformationPopupVisible = false
             viewModel.onInformationAcknowledged()
         }
 
@@ -220,7 +217,7 @@ class ActivityBusinessOwnerQRScanner : AppCompatActivity() {
 
         cancelButton?.setOnClickListener {
             errorDialog.dismiss()
-            redirectToInitial() // Navigate to initial activity
+            redirectToInitial()
         }
 
         errorDialog.show()
@@ -235,6 +232,10 @@ class ActivityBusinessOwnerQRScanner : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        isActive = false // Stop the loop when the activity ends
+        isActive = false
+    }
+
+    companion object {
+        private const val CAMERA_PERMISSION_REQUEST_CODE = 1001
     }
 }
