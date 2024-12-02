@@ -69,6 +69,8 @@
 
     <string name="sign_in_forgot_password_please_write_your_existing_account">Por favor escribe tu cuenta existente</string>
     <string name="sign_in_forgot_password_email">CORREO ELECTRÓNICO</string>
+    <string name="sign_in_forgot_password_phone">TELEFONO</string>
+
     <string name="sign_in_forgot_password_send_code">ENVIAR CÓDIGO</string>
 
     <string name="sign_in_verification_verification">Verificación</string>
