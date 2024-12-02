@@ -240,6 +240,7 @@
     <string name="closed">Cerrado</string>
     <string name="store_closed">Tienda Cerrada</string>
     <string name="please_spaces_are_not_allowed_here">Por favor, los espacios no están permitidos aquí</string>
+
     <string name="no_internet_connection_please_check_your_connection_and_try_again">No hay conexión a internet. Por favor, revisa tu conexión e inténtalo de nuevo</string>
     <string name="please_wait_one_moment_while_processing_the_information">Por favor, espera un momento mientras procesamos la información</string>
 
