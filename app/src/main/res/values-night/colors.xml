@@ -2,10 +2,10 @@
 <resources>
     <color name="primary">#FF7A28</color>
     <color name="secondary">#98A8B8</color>
-    <color name="tertiary">#F0F5FA</color>
-    <color name="text">#646982</color>
-    <color name="text_highlight">#2B2B2B</color>
-    <color name="background">#FFFFFF</color>
+    <color name="tertiary">#2B2B2B</color>
+    <color name="text">#E0E0E0</color>
+    <color name="text_highlight">#F5F5F5</color>
+    <color name="background">#121212</color>
 
     <color name="lightgray">#ECF0F4</color>
 
