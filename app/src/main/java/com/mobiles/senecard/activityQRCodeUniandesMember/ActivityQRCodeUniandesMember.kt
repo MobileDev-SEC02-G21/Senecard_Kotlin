@@ -6,10 +6,12 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.mobiles.senecard.R
 import com.mobiles.senecard.activityQRCodeUniandesMember.ViewModelQRCodeUniandesMember
 import com.mobiles.senecard.activityQRCodeUniandesMember.ViewModelQRCodeUniandesMemberFactory
 import com.mobiles.senecard.databinding.ActivityQrCodeUniandesMemberBinding
 import kotlinx.coroutines.launch
+
 class ActivityQRCodeUniandesMember : AppCompatActivity() {
 
     private lateinit var binding: ActivityQrCodeUniandesMemberBinding
@@ -53,7 +55,8 @@ class ActivityQRCodeUniandesMember : AppCompatActivity() {
 
         // Botón de retroceso
         binding.optionsImageView2.setOnClickListener {
-            onBackPressed()
+            finish()
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
         }
     }
 

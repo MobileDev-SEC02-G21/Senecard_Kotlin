@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/white"
+    android:background="@color/background"
     tools:context=".activitiesHomeUniandesMember.activityHomeUniandesMemberStoreList.ActivityHomeUniandesMemberStoreList"
 
     android:orientation="vertical"
@@ -47,6 +47,7 @@
         android:id="@+id/search_edit_text"
         android:autofillHints="search_edit_text"
         android:hint="Search stores"
+        android:textColorHint="@color/text"
         android:inputType="textNoSuggestions"
         android:fontFamily="@font/sen_regular"
         android:textSize="16sp"

@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string-array name="time_slots">
         <item>00</item>
         <item>01</item>
@@ -27,7 +27,7 @@
         <item>24</item>
     </string-array>
 
-    <string-array name="categories">
+    <string-array name="categories" tools:ignore="InconsistentArrays">
         <item>Restaurante</item>
         <item>Papeleria</item>
         <item>Comida</item>
@@ -39,6 +39,7 @@
     <string name="icon_launcher">icono de inicio</string>
     <string name="icon_back">icono atrás</string>
     <string name="icon_image">icono de imagen</string>
+    <string name="icon_options">icono de opciones</string>
 
     <string name="custom_dialog_accept">Aceptar</string>
     <string name="custom_dialog_message">Mensaje</string>
@@ -47,6 +48,7 @@
     <string name="custom_dialog_info">Información</string>
     <string name="custom_dialog_error">Error</string>
     <string name="custom_dialog_success">Éxito</string>
+    <string name="custom_dialog_loading">Cargando</string>
 
     <string name="initial_know_more_stores_with_us">¡Conoce más tiendas con nosotros!</string>
     <string name="initial_sign_in">INICIAR SESIÓN</string>
@@ -67,6 +69,7 @@
     <string name="sign_in_error_firebase_auth">El correo/contraseña son incorrectos</string>
     <string name="sign_in_authenticate_succesfully">Te has autenticado exitosamente</string>
 
+    <string name="sign_in_forgot_password_forgot_password">Olvidó la contraseña</string>
     <string name="sign_in_forgot_password_please_write_your_existing_account">Por favor escribe tu cuenta existente</string>
     <string name="sign_in_forgot_password_email">CORREO ELECTRÓNICO</string>
     <string name="sign_in_forgot_password_phone">TELEFONO</string>
@@ -178,6 +181,33 @@
     <string name="reward_image_desc">Description of the example</string>
     <string name="back_button_desc">Back botton</string>
     <string name="harvest_text">Cosechas</string>
+
+    <string name="settings">Configuraciones</string>
+    <string name="language">Idioma</string>
+    <string name="english">Ingles</string>
+    <string name="spanish">Español</string>
+    <string name="theme">Tema</string>
+    <string name="light">Claro</string>
+    <string name="dark">Oscuro</string>
+    <string name="push_notifications">Notificaciones Emergentes</string>
+    <string name="on">Activo</string>
+    <string name="remember_notifications">Notificaciones de Recordatorio</string>
+    <string name="advertisements_notifications">Notificaciones de Anuncios</string>
+    <string name="hey_user">¡Hola Usuario,</string>
+    <string name="i_hope_you_are_fine">¡Espero que estés bien!</string>
+    <string name="we_select_these_recommendations_for_you">Seleccionamos estas recomendaciones para ti</string>
+    <string name="stores">Tiendas</string>
+    <string name="see_all"><![CDATA[Ver todo >]]></string>
+    <string name="please_check_your_internet_connection_and_try_again">Por favor, revisa tu conexión a internet y vuelve a intentarlo</string>
+    <string name="advertisements">Anuncios</string>
+    <string name="options">Opciones</string>
+    <string name="home">Inicio</string>
+    <string name="qr_code">Código QR</string>
+    <string name="loyalty_cards">Tarjetas de fidelidad</string>
+    <string name="profile">Perfil</string>
+    <string name="log_out">Cerrar sesión</string>
+    <string name="senecard">SeneCard</string>
+    <string name="isis3510">ISIS3510</string>
 
 </resources>
 
