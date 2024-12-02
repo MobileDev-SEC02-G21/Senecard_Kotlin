@@ -22,6 +22,7 @@ import com.mobiles.senecard.activitiesHomeUniandesMember.activityHomeUniandesMem
 import com.mobiles.senecard.activitiesHomeUniandesMember.activityHomeUniandesMemberStoreDetail.ActivityHomeUniandesMemberStoreDetail
 import com.mobiles.senecard.activitiesHomeUniandesMember.activityHomeUniandesMemberStoreList.ActivityHomeUniandesMemberStoreList
 import com.mobiles.senecard.activitiesInitial.activityInitial.ActivityInitial
+import com.mobiles.senecard.activitySettings.ActivitySettings
 import com.mobiles.senecard.databinding.ActivityHomeUniandesMemberBinding
 
 class ActivityHomeUniandesMember : AppCompatActivity() {
@@ -93,8 +94,8 @@ class ActivityHomeUniandesMember : AppCompatActivity() {
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
                 val options = ActivityOptionsCompat.makeCustomAnimation(
                     this,
-                    R.anim.slide_in_down,
-                    R.anim.slide_out_up
+                    R.anim.slide_in_right,
+                    R.anim.slide_out_left
                 )
                 startActivity(intent, options.toBundle())
                 viewModelHomeUniandesMember.onNavigated()
@@ -204,6 +205,10 @@ class ActivityHomeUniandesMember : AppCompatActivity() {
             Toast.makeText(this, "Profile", Toast.LENGTH_SHORT).show()
         }
 
+        binding.settingsButton.setOnClickListener {
+            viewModelHomeUniandesMember.settingsButtonClicked()
+        }
+
         binding.logOutButton.setOnClickListener {
             viewModelHomeUniandesMember.logOutButtonClicked()
         }
@@ -226,6 +231,19 @@ class ActivityHomeUniandesMember : AppCompatActivity() {
         viewModelHomeUniandesMember.navigateToActivityLoyaltyCardsUniandesMember.observe(this) { navigate ->
             if (navigate) {
                 val intent = Intent(this, ActivityLoyaltyCards::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+                val options = ActivityOptionsCompat.makeCustomAnimation(
+                    this,
+                    R.anim.slide_in_right,
+                    R.anim.slide_out_left
+                )
+                startActivity(intent, options.toBundle())
+                viewModelHomeUniandesMember.onNavigated()
+            }
+        }
+        viewModelHomeUniandesMember.navigateToActivitySettings.observe(this) { navigate ->
+            if (navigate) {
+                val intent = Intent(this, ActivitySettings::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
                 val options = ActivityOptionsCompat.makeCustomAnimation(
                     this,

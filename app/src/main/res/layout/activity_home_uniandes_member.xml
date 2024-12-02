@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/white"
+    android:background="@color/background"
     android:id="@+id/drawer_layout"
     tools:context=".activitiesHomeUniandesMember.activityHomeUniandesMember.ActivityHomeUniandesMember"
     android:layout_width="match_parent"
@@ -38,7 +38,7 @@
 
                 <TextView
                     android:id="@+id/name_text_view"
-                    android:text="Hey User,"
+                    android:text="@string/hey_user"
                     android:fontFamily="@font/sen_regular"
                     android:textColor="@color/text_highlight"
                     android:textSize="18sp"
@@ -48,7 +48,7 @@
 
                 <TextView
                     android:id="@+id/greeting_text_view"
-                    android:text="¡I hope you are fine!"
+                    android:text="@string/i_hope_you_are_fine"
                     android:fontFamily="@font/sen_bold"
                     android:textColor="@color/text_highlight"
                     android:textSize="18sp"
@@ -78,7 +78,7 @@
 
             <TextView
                 android:id="@+id/recommendations_text_view"
-                android:text="We Select These Recommendations For You"
+                android:text="@string/we_select_these_recommendations_for_you"
                 android:fontFamily="@font/sen_semibold"
                 android:textColor="@color/white"
                 android:textSize="18sp"
@@ -105,7 +105,7 @@
                     android:layout_height="wrap_content">
 
                     <TextView
-                        android:text="Stores"
+                        android:text="@string/stores"
                         android:fontFamily="@font/sen_regular"
                         android:textColor="@color/text"
                         android:textSize="16sp"
@@ -119,7 +119,7 @@
 
                     <TextView
                         android:id="@+id/stores_edit_text"
-                        android:text="See All >"
+                        android:text="@string/see_all"
                         android:fontFamily="@font/sen_regular"
                         android:textColor="@color/text"
                         android:textSize="16sp"
@@ -151,7 +151,7 @@
                 <TextView
                     android:visibility="gone"
                     android:id="@+id/message_no_connection_stores"
-                    android:text="Please check your internet connection and try again"
+                    android:text="@string/please_check_your_internet_connection_and_try_again"
                     android:fontFamily="@font/sen_regular"
                     android:textColor="@color/text"
                     android:textSize="14sp"
@@ -177,7 +177,7 @@
                     android:layout_height="wrap_content">
 
                     <TextView
-                        android:text="Advertisements"
+                        android:text="@string/advertisements"
                         android:fontFamily="@font/sen_regular"
                         android:textColor="@color/text"
                         android:textSize="16sp"
@@ -191,7 +191,7 @@
 
                     <TextView
                         android:id="@+id/advertisements_edit_text"
-                        android:text="See All >"
+                        android:text="@string/see_all"
                         android:fontFamily="@font/sen_regular"
                         android:textColor="@color/text"
                         android:textSize="16sp"
@@ -223,7 +223,7 @@
                 <TextView
                     android:visibility="gone"
                     android:id="@+id/message_no_connection_advertisements"
-                    android:text="Please check your internet connection and try again"
+                    android:text="@string/please_check_your_internet_connection_and_try_again"
                     android:fontFamily="@font/sen_regular"
                     android:textColor="@color/text"
                     android:textSize="14sp"
@@ -267,7 +267,7 @@
             android:layout_height="50dp" />
 
         <TextView
-            android:text="Options"
+            android:text="@string/options"
             android:fontFamily="@font/sen_semibold"
             android:textColor="@color/text_highlight"
             android:textSize="20sp"
@@ -280,7 +280,7 @@
 
         <Button
             android:id="@+id/home_button"
-            android:text="Home"
+            android:text="@string/home"
             android:fontFamily="@font/sen_semibold"
             android:textColor="@color/text"
             android:textSize="14sp"
@@ -296,7 +296,7 @@
 
         <Button
             android:id="@+id/qr_code_button"
-            android:text="QR Code"
+            android:text="@string/qr_code"
             android:fontFamily="@font/sen_semibold"
             android:textColor="@color/text"
             android:textSize="14sp"
@@ -312,7 +312,7 @@
 
         <Button
             android:id="@+id/loyalty_cards_button"
-            android:text="Loyalty Cards"
+            android:text="@string/loyalty_cards"
             android:fontFamily="@font/sen_semibold"
             android:textColor="@color/text"
             android:textSize="14sp"
@@ -328,7 +328,23 @@
 
         <Button
             android:id="@+id/profile_button"
-            android:text="Profile"
+            android:text="@string/profile"
+            android:fontFamily="@font/sen_semibold"
+            android:textColor="@color/text"
+            android:textSize="14sp"
+            android:textAllCaps="false"
+            android:background="@drawable/home_menu_button_background"
+
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_gravity="center"
+            android:layout_width="250dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="10dp" />
+
+        <Button
+            android:id="@+id/settings_button"
+            android:text="@string/settings"
             android:fontFamily="@font/sen_semibold"
             android:textColor="@color/text"
             android:textSize="14sp"
@@ -344,7 +360,7 @@
 
         <Button
             android:id="@+id/log_out_button"
-            android:text="Log Out"
+            android:text="@string/log_out"
             android:fontFamily="@font/sen_semibold"
             android:textColor="@color/text"
             android:textSize="14sp"
@@ -359,18 +375,18 @@
             android:layout_marginTop="10dp" />
 
         <TextView
-            android:text="SeneCard"
+            android:text="@string/senecard"
             android:fontFamily="@font/sen_regular"
             android:textColor="@color/text"
             android:textSize="16sp"
 
             android:layout_gravity="center"
-            android:layout_marginTop="200dp"
+            android:layout_marginTop="150dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
         <TextView
-            android:text="ISIS3510"
+            android:text="@string/isis3510"
             android:fontFamily="@font/sen_regular"
             android:textColor="@color/text"
             android:textSize="16sp"

@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/background"
+    tools:context=".activitySettings.ActivitySettings"
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <ImageView
+        android:id="@+id/back_image_view"
+        android:contentDescription="@string/icon_back"
+        android:src="@mipmap/icon_back"
+
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:layout_constraintVertical_bias="0.05"
+        app:layout_constraintHorizontal_bias="0.1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ImageContrastCheck" />
+
+    <TextView
+        android:id="@+id/store_detail_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/sen_bold"
+        android:text="@string/settings"
+
+        android:textColor="@color/text_highlight"
+        android:textSize="25sp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/back_image_view" />
+
+    <TextView
+        android:id="@+id/language_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/sen_regular"
+
+        android:text="@string/language"
+        android:textColor="@color/text"
+        android:textSize="18sp"
+        app:layout_constraintHorizontal_bias="0.15"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/store_detail_text_view" />
+
+    <Button
+        android:id="@+id/english_button"
+        android:text="@string/english"
+        android:fontFamily="@font/sen_regular"
+        android:textSize="16sp"
+        android:textColor="@color/text"
+        android:textAllCaps="false"
+        android:background="@drawable/home_categories_scroll_button_background"
+
+        android:layout_marginTop="20dp"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toStartOf="@+id/spanish_button"
+        app:layout_constraintTop_toBottomOf="@+id/language_text_view"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/spanish_button"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/home_categories_scroll_button_background"
+        android:fontFamily="@font/sen_regular"
+        android:text="@string/spanish"
+
+        android:textAllCaps="false"
+        android:textColor="@color/text"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/english_button"
+        app:layout_constraintTop_toBottomOf="@+id/language_text_view" />
+
+    <TextView
+        android:id="@+id/theme_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/sen_regular"
+
+        android:text="@string/theme"
+        android:textColor="@color/text"
+        android:textSize="18sp"
+        app:layout_constraintHorizontal_bias="0.15"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/english_button" />
+
+    <Button
+        android:id="@+id/light_button"
+        android:text="@string/light"
+        android:fontFamily="@font/sen_regular"
+        android:textSize="16sp"
+        android:textColor="@color/text"
+        android:textAllCaps="false"
+        android:background="@drawable/home_categories_scroll_button_background"
+
+        android:layout_marginTop="20dp"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toStartOf="@+id/dark_button"
+        app:layout_constraintTop_toBottomOf="@+id/theme_text_view"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/dark_button"
+        android:text="@string/dark"
+        android:fontFamily="@font/sen_regular"
+        android:textSize="16sp"
+        android:textColor="@color/text"
+        android:textAllCaps="false"
+        android:background="@drawable/home_categories_scroll_button_background"
+
+        android:layout_marginTop="20dp"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@+id/light_button"
+        app:layout_constraintTop_toBottomOf="@+id/theme_text_view"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/push_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/sen_regular"
+
+        android:text="@string/push_notifications"
+        android:textColor="@color/text"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/light_button" />
+
+    <Button
+        android:id="@+id/push_button"
+        android:text="@string/on"
+        android:textAllCaps="false"
+        android:textColor="@color/text"
+        android:textSize="16sp"
+        android:background="@drawable/home_categories_scroll_button_background"
+        android:fontFamily="@font/sen_regular"
+
+        android:layout_marginTop="20dp"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/push_text_view" />
+
+    <TextView
+        android:id="@+id/remember_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/sen_regular"
+
+        android:text="@string/remember_notifications"
+        android:textColor="@color/text"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/push_button" />
+
+    <Button
+        android:id="@+id/remember_button"
+        android:text="@string/on"
+        android:textAllCaps="false"
+        android:textColor="@color/text"
+        android:textSize="16sp"
+        android:background="@drawable/home_categories_scroll_button_background"
+        android:fontFamily="@font/sen_regular"
+
+        android:layout_marginTop="20dp"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/remember_text_view" />
+
+    <TextView
+        android:id="@+id/advertisements_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/sen_regular"
+
+        android:text="@string/advertisements_notifications"
+        android:textColor="@color/text"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/remember_button" />
+
+    <Button
+        android:id="@+id/advertisements_button"
+        android:text="@string/on"
+        android:textAllCaps="false"
+        android:textColor="@color/text"
+        android:textSize="16sp"
+        android:background="@drawable/home_categories_scroll_button_background"
+        android:fontFamily="@font/sen_regular"
+
+        android:layout_marginTop="20dp"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/advertisements_text_view" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

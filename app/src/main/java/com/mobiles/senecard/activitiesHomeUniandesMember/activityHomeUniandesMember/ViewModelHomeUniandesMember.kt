@@ -47,6 +47,10 @@ class ViewModelHomeUniandesMember: ViewModel() {
     val navigateToActivityLoyaltyCardsUniandesMember: LiveData<Boolean>
         get() = _navigateToActivityLoyaltyCardsUniandesMember
 
+    private val _navigateToActivitySettings = MutableLiveData<Boolean>()
+    val navigateToActivitySettings: LiveData<Boolean>
+        get() = _navigateToActivitySettings
+
     private val _navigateToActivityInitial = MutableLiveData<Boolean>()
     val navigateToActivityInitial: LiveData<Boolean>
         get() = _navigateToActivityInitial
@@ -122,6 +126,10 @@ class ViewModelHomeUniandesMember: ViewModel() {
         _navigateToActivityLoyaltyCardsUniandesMember.value = true
     }
 
+    fun settingsButtonClicked() {
+        _navigateToActivitySettings.value = true
+    }
+
     fun logOutButtonClicked() {
         viewModelScope.launch {
             repositoryAuthentication.logOut()
@@ -140,6 +148,7 @@ class ViewModelHomeUniandesMember: ViewModel() {
         _navigateToActivityQrCodeUniandesMemberImageView.value = false
         _navigateToActivityQrCodeUniandesMemberButton.value = false
         _navigateToActivityLoyaltyCardsUniandesMember.value = false
+        _navigateToActivitySettings.value = false
         _navigateToActivityInitial.value = false
     }
 }
