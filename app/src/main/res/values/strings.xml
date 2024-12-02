@@ -76,6 +76,7 @@
     <string name="sign_in_forgot_password_forgot_password">Forgot Password</string>
     <string name="sign_in_forgot_password_please_write_your_existing_account">Please write your existing account</string>
     <string name="sign_in_forgot_password_email">EMAIL</string>
+    <string name="sign_in_forgot_password_phone">PHONE</string>
     <string name="sign_in_forgot_password_send_code">SEND CODE</string>
     <!-- Sign In Verification Activity Strings -->
     <string name="sign_in_verification_verification">Verification</string>
