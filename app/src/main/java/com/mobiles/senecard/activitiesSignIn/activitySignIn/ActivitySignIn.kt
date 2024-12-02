@@ -1,5 +1,6 @@
 package com.mobiles.senecard.activitiesSignIn.activitySignIn
 
+
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -11,8 +12,8 @@ import com.mobiles.senecard.R
 import com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerLandingPage.ActivityBusinessOwnerLandingPage
 import com.mobiles.senecard.activitiesHomeUniandesMember.activityHomeUniandesMember.ActivityHomeUniandesMember
 import com.mobiles.senecard.activitiesInitial.activityInitial.ActivityInitial
-import com.mobiles.senecard.activitiesSignUp.activitySignUp.ActivitySignUp
 import com.mobiles.senecard.activitiesSignIn.activitySignInForgotPassword.ActivitySignInForgotPassword
+import com.mobiles.senecard.activitiesSignUp.activitySignUp.ActivitySignUp
 import com.mobiles.senecard.databinding.ActivitySignInBinding
 
 class ActivitySignIn : AppCompatActivity() {
