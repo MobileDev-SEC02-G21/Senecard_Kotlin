@@ -63,6 +63,13 @@ class LoyaltyCardAdapter(
                 binding.storeImageView.setImageResource(R.mipmap.icon_image_landscape)
             }
 
+            // Mostrar los puntos (Lleno o "points/maxPoints")
+            if (loyaltyCard.points == loyaltyCard.maxPoints) {
+                binding.loyaltyCardPointsText.text = "Lleno"
+            } else {
+                binding.loyaltyCardPointsText.text = "${loyaltyCard.points}/${loyaltyCard.maxPoints}"
+            }
+
             // Manejar el clic en la tarjeta
             itemView.setOnClickListener {
                 Log.d("LoyaltyCardAdapter", "Card clicked: ${loyaltyCard.id}")
@@ -71,8 +78,3 @@ class LoyaltyCardAdapter(
         }
     }
 }
-
-
-
-
-
