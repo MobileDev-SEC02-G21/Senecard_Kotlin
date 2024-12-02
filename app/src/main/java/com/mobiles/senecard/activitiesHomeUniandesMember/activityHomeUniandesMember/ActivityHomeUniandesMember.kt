@@ -84,8 +84,8 @@ class ActivityHomeUniandesMember : AppCompatActivity() {
         viewModelHomeUniandesMember.isUser.observe(this) { user ->
             if (user != null) {
                 val firstName = user.name!!.split(" ").first()
-                binding.nameTextView.text = "Hey ${firstName},"
-                binding.greetingTextView.text = viewModelHomeUniandesMember.getGreeting()
+                binding.nameTextView.text = getString(R.string.greeting1, firstName)
+                binding.greetingTextView.text = viewModelHomeUniandesMember.getGreeting(this)
             }
         }
         viewModelHomeUniandesMember.navigateToActivityQrCodeUniandesMemberImageView.observe(this) { navigate ->

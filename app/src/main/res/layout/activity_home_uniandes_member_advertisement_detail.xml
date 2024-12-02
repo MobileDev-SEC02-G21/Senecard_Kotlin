@@ -14,7 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/sen_bold"
-        android:text="Advertisement Detail"
+        android:text="@string/advertisement_detail"
 
         android:textColor="@color/text_highlight"
         android:textSize="20sp"
@@ -69,7 +69,7 @@
     <TextView
         android:id="@+id/description_text_view"
         android:fontFamily="@font/sen_bold"
-        android:text="Description"
+        android:text="@string/description"
         android:textColor="@color/text_highlight"
         android:textSize="18sp"
 
@@ -99,7 +99,7 @@
     <TextView
         android:id="@+id/start_date_text_view"
         android:fontFamily="@font/sen_bold"
-        android:text="Start Date"
+        android:text="@string/start_date"
         android:textColor="@color/text_highlight"
         android:textSize="18sp"
 
@@ -126,7 +126,7 @@
     <TextView
         android:id="@+id/end_date_text_view"
         android:fontFamily="@font/sen_bold"
-        android:text="End Date"
+        android:text="@string/end_date"
         android:textColor="@color/text_highlight"
         android:textSize="18sp"
 

@@ -32,7 +32,7 @@ class ActivitySignUpStoreOwner3 : AppCompatActivity() {
             viewModelSignUpStoreOwner3.backImageViewClicked()
         }
         binding.registerButton.setOnClickListener {
-            showMessage("Please wait one moment while processing the information", "loading")
+            showMessage(getString(R.string.please_wait_one_moment_while_processing_the_information), "loading")
             val schedule = mapOf(
                 "monday" to listOf(
                     binding.mondayStartTimeSpinner.selectedItem.toString().toInt(),
@@ -100,7 +100,7 @@ class ActivitySignUpStoreOwner3 : AppCompatActivity() {
                 "friday_error_hours" -> showMessage(getString(R.string.sign_up_store_owner_3_friday_error_hours))
                 "saturday_error_hours" -> showMessage(getString(R.string.sign_up_store_owner_3_saturday_error_hours))
                 "sunday_error_hours" -> showMessage(getString(R.string.sign_up_store_owner_3_sunday_error_hours))
-                "no_internet_connection" -> showMessage("No internet connection. Please check your connection and try again", "error")
+                "no_internet_connection" -> showMessage(getString(R.string.no_internet_connection_please_check_your_connection_and_try_again), "error")
                 "error_firebase_auth" -> showMessage(getString(R.string.sign_up_store_owner_3_error_firebase_auth), "error")
                 "error_firebase_firestore" -> showMessage(getString(R.string.sign_up_store_owner_3_error_firebase_firestore), "error")
             }

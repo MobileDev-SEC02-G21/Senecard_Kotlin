@@ -2,7 +2,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/white"
+    android:background="@color/background"
     tools:context=".activitiesSignUp.activitySignUpStoreOwner1.ActivitySignUpStoreOwner1"
 
     android:orientation="vertical"
@@ -25,7 +25,7 @@
     <TextView
         android:text="@string/sign_up_store_owner_1_store_owner"
         android:fontFamily="@font/sen_bold"
-        android:textColor="@color/black"
+        android:textColor="@color/text_highlight"
         android:textSize="30sp"
 
         android:layout_gravity="center"

@@ -45,7 +45,7 @@
         android:id="@+id/empty_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="No tienes tarjetas de lealtad."
+        android:text="@string/you_do_not_have_loyalty_cards"
         android:visibility="gone"
         android:layout_gravity="center"
         android:textSize="18sp"

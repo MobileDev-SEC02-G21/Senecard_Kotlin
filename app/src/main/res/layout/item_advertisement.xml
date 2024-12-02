@@ -28,7 +28,7 @@
         android:visibility="gone"
         android:id="@+id/closed_text_view"
         android:fontFamily="@font/sen_semibold"
-        android:text="Store Closed"
+        android:text="@string/store_closed"
         android:textColor="@android:color/white"
         android:textSize="16sp"
 

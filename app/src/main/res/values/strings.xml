@@ -210,6 +210,40 @@
     <string name="log_out">Log Out</string>
     <string name="senecard">SeneCard</string>
     <string name="isis3510">ISIS3510</string>
+    <string name="greeting1">Hey %1$s,</string>
+    <string name="good_morning">¡Good Morning!</string>
+    <string name="good_afternoon">¡Good Afternoon!</string>
+    <string name="good_night">¡Good Night!</string>
+    <string name="stores_list">Store List</string>
+    <string name="get_to_know_all_our_affiliated_stores">Get to know all our affiliated stores</string>
+    <string name="search_stores">Search stores</string>
+    <string name="categories">Categories</string>
+    <string name="bakeries">Bakeries</string>
+    <string name="bar">Bar</string>
+    <string name="coffee">Coffee</string>
+    <string name="electronic">Electronic</string>
+    <string name="pizzeria">Pizzeria</string>
+    <string name="restaurant">Restaurant</string>
+    <string name="stationery">Stationery</string>
+    <string name="other">Other</string>
+    <string name="advertisement_list">Advertisement List</string>
+    <string name="check_out_all_the_advertisements">Check out all the advertisements</string>
+    <string name="search_advertisements">Search advertisements</string>
+    <string name="store_detail">Store Detail</string>
+    <string name="rating">Rating</string>
+    <string name="address">Address</string>
+    <string name="schedule">Schedule</string>
+    <string name="advertisement_detail">Advertisement Detail</string>
+    <string name="description">Description</string>
+    <string name="start_date">Start Date</string>
+    <string name="end_date">End Date</string>
+    <string name="this_is_your_qr_code">¡This is your QR Code!</string>
+    <string name="you_do_not_have_loyalty_cards">You do not have Loyalty Cards</string>
+    <string name="closed">Closed</string>
+    <string name="store_closed">Store Closed</string>
+    <string name="please_spaces_are_not_allowed_here">Please spaces are not allowed here</string>
+    <string name="no_internet_connection_please_check_your_connection_and_try_again">No internet connection. Please check your connection and try again</string>
+    <string name="please_wait_one_moment_while_processing_the_information">Please wait one moment while processing the information</string>
 
 
 </resources>

@@ -1,9 +1,11 @@
 package com.mobiles.senecard.activitiesHomeUniandesMember.activityHomeUniandesMember
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mobiles.senecard.R
 import com.mobiles.senecard.model.RepositoryAdvertisement
 import com.mobiles.senecard.model.RepositoryAuthentication
 import com.mobiles.senecard.model.RepositoryStore
@@ -67,14 +69,14 @@ class ViewModelHomeUniandesMember: ViewModel() {
     val advertisementListRecommended: LiveData<List<Advertisement>>
         get() = _advertisementListRecommended
 
-    fun getGreeting(): String {
+    fun getGreeting(context: Context): String {
         val calendar = Calendar.getInstance()
         val hourOfDay = calendar.get(Calendar.HOUR_OF_DAY)
 
         return when (hourOfDay) {
-            in 5..11 -> "¡Good Morning!"
-            in 12..17 -> "¡Good Afternoon!"
-            else -> "¡Good Night!"
+            in 5..11 -> context.getString(R.string.good_morning)
+            in 12..17 -> context.getString(R.string.good_afternoon)
+            else -> context.getString(R.string.good_night)
         }
     }
 
