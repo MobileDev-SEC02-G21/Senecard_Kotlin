@@ -3,6 +3,7 @@ package com.mobiles.senecard.LoyaltyCardsActivity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Debug
 import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
@@ -21,12 +22,13 @@ import com.mobiles.senecard.ViewModelLoyaltyCards
 import com.mobiles.senecard.adapters.LoyaltyCardAdapter
 import com.mobiles.senecard.model.RepositoryStore
 import com.mobiles.senecard.model.entities.LoyaltyCard
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ActivityLoyaltyCards : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
-    private lateinit var adapter: LoyaltyCardAdapter
     private lateinit var emptyView: TextView
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
@@ -34,23 +36,25 @@ class ActivityLoyaltyCards : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Debug.startMethodTracing("lifecycle_events");
+
         setContentView(R.layout.activity_loyalty_cards)
 
+        initializeViews()
+        setupSwipeRefresh()
+        setupObservers()
+        loadLoyaltyCardsAndStores()
+
+        findViewById<ImageButton>(R.id.options_image_view2).setOnClickListener {
+            onBackPressed()
+        }
+    }
+
+    private fun initializeViews() {
         recyclerView = findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
         emptyView = findViewById(R.id.empty_view)
         swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout)
-
-        // Configurar SwipeRefreshLayout
-        setupSwipeRefresh()
-
-        // Cargar datos al iniciar
-        loadLoyaltyCardsAndStores()
-
-        val optionsButton = findViewById<ImageButton>(R.id.options_image_view2)
-        optionsButton.setOnClickListener {
-            onBackPressed()
-        }
     }
 
     private fun setupSwipeRefresh() {
@@ -59,59 +63,117 @@ class ActivityLoyaltyCards : AppCompatActivity() {
         }
     }
 
-    private fun loadLoyaltyCardsAndStores(refresh: Boolean = false) {
-        lifecycleScope.launch {
-            val currentUserId = viewModel.getCurrentUserId(this@ActivityLoyaltyCards)
-
-            if (currentUserId != null) {
-                if (refresh || isNetworkAvailable()) {
-                    // Si hay red o estamos forzando un refresh, obtener datos del servidor
-                    viewModel.fetchLoyaltyCardsForUser(currentUserId)
-                    viewModel.loyaltyCards.observe(this@ActivityLoyaltyCards) { cards ->
-                        saveLoyaltyCardsToPreferences(currentUserId, cards ?: emptyList())
-                        displayLoyaltyCards(cards ?: emptyList())
-                    }
-                } else {
-                    // Cargar desde local storage si no hay red
-                    val localData = loadLoyaltyCardsFromPreferences()
-                    val localUserId = localData.first
-                    val localLoyaltyCards = localData.second
-
-                    if (currentUserId == localUserId) {
-                        if (localLoyaltyCards.isNotEmpty()) {
-                            Toast.makeText(this@ActivityLoyaltyCards, "Mostrando datos desde almacenamiento local", Toast.LENGTH_SHORT).show()
-                            displayLoyaltyCards(localLoyaltyCards)
-                        } else {
-                            Toast.makeText(this@ActivityLoyaltyCards, "No hay datos en almacenamiento local", Toast.LENGTH_LONG).show()
-                            emptyView.visibility = View.VISIBLE
-                            recyclerView.visibility = View.GONE
-                        }
-                    } else {
-                        // Si el local storage no corresponde al usuario actual, pedir al usuario recargar
-                        Toast.makeText(this@ActivityLoyaltyCards, "Los datos del almacenamiento local no corresponden al usuario actual", Toast.LENGTH_LONG).show()
-                        emptyView.visibility = View.VISIBLE
-                        recyclerView.visibility = View.GONE
-                    }
+    private fun setupObservers() {
+        viewModel.loyaltyCards.observe(this) { cards ->
+            lifecycleScope.launch {
+                val userId = viewModel.getCurrentUserId(this@ActivityLoyaltyCards)
+                if (userId != null) {
+                    saveLoyaltyCardsToPreferences(userId, cards ?: emptyList())
                 }
-            } else {
-                Toast.makeText(this@ActivityLoyaltyCards, "No se pudo obtener el ID del usuario", Toast.LENGTH_SHORT).show()
+                displayLoyaltyCards(cards ?: emptyList())
             }
-
-            swipeRefreshLayout.isRefreshing = false // Detener animación de carga
         }
     }
 
+    private fun loadLoyaltyCardsAndStores(refresh: Boolean = false) {
+        lifecycleScope.launch {
+            val currentUserId = viewModel.getCurrentUserId(this@ActivityLoyaltyCards)
+            if (currentUserId != null) {
+                if (refresh || isNetworkAvailable()) {
+                    viewModel.fetchLoyaltyCardsForUser(currentUserId)
+                } else {
+                    loadLocalData(currentUserId)
+                }
+            } else {
+                showToast("No se pudo obtener el ID del usuario")
+            }
+            swipeRefreshLayout.isRefreshing = false
+        }
+    }
+
+    private suspend fun loadLocalData(currentUserId: String) {
+        val (localUserId, localLoyaltyCards) = loadLoyaltyCardsFromPreferences()
+        if (currentUserId == localUserId && localLoyaltyCards.isNotEmpty()) {
+            showToast("Mostrando datos desde almacenamiento local")
+            displayLoyaltyCards(localLoyaltyCards)
+        } else {
+            handleEmptyLocalData(currentUserId != localUserId)
+        }
+    }
+
+    private fun handleEmptyLocalData(isMismatchedUser: Boolean) {
+        if (isMismatchedUser) {
+            showToast("Los datos del almacenamiento local no corresponden al usuario actual")
+        } else {
+            showToast("No hay datos en almacenamiento local")
+        }
+        emptyView.visibility = View.VISIBLE
+        recyclerView.visibility = View.GONE
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    private suspend fun saveLoyaltyCardsToPreferences(userId: String, cards: List<LoyaltyCard>) {
+        withContext(Dispatchers.IO) {
+            val sharedPreferences = getSharedPreferences("local_storage", Context.MODE_PRIVATE)
+            sharedPreferences.edit().apply {
+                putString("loyalty_cards", Gson().toJson(cards))
+                putString("user_id", userId)
+                apply()
+            }
+        }
+    }
+
+    private suspend fun loadLoyaltyCardsFromPreferences(): Pair<String?, List<LoyaltyCard>> {
+        return withContext(Dispatchers.IO) {
+            val sharedPreferences = getSharedPreferences("local_storage", Context.MODE_PRIVATE)
+            val userId = sharedPreferences.getString("user_id", null)
+            val loyaltyCardsJson = sharedPreferences.getString("loyalty_cards", null)
+            val loyaltyCards: List<LoyaltyCard> = if (!loyaltyCardsJson.isNullOrEmpty()) {
+                try {
+                    val type = object : TypeToken<List<LoyaltyCard>>() {}.type
+                    Gson().fromJson(loyaltyCardsJson, type)
+                } catch (e: Exception) {
+                    emptyList()
+                }
+            } else {
+                emptyList()
+            }
+            userId to loyaltyCards
+        }
+    }
+
+    private fun isNetworkAvailable(): Boolean {
+        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as android.net.ConnectivityManager
+        return connectivityManager.activeNetworkInfo?.isConnected == true
+    }
+
+    // El método displayLoyaltyCards se mantiene intacto según tu requerimiento
     private fun displayLoyaltyCards(loyaltyCards: List<LoyaltyCard>) {
         lifecycleScope.launch {
             val fetchedStores = RepositoryStore.instance.getAllStores()
                 .filter { it.id != null }
                 .associateBy { it.id!! }
 
-            adapter = LoyaltyCardAdapter(loyaltyCards, fetchedStores) { selectedCard ->
-                val intent = Intent(this@ActivityLoyaltyCards, ActivityLoyaltyCardDetail::class.java).apply {
-                    putExtra(LoyaltyCardAdapter.EXTRA_STORE_NAME, fetchedStores[selectedCard.storeId]?.name ?: "Tienda Desconocida")
-                    putExtra(LoyaltyCardAdapter.EXTRA_STORE_ADDRESS, fetchedStores[selectedCard.storeId]?.address ?: "Dirección Desconocida")
-                    putExtra(LoyaltyCardAdapter.EXTRA_STORE_IMAGE, fetchedStores[selectedCard.storeId]?.image)
+            var adapter = LoyaltyCardAdapter(loyaltyCards, fetchedStores) { selectedCard ->
+                val intent = Intent(
+                    this@ActivityLoyaltyCards,
+                    ActivityLoyaltyCardDetail::class.java
+                ).apply {
+                    putExtra(
+                        LoyaltyCardAdapter.EXTRA_STORE_NAME,
+                        fetchedStores[selectedCard.storeId]?.name ?: "Tienda Desconocida"
+                    )
+                    putExtra(
+                        LoyaltyCardAdapter.EXTRA_STORE_ADDRESS,
+                        fetchedStores[selectedCard.storeId]?.address ?: "Dirección Desconocida"
+                    )
+                    putExtra(
+                        LoyaltyCardAdapter.EXTRA_STORE_IMAGE,
+                        fetchedStores[selectedCard.storeId]?.image
+                    )
                     putExtra(LoyaltyCardAdapter.EXTRA_POINTS, selectedCard.points)
                     putExtra(LoyaltyCardAdapter.EXTRA_MAX_POINTS, selectedCard.maxPoints)
                 }
@@ -122,46 +184,5 @@ class ActivityLoyaltyCards : AppCompatActivity() {
             emptyView.visibility = if (loyaltyCards.isEmpty()) View.VISIBLE else View.GONE
             recyclerView.visibility = if (loyaltyCards.isEmpty()) View.GONE else View.VISIBLE
         }
-    }
-
-    private fun saveLoyaltyCardsToPreferences(userId: String, cards: List<LoyaltyCard>) {
-        val sharedPreferences = getSharedPreferences("local_storage", Context.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        val json = Gson().toJson(cards)
-        editor.putString("loyalty_cards", json)
-        editor.putString("user_id", userId) // Guardar el ID del usuario asociado al local storage
-        editor.apply()
-    }
-
-    private fun loadLoyaltyCardsFromPreferences(): Pair<String?, List<LoyaltyCard>> {
-        val sharedPreferences = getSharedPreferences("local_storage", Context.MODE_PRIVATE)
-        val storedUserId = sharedPreferences.getString("user_id", null)
-        val json = sharedPreferences.getString("loyalty_cards", null)
-        val loyaltyCards: List<LoyaltyCard> = if (json != null) {
-            try {
-                val type = object : TypeToken<List<LoyaltyCard>>() {}.type
-                Gson().fromJson<List<LoyaltyCard>>(json, type) ?: emptyList()
-            } catch (e: Exception) {
-                emptyList() // En caso de error de deserialización, retorna lista vacía
-            }
-        } else {
-            emptyList()
-        }
-        return Pair(storedUserId, loyaltyCards)
-    }
-
-    private fun isNetworkAvailable(): Boolean {
-        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as android.net.ConnectivityManager
-        val activeNetwork = connectivityManager.activeNetworkInfo
-        return activeNetwork != null && activeNetwork.isConnected
-    }
-
-    // Limpiar almacenamiento local al cerrar sesión
-    fun clearLocalStorageOnLogout() {
-        val sharedPreferences = getSharedPreferences("local_storage", Context.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.remove("loyalty_cards")
-        editor.remove("user_id")
-        editor.apply()
     }
 }

@@ -30,7 +30,7 @@ class ActivitySignInForgotPassword : AppCompatActivity() {
         ViewModelSignInForgotPasswordFactory(applicationContext)
     }
 
-    private val cache: LruCache<String, Long> = LruCache(2) // Para controlar el tiempo entre solicitudes
+    private val cache: LruCache<String, Long> = LruCache(2)
     private val firestore = FirebaseFirestore.getInstance()
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
