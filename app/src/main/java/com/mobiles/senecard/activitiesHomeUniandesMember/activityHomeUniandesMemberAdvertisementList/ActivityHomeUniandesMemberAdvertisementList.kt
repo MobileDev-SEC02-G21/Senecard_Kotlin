@@ -118,15 +118,38 @@ class ActivityHomeUniandesMemberAdvertisementList : AppCompatActivity() {
         val clickedButton = view as Button
         val category = clickedButton.text.toString()
 
+        var newCategory = ""
+
+        if (category == "Panadería" || category == "Bakeries") {
+            newCategory = "Bakeries"
+        } else if (category == "Bar") {
+            newCategory = "Bar"
+        } else if (category == "Café" || category == "Coffee") {
+            newCategory = "Coffee"
+        } else if (category == "Electrónica" || category == "Electronic") {
+            newCategory = "Electronic"
+        } else if (category == "Pizzería" || category == "Pizzeria") {
+            newCategory = "Pizzeria"
+        } else if (category == "Restaurante" || category == "Restaurant") {
+            newCategory = "Restaurant"
+        } else if (category == "Papelería" || category == "Stationery") {
+            newCategory = "Stationery"
+        } else if (category == "Otro" || category == "Other") {
+            newCategory = "Other"
+        }
+
         if (selectedCategoryButton == clickedButton) {
             selectedCategoryButton?.setBackgroundResource(R.drawable.home_categories_scroll_button_background)
+            selectedCategoryButton?.setTextColor(ContextCompat.getColor(this, R.color.text))
             selectedCategoryButton = null
             viewModelHomeUniandesMemberAdvertisementList.filterStoresByCategory("All")
         } else {
             selectedCategoryButton?.setBackgroundResource(R.drawable.home_categories_scroll_button_background)
+            selectedCategoryButton?.setTextColor(ContextCompat.getColor(this, R.color.text))
             clickedButton.setBackgroundResource(R.drawable.home_categories_scroll_button_selected_background)
+            clickedButton.setTextColor(ContextCompat.getColor(this, R.color.white))
             selectedCategoryButton = clickedButton
-            viewModelHomeUniandesMemberAdvertisementList.filterStoresByCategory(category)
+            viewModelHomeUniandesMemberAdvertisementList.filterStoresByCategory(newCategory)
 
         }
     }

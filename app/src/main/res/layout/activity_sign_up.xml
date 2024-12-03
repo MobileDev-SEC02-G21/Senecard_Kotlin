@@ -2,7 +2,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/white"
+    android:background="@color/background"
     tools:context=".activitiesSignUp.activitySignUp.ActivitySignUp"
 
     android:orientation="vertical"
@@ -25,7 +25,7 @@
     <TextView
         android:text="@string/sign_up_sign_up"
         android:fontFamily="@font/sen_bold"
-        android:textColor="@color/black"
+        android:textColor="@color/text_highlight"
         android:textSize="30sp"
 
         android:layout_gravity="center"

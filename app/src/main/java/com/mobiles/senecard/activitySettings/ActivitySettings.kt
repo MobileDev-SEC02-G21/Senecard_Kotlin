@@ -3,6 +3,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.mobiles.senecard.R
@@ -44,10 +45,12 @@ class ActivitySettings : AppCompatActivity() {
 
         binding.lightButton.setOnClickListener {
             viewModelSettings.updateTheme("Light")
+            recreate()
         }
 
         binding.darkButton.setOnClickListener {
             viewModelSettings.updateTheme("Dark")
+            recreate()
         }
 
         binding.pushButton.setOnClickListener {
@@ -104,6 +107,7 @@ class ActivitySettings : AppCompatActivity() {
             } else {
                 binding.pushButton.text = "Off"
                 binding.pushButton.setBackgroundResource(R.drawable.home_categories_scroll_button_background)
+                binding.pushButton.setTextColor(ContextCompat.getColor(this, R.color.text))
             }
         }
 
@@ -115,6 +119,7 @@ class ActivitySettings : AppCompatActivity() {
             } else {
                 binding.rememberButton.text = "Off"
                 binding.rememberButton.setBackgroundResource(R.drawable.home_categories_scroll_button_background)
+                binding.rememberButton.setTextColor(ContextCompat.getColor(this, R.color.text))
             }
         }
 
@@ -126,6 +131,7 @@ class ActivitySettings : AppCompatActivity() {
             } else {
                 binding.advertisementsButton.text = "Off"
                 binding.advertisementsButton.setBackgroundResource(R.drawable.home_categories_scroll_button_background)
+                binding.advertisementsButton.setTextColor(ContextCompat.getColor(this, R.color.text))
             }
         }
         viewModelSettings.navigateToActivityBack.observe(this) { navigate ->

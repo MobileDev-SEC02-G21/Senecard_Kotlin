@@ -37,6 +37,8 @@ class ActivitySplash : AppCompatActivity() {
             "businessOwner" -> Intent(this, ActivityBusinessOwnerLandingPage::class.java)
             else -> Intent(this, ActivityInitial::class.java)
         }
-        startActivity(intent)
+        startActivity(intent.apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        })
     }
 }

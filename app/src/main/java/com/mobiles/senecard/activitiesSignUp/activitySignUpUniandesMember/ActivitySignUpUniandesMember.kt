@@ -32,7 +32,7 @@ class ActivitySignUpUniandesMember : AppCompatActivity() {
             viewModelSignUpUniandesMember.backImageViewClicked()
         }
         binding.registerButton.setOnClickListener {
-            showMessage("Please wait one moment while processing the information", "loading")
+            showMessage(getString(R.string.please_wait_one_moment_while_processing_the_information), "loading")
             viewModelSignUpUniandesMember.registerButtonClicked(
                 name = binding.nameEditText.text.toString(),
                 email = binding.emailEditText.text.toString(),
@@ -74,11 +74,11 @@ class ActivitySignUpUniandesMember : AppCompatActivity() {
                 "phone_empty" -> showMessage(getString(R.string.sign_up_uniandes_member_phone_empty))
                 "password_empty" -> showMessage(getString(R.string.sign_up_uniandes_member_password_empty))
                 "confirm_password_empty" -> showMessage(getString(R.string.sign_up_uniandes_member_confirm_password_empty))
-                "no_spaces_allowed" -> showMessage("Please spaces are not allowed here")
+                "no_spaces_allowed" -> showMessage(getString(R.string.please_spaces_are_not_allowed_here))
                 "email_invalid" -> showMessage(getString(R.string.sign_up_uniandes_member_email_invalid))
                 "password_short" -> showMessage(getString(R.string.sign_up_uniandes_member_password_short))
                 "passwords_not_equals" -> showMessage(getString(R.string.sign_up_uniandes_member_passwords_not_equals))
-                "no_internet_connection" -> showMessage("No internet connection. Please check your connection and try again", "error")
+                "no_internet_connection" -> showMessage(getString(R.string.no_internet_connection_please_check_your_connection_and_try_again), "error")
                 "user_exists" -> showMessage(getString(R.string.sign_up_uniandes_member_user_exists), "error")
                 "error_firebase_auth" -> showMessage(getString(R.string.sign_up_uniandes_member_error_firebase_auth), "error")
                 "error_firebase_firestore" -> showMessage(getString(R.string.sign_up_uniandes_member_error_firebase_firestore), "error")
