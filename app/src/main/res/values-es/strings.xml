@@ -208,6 +208,41 @@
     <string name="log_out">Cerrar sesión</string>
     <string name="senecard">SeneCard</string>
     <string name="isis3510">ISIS3510</string>
+    <string name="greeting1">Hola %1$s,</string>
+    <string name="good_morning">¡Buenos Días!</string>
+    <string name="good_afternoon">¡Buenas Tardes!</string>
+    <string name="good_night">¡Buenas Noches!</string>
+    <string name="stores_list">Lista de Tiendas</string>
+    <string name="get_to_know_all_our_affiliated_stores">Conoce todas nuestras tiendas afiliadas</string>
+    <string name="search_stores">Buscar tiendas</string>
+    <string name="categories">Categorías</string>
+    <string name="bakeries">Panadería</string>
+    <string name="bar">Bar</string>
+    <string name="coffee">Café</string>
+    <string name="electronic">Electrónica</string>
+    <string name="pizzeria">Pizzería</string>
+    <string name="restaurant">Restaurante</string>
+    <string name="stationery">Papelería</string>
+    <string name="other">Otro</string>
+    <string name="advertisement_list">Lista de Anuncios</string>
+    <string name="check_out_all_the_advertisements">Consulta todos los anuncios</string>
+    <string name="search_advertisements">Buscar anuncios</string>
+    <string name="store_detail">Detalle de Tienda</string>
+    <string name="rating">Calificación</string>
+    <string name="address">Dirección</string>
+    <string name="schedule">Horario</string>
+    <string name="advertisement_detail">Detalle de Anuncio</string>
+    <string name="description">Descripción</string>
+    <string name="start_date">Fecha de inicio</string>
+    <string name="end_date">Fecha de finalización</string>
+    <string name="this_is_your_qr_code">¡Este es tu Código QR!</string>
+    <string name="you_do_not_have_loyalty_cards">No tienes Tarjetas de Fidelidad</string>
+    <string name="closed">Cerrado</string>
+    <string name="store_closed">Tienda Cerrada</string>
+    <string name="please_spaces_are_not_allowed_here">Por favor, los espacios no están permitidos aquí</string>
+
+    <string name="no_internet_connection_please_check_your_connection_and_try_again">No hay conexión a internet. Por favor, revisa tu conexión e inténtalo de nuevo</string>
+    <string name="please_wait_one_moment_while_processing_the_information">Por favor, espera un momento mientras procesamos la información</string>
 
 </resources>
 

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
 
-    android:background="@color/white"
+    android:background="@color/background"
     android:orientation="vertical"
     tools:context=".activitiesInitial.activityInitial.ActivityInitial">
 
@@ -16,6 +16,7 @@
         android:layout_gravity="center"
         android:layout_marginTop="80dp"
         android:contentDescription="@string/icon_launcher"
+        android:foreground="@drawable/auth_image_foreground"
         android:src="@mipmap/ic_launcher" />
 
     <TextView

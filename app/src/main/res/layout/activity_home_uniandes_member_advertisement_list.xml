@@ -24,7 +24,7 @@
         tools:ignore="ImageContrastCheck" />
 
     <TextView
-        android:text="Advertisement List"
+        android:text="@string/advertisement_list"
         android:fontFamily="@font/sen_bold"
         android:textColor="@color/text_highlight"
         android:textSize="20sp"
@@ -34,7 +34,7 @@
         android:layout_height="wrap_content" />
 
     <TextView
-        android:text="Check out all the advertisements"
+        android:text="@string/check_out_all_the_advertisements"
         android:fontFamily="@font/sen_regular"
         android:textColor="@color/text"
         android:textSize="16sp"
@@ -46,7 +46,7 @@
     <EditText
         android:id="@+id/search_edit_text"
         android:autofillHints="search_edit_text"
-        android:hint="Search advertisements"
+        android:hint="@string/search_advertisements"
         android:textColorHint="@color/text"
         android:inputType="textNoSuggestions"
         android:fontFamily="@font/sen_regular"
@@ -62,7 +62,7 @@
         android:layout_marginTop="20dp" />
 
     <TextView
-        android:text="Categories"
+        android:text="@string/categories"
         android:fontFamily="@font/sen_regular"
         android:textColor="@color/text"
         android:textSize="16sp"
@@ -87,10 +87,10 @@
 
             <Button
                 android:id="@+id/categories_bakeries"
-                android:text="Bakeries"
+                android:text="@string/bakeries"
                 android:fontFamily="@font/sen_regular"
                 android:textSize="16sp"
-                android:textColor="@color/white"
+                android:textColor="@color/text"
                 android:textAllCaps="false"
                 android:background="@drawable/home_categories_scroll_button_background"
 
@@ -101,10 +101,10 @@
 
             <Button
                 android:id="@+id/categories_bar"
-                android:text="Bar"
+                android:text="@string/bar"
                 android:fontFamily="@font/sen_regular"
                 android:textSize="16sp"
-                android:textColor="@color/white"
+                android:textColor="@color/text"
                 android:textAllCaps="false"
                 android:background="@drawable/home_categories_scroll_button_background"
 
@@ -115,10 +115,10 @@
 
             <Button
                 android:id="@+id/categories_coffee"
-                android:text="Coffee"
+                android:text="@string/coffee"
                 android:fontFamily="@font/sen_regular"
                 android:textSize="16sp"
-                android:textColor="@color/white"
+                android:textColor="@color/text"
                 android:textAllCaps="false"
                 android:background="@drawable/home_categories_scroll_button_background"
 
@@ -129,10 +129,10 @@
 
             <Button
                 android:id="@+id/categories_electronic"
-                android:text="Electronic"
+                android:text="@string/electronic"
                 android:fontFamily="@font/sen_regular"
                 android:textSize="16sp"
-                android:textColor="@color/white"
+                android:textColor="@color/text"
                 android:textAllCaps="false"
                 android:background="@drawable/home_categories_scroll_button_background"
 
@@ -143,10 +143,10 @@
 
             <Button
                 android:id="@+id/categories_pizzeria"
-                android:text="Pizzeria"
+                android:text="@string/pizzeria"
                 android:fontFamily="@font/sen_regular"
                 android:textSize="16sp"
-                android:textColor="@color/white"
+                android:textColor="@color/text"
                 android:textAllCaps="false"
                 android:background="@drawable/home_categories_scroll_button_background"
 
@@ -157,10 +157,10 @@
 
             <Button
                 android:id="@+id/categories_restaurant"
-                android:text="Restaurant"
+                android:text="@string/restaurant"
                 android:fontFamily="@font/sen_regular"
                 android:textSize="16sp"
-                android:textColor="@color/white"
+                android:textColor="@color/text"
                 android:textAllCaps="false"
                 android:background="@drawable/home_categories_scroll_button_background"
 
@@ -171,10 +171,10 @@
 
             <Button
                 android:id="@+id/categories_stationery"
-                android:text="Stationery"
+                android:text="@string/stationery"
                 android:fontFamily="@font/sen_regular"
                 android:textSize="16sp"
-                android:textColor="@color/white"
+                android:textColor="@color/text"
                 android:textAllCaps="false"
                 android:background="@drawable/home_categories_scroll_button_background"
 
@@ -185,10 +185,10 @@
 
             <Button
                 android:id="@+id/categories_other"
-                android:text="Other"
+                android:text="@string/other"
                 android:fontFamily="@font/sen_regular"
                 android:textSize="16sp"
-                android:textColor="@color/white"
+                android:textColor="@color/text"
                 android:textAllCaps="false"
                 android:background="@drawable/home_categories_scroll_button_background"
 
@@ -202,7 +202,7 @@
     </HorizontalScrollView>
 
     <TextView
-        android:text="Advertisements"
+        android:text="@string/advertisements"
         android:fontFamily="@font/sen_regular"
         android:textColor="@color/text"
         android:textSize="16sp"
@@ -248,7 +248,7 @@
             <TextView
                 android:visibility="gone"
                 android:id="@+id/message_no_connection_advertisements"
-                android:text="Please check your internet connection and try again"
+                android:text="@string/please_check_your_internet_connection_and_try_again"
                 android:fontFamily="@font/sen_regular"
                 android:textColor="@color/text"
                 android:textSize="14sp"

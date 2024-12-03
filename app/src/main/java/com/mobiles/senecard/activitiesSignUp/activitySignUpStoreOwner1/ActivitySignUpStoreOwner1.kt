@@ -31,7 +31,7 @@ class ActivitySignUpStoreOwner1 : AppCompatActivity() {
             viewModelSignUpStoreOwner1.backImageViewClicked()
         }
         binding.nextButton.setOnClickListener {
-            showMessage("Please wait one moment while processing the information", "loading")
+            showMessage(getString(R.string.please_wait_one_moment_while_processing_the_information), "loading")
             viewModelSignUpStoreOwner1.nextButtonClicked(
                 name = binding.nameEditText.text.toString(),
                 email = binding.emailEditText.text.toString(),
@@ -78,7 +78,7 @@ class ActivitySignUpStoreOwner1 : AppCompatActivity() {
                 "phone_empty" -> showMessage(getString(R.string.sign_up_store_owner_1_phone_empty))
                 "password_empty" -> showMessage(getString(R.string.sign_up_store_owner_1_password_empty))
                 "confirm_password_empty" -> showMessage(getString(R.string.sign_up_store_owner_1_confirm_password_empty))
-                "no_spaces_allowed" -> showMessage("Please spaces are not allowed here")
+                "no_spaces_allowed" -> showMessage(getString(R.string.please_spaces_are_not_allowed_here))
                 "email_invalid" -> showMessage(getString(R.string.sign_up_store_owner_1_email_invalid))
                 "password_short" -> showMessage(getString(R.string.sign_up_store_owner_1_password_short))
                 "passwords_not_equals" -> showMessage(getString(R.string.sign_up_store_owner_1_passwords_not_equals))

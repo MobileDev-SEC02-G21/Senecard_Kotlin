@@ -14,7 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/sen_bold"
-        android:text="Store Detail"
+        android:text="@string/store_detail"
 
         android:textColor="@color/text_highlight"
         android:textSize="20sp"
@@ -67,7 +67,7 @@
     <TextView
         android:id="@+id/rating_text_view"
         android:fontFamily="@font/sen_bold"
-        android:text="Rating"
+        android:text="@string/rating"
         android:textColor="@color/text_highlight"
         android:textSize="18sp"
 
@@ -94,7 +94,7 @@
     <TextView
         android:id="@+id/address_text_view"
         android:fontFamily="@font/sen_bold"
-        android:text="Address"
+        android:text="@string/address"
         android:textColor="@color/text_highlight"
         android:textSize="18sp"
 
@@ -121,7 +121,7 @@
     <TextView
         android:id="@+id/schedule_text_view"
         android:fontFamily="@font/sen_bold"
-        android:text="Schedule"
+        android:text="@string/schedule"
         android:textColor="@color/text_highlight"
         android:textSize="18sp"
 
