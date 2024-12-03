@@ -42,6 +42,7 @@ core = "3.5.3"
 firebaseCrashlyticsBuildtools = "3.0.2"
 playServicesMlkitBarcodeScanning = "18.3.1"
 playServicesPhenotype = "17.0.0"
+playServicesLocation = "21.3.0"
 
 [libraries]
 androidx-activity-activity-compose-v180-x5 = { module = "androidx.activity:activity-compose", version.ref = "androidxActivityActivityCompose4" }
@@ -95,6 +96,7 @@ core = { group = "com.google.zxing", name = "core", version.ref = "core" }
 firebase-crashlytics-buildtools = { group = "com.google.firebase", name = "firebase-crashlytics-buildtools", version.ref = "firebaseCrashlyticsBuildtools" }
 play-services-mlkit-barcode-scanning = { group = "com.google.android.gms", name = "play-services-mlkit-barcode-scanning", version.ref = "playServicesMlkitBarcodeScanning" }
 play-services-phenotype = { group = "com.google.android.gms", name = "play-services-phenotype", version.ref = "playServicesPhenotype" }
+play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

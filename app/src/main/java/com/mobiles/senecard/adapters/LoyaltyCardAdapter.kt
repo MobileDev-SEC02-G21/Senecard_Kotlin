@@ -11,9 +11,9 @@ import com.mobiles.senecard.model.entities.LoyaltyCard
 import com.mobiles.senecard.model.entities.Store
 
 class LoyaltyCardAdapter(
-    private val loyaltyCards: List<LoyaltyCard>,
-    private val stores: Map<String, Store>,
-    private val onCardClick: (LoyaltyCard) -> Unit // Agregar el listener aquí
+    private var loyaltyCards: List<LoyaltyCard>,
+    private var stores: Map<String, Store>,
+    private val onCardClick: (LoyaltyCard) -> Unit // Listener para manejar clics
 ) : RecyclerView.Adapter<LoyaltyCardAdapter.LoyaltyCardViewHolder>() {
 
     companion object {
@@ -22,6 +22,15 @@ class LoyaltyCardAdapter(
         const val EXTRA_STORE_IMAGE = "STORE_IMAGE"
         const val EXTRA_POINTS = "POINTS"
         const val EXTRA_MAX_POINTS = "MAX_POINTS"
+    }
+
+    /**
+     * Permite actualizar los datos del adaptador dinámicamente sin necesidad de recrear la instancia.
+     */
+    fun updateData(newLoyaltyCards: List<LoyaltyCard>, newStores: Map<String, Store>) {
+        this.loyaltyCards = newLoyaltyCards
+        this.stores = newStores
+        notifyDataSetChanged() // Notifica al adaptador para actualizar la lista.
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LoyaltyCardViewHolder {
@@ -34,17 +43,15 @@ class LoyaltyCardAdapter(
         val loyaltyCard = loyaltyCards[position]
         val store = stores[loyaltyCard.storeId]
 
-        // Aplicar borde amarillo si los puntos son iguales a maxPoints, gris si aún no llega a maxPoints
+        // Cambiar el fondo según los puntos de la tarjeta
         holder.itemView.setBackgroundResource(
-            if (loyaltyCard.points == loyaltyCard.maxPoints) R.drawable.border_gray else R.drawable.border_yellow
+            if (loyaltyCard.points == loyaltyCard.maxPoints) R.drawable.border_yellow else R.drawable.border_gray
         )
 
         holder.render(loyaltyCard, store)
     }
 
-    override fun getItemCount(): Int {
-        return loyaltyCards.size
-    }
+    override fun getItemCount(): Int = loyaltyCards.size
 
     inner class LoyaltyCardViewHolder(private val binding: ItemLoyaltyCardBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -57,23 +64,23 @@ class LoyaltyCardAdapter(
             store?.image?.let {
                 Glide.with(binding.storeImageView.context)
                     .load(it)
-                    .placeholder(R.mipmap.icon_image_landscape)
+                    .placeholder(R.mipmap.icon_image_landscape) // Imagen de carga predeterminada
                     .into(binding.storeImageView)
             } ?: run {
                 binding.storeImageView.setImageResource(R.mipmap.icon_image_landscape)
             }
 
-            // Mostrar los puntos (Lleno o "points/maxPoints")
-            if (loyaltyCard.points == loyaltyCard.maxPoints) {
-                binding.loyaltyCardPointsText.text = "Lleno"
+            // Mostrar puntos (Lleno o "points/maxPoints")
+            binding.loyaltyCardPointsText.text = if (loyaltyCard.points == loyaltyCard.maxPoints) {
+                "Lleno"
             } else {
-                binding.loyaltyCardPointsText.text = "${loyaltyCard.points}/${loyaltyCard.maxPoints}"
+                "${loyaltyCard.points}/${loyaltyCard.maxPoints}"
             }
 
-            // Manejar el clic en la tarjeta
+            // Manejar clics en la tarjeta
             itemView.setOnClickListener {
                 Log.d("LoyaltyCardAdapter", "Card clicked: ${loyaltyCard.id}")
-                onCardClick(loyaltyCard) // Llamar al listener aquí
+                onCardClick(loyaltyCard) // Llamar al listener
             }
         }
     }

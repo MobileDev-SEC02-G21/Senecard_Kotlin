@@ -20,6 +20,7 @@ android {
     }
 
     buildTypes {
+
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -77,6 +78,7 @@ dependencies {
     implementation(libs.play.services.mlkit.barcode.scanning)
     implementation(libs.androidx.swiperefreshlayout)
     implementation(libs.play.services.phenotype)
+    implementation(libs.play.services.location)
 
     // Dependencies of tests
     testImplementation(libs.junit)
