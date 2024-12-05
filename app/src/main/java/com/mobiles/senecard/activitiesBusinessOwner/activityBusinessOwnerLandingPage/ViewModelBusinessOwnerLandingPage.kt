@@ -270,4 +270,8 @@ class  ViewModelBusinessOwnerLandingPage : ViewModel() {
         _infoMessage.value = null
         _uiState.value = UiState.SUCCESS
     }
+
+    fun onProfileClicked() {
+        _navigateTo.value = NavigationDestination.PROFILE
+    }
 }

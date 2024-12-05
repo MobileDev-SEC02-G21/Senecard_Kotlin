@@ -2,6 +2,7 @@ package com.mobiles.senecard.model.cache
 
 import android.util.Log
 import com.google.firebase.firestore.toObject
+import com.mobiles.senecard.NetworkUtils
 import com.mobiles.senecard.model.FirebaseClient
 import com.mobiles.senecard.model.entities.User
 import kotlinx.coroutines.tasks.await
@@ -136,6 +137,39 @@ class CacheRepositoryUser private constructor() {
             UserResult.Failure("No user found in cache")
         }
     }
+
+    suspend fun updateUser(user: User): UserResult {
+        try {
+            val userId = user.id ?: return UserResult.Failure("User ID cannot be null.")
+
+            // Prepare the fields to update
+            val userMap = mapOf(
+                "name" to user.name,
+                "email" to user.email,
+                "phone" to user.phone,
+                "role" to user.role
+            )
+
+            // Ensure the network is available
+            if (!NetworkUtils.isInternetAvailable()) {
+                return UserResult.Failure("No internet connection. Update requires online access.")
+            }
+
+            // Update Firestore
+            firebase.firestore.collection("users")
+                .document(userId)
+                .update(userMap)
+                .await()
+
+            // Update cache only if Firestore update succeeds
+            userCache.put(userId, user)
+            return UserResult.Success(user, isFromCache = false)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return UserResult.Failure("Failed to update user: ${e.message}")
+        }
+    }
+
 
     suspend fun existsUserByEmail(email: String): UserResult {
         return try {

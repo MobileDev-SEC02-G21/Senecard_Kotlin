@@ -47,6 +47,30 @@ class RepositoryUser private constructor() {
         }
     }
 
+    suspend fun updateUser(user: User): Boolean {
+        try {
+            val userId = user.id ?: throw IllegalArgumentException("User ID cannot be null")
+
+            val userMap = mapOf(
+                "name" to user.name,
+                "email" to user.email,
+                "phone" to user.phone,
+                "role" to user.role
+            )
+
+            firebase.firestore.collection("users")
+                .document(userId)
+                .update(userMap)
+                .await()
+
+            return true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return false
+        }
+    }
+
+
     suspend fun getUserByEmail(email: String): User? {
         try {
             val querySnapshot = firebase.firestore.collection("users").whereEqualTo("email", email).get().await()
