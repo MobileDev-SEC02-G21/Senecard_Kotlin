@@ -5,10 +5,7 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.mobiles.senecard.R
-import com.mobiles.senecard.activityQRCodeUniandesMember.ViewModelQRCodeUniandesMember
-import com.mobiles.senecard.activityQRCodeUniandesMember.ViewModelQRCodeUniandesMemberFactory
 import com.mobiles.senecard.databinding.ActivityQrCodeUniandesMemberBinding
 import kotlinx.coroutines.launch
 
@@ -29,12 +26,10 @@ class ActivityQRCodeUniandesMember : AppCompatActivity() {
     }
 
     private fun setElements() {
-        // Configura el SwipeRefreshLayout
         binding.swipeRefresh.setOnRefreshListener {
             refreshQRCode()
         }
 
-        // Intenta cargar el QR desde el caché o lo genera
         lifecycleScope.launch {
             val currentUserId = viewModelQRCodeUniandesMember.getCurrentUserId()
 
@@ -47,7 +42,7 @@ class ActivityQRCodeUniandesMember : AppCompatActivity() {
             } else {
                 Toast.makeText(
                     this@ActivityQRCodeUniandesMember,
-                    "No se pudo obtener el ID del usuario",
+                    "Could not retrieve the user ID",
                     Toast.LENGTH_SHORT
                 ).show()
             }
@@ -65,12 +60,11 @@ class ActivityQRCodeUniandesMember : AppCompatActivity() {
             val currentUserId = viewModelQRCodeUniandesMember.getCurrentUserId()
 
             if (currentUserId != null) {
-                // Fuerza la regeneración del QR ignorando el caché
                 viewModelQRCodeUniandesMember.generateQRCode(currentUserId)
             } else {
                 Toast.makeText(
                     this@ActivityQRCodeUniandesMember,
-                    "No se pudo obtener el ID del usuario",
+                    "Could not retrieve the user ID",
                     Toast.LENGTH_SHORT
                 ).show()
             }

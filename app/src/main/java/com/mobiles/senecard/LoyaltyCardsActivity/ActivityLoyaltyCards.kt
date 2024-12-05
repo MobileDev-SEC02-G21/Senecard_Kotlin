@@ -85,7 +85,7 @@ class ActivityLoyaltyCards : AppCompatActivity() {
                     loadLocalData(currentUserId)
                 }
             } else {
-                showToast("No se pudo obtener el ID del usuario")
+                showToast("user id not founded")
             }
             swipeRefreshLayout.isRefreshing = false
         }
@@ -94,7 +94,7 @@ class ActivityLoyaltyCards : AppCompatActivity() {
     private suspend fun loadLocalData(currentUserId: String) {
         val (localUserId, localLoyaltyCards) = loadLoyaltyCardsFromPreferences()
         if (currentUserId == localUserId && localLoyaltyCards.isNotEmpty()) {
-            showToast("Mostrando datos desde almacenamiento local")
+            showToast("showing local storage data")
             displayLoyaltyCards(localLoyaltyCards)
         } else {
             handleEmptyLocalData(currentUserId != localUserId)
@@ -103,9 +103,9 @@ class ActivityLoyaltyCards : AppCompatActivity() {
 
     private fun handleEmptyLocalData(isMismatchedUser: Boolean) {
         if (isMismatchedUser) {
-            showToast("Los datos del almacenamiento local no corresponden al usuario actual")
+            showToast("The local storage data does not match the current user.")
         } else {
-            showToast("No hay datos en almacenamiento local")
+            showToast("No local storage data founded")
         }
         emptyView.visibility = View.VISIBLE
         recyclerView.visibility = View.GONE
@@ -150,7 +150,6 @@ class ActivityLoyaltyCards : AppCompatActivity() {
         return connectivityManager.activeNetworkInfo?.isConnected == true
     }
 
-    // El método displayLoyaltyCards se mantiene intacto según tu requerimiento
     private fun displayLoyaltyCards(loyaltyCards: List<LoyaltyCard>) {
         lifecycleScope.launch {
             val fetchedStores = RepositoryStore.instance.getAllStores()
@@ -164,11 +163,11 @@ class ActivityLoyaltyCards : AppCompatActivity() {
                 ).apply {
                     putExtra(
                         LoyaltyCardAdapter.EXTRA_STORE_NAME,
-                        fetchedStores[selectedCard.storeId]?.name ?: "Tienda Desconocida"
+                        fetchedStores[selectedCard.storeId]?.name ?: "Unknown store."
                     )
                     putExtra(
                         LoyaltyCardAdapter.EXTRA_STORE_ADDRESS,
-                        fetchedStores[selectedCard.storeId]?.address ?: "Dirección Desconocida"
+                        fetchedStores[selectedCard.storeId]?.address ?: "Unknown address"
                     )
                     putExtra(
                         LoyaltyCardAdapter.EXTRA_STORE_IMAGE,

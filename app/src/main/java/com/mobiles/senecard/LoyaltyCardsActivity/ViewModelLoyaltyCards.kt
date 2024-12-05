@@ -23,7 +23,6 @@ class ViewModelLoyaltyCards : ViewModel() {
     private val _loyaltyCards = MutableLiveData<List<LoyaltyCard>>()
     val loyaltyCards: LiveData<List<LoyaltyCard>> get() = _loyaltyCards
 
-    // Obtiene el ID del usuario desde Firebase o caché
     suspend fun getCurrentUserId(context: Context): String? {
         val firebaseUserId = withContext(Dispatchers.IO) {
             repositoryAuthentication.getCurrentUser()?.id
@@ -31,7 +30,6 @@ class ViewModelLoyaltyCards : ViewModel() {
         return firebaseUserId ?: UserSessionManager.getUserId(context)
     }
 
-    // Obtiene las tarjetas de lealtad para el usuario actual
     fun fetchLoyaltyCardsForUser(userId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -42,9 +40,9 @@ class ViewModelLoyaltyCards : ViewModel() {
                     }.thenByDescending { it.points }
                 )
                 _loyaltyCards.postValue(sortedCards)
-                Log.d(TAG, "Tarjetas de lealtad obtenidas para el usuario: ${sortedCards.size}")
+                Log.d(TAG, "getting loyalty cards by user: ${sortedCards.size}")
             } catch (e: Exception) {
-                Log.e(TAG, "Error obteniendo las tarjetas de lealtad: ${e.message}")
+                Log.e(TAG, "Error retrieving loyalty cards.: ${e.message}")
             }
         }
     }

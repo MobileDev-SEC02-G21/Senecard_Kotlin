@@ -13,7 +13,7 @@ import com.mobiles.senecard.model.entities.Store
 class LoyaltyCardAdapter(
     private var loyaltyCards: List<LoyaltyCard>,
     private var stores: Map<String, Store>,
-    private val onCardClick: (LoyaltyCard) -> Unit // Listener para manejar clics
+    private val onCardClick: (LoyaltyCard) -> Unit
 ) : RecyclerView.Adapter<LoyaltyCardAdapter.LoyaltyCardViewHolder>() {
 
     companion object {
@@ -24,13 +24,11 @@ class LoyaltyCardAdapter(
         const val EXTRA_MAX_POINTS = "MAX_POINTS"
     }
 
-    /**
-     * Permite actualizar los datos del adaptador dinámicamente sin necesidad de recrear la instancia.
-     */
+
     fun updateData(newLoyaltyCards: List<LoyaltyCard>, newStores: Map<String, Store>) {
         this.loyaltyCards = newLoyaltyCards
         this.stores = newStores
-        notifyDataSetChanged() // Notifica al adaptador para actualizar la lista.
+        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LoyaltyCardViewHolder {
@@ -43,7 +41,6 @@ class LoyaltyCardAdapter(
         val loyaltyCard = loyaltyCards[position]
         val store = stores[loyaltyCard.storeId]
 
-        // Cambiar el fondo según los puntos de la tarjeta
         holder.itemView.setBackgroundResource(
             if (loyaltyCard.points == loyaltyCard.maxPoints) R.drawable.border_yellow else R.drawable.border_gray
         )
@@ -57,30 +54,26 @@ class LoyaltyCardAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun render(loyaltyCard: LoyaltyCard, store: Store?) {
-            // Establecer el nombre de la tienda
             binding.storeNameTextView.text = store?.name ?: "Desconocido"
 
-            // Cargar la imagen de la tienda
             store?.image?.let {
                 Glide.with(binding.storeImageView.context)
                     .load(it)
-                    .placeholder(R.mipmap.icon_image_landscape) // Imagen de carga predeterminada
+                    .placeholder(R.mipmap.icon_image_landscape)
                     .into(binding.storeImageView)
             } ?: run {
                 binding.storeImageView.setImageResource(R.mipmap.icon_image_landscape)
             }
 
-            // Mostrar puntos (Lleno o "points/maxPoints")
             binding.loyaltyCardPointsText.text = if (loyaltyCard.points == loyaltyCard.maxPoints) {
-                "Lleno"
+                "full"
             } else {
                 "${loyaltyCard.points}/${loyaltyCard.maxPoints}"
             }
 
-            // Manejar clics en la tarjeta
             itemView.setOnClickListener {
                 Log.d("LoyaltyCardAdapter", "Card clicked: ${loyaltyCard.id}")
-                onCardClick(loyaltyCard) // Llamar al listener
+                onCardClick(loyaltyCard)
             }
         }
     }

@@ -11,7 +11,6 @@ class ViewModelLoyaltyCardDetail : ViewModel() {
     val backButtonClicked: LiveData<Boolean>
         get() = _backButtonClicked
 
-    // Método para manejar el clic en el botón de atrás
     fun onBackButtonClicked() {
         _backButtonClicked.value = true
     }
