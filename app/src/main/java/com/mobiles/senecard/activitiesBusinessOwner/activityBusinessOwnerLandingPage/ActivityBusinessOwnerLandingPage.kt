@@ -14,6 +14,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.mobiles.senecard.R
 import com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerQRScanner.ActivityBusinessOwnerQRScanner
 import com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerAdvertisements.ActivityBusinessOwnerAdvertisements
+import com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerProfile.ActivityBusinessOwnerProfile
 import com.mobiles.senecard.activitiesInitial.activityInitial.ActivityInitial
 import com.mobiles.senecard.databinding.ActivityBusinessOwnerLandingPageBinding
 
@@ -76,6 +77,10 @@ class ActivityBusinessOwnerLandingPage : AppCompatActivity() {
             viewModel.onAdvertisementsClicked()
         }
 
+        binding.profileButton.setOnClickListener {
+            viewModel.onProfileClicked()
+        }
+
         // Drawer layout handling
         binding.menuButton.setOnClickListener {
             binding.drawerLayout.openDrawer(binding.optionsMenu)
@@ -131,6 +136,7 @@ class ActivityBusinessOwnerLandingPage : AppCompatActivity() {
                     NavigationDestination.ADVERTISEMENTS -> navigateToActivity(ActivityBusinessOwnerAdvertisements::class.java)
                     NavigationDestination.QR_SCANNER -> navigateToActivity(ActivityBusinessOwnerQRScanner::class.java)
                     NavigationDestination.INITIAL -> redirectToInitial()
+                    NavigationDestination.PROFILE -> navigateToActivity(ActivityBusinessOwnerProfile::class.java)
                 }
                 viewModel.onNavigationHandled()
             }

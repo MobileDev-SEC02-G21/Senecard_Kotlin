@@ -1,6 +1,8 @@
 package com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerProfile
 
-enum class NavigationDestination {
-    EDIT_PROFILE,
-    LANDING_PAGE
+enum class UiState {
+    LOADING,
+    SUCCESS,
+    ERROR,
+    INFORMATION
 }

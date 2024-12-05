@@ -46,6 +46,45 @@ class RepositoryStore private constructor() {
         }
     }
 
+    suspend fun updateStore(store: Store): Boolean {
+        try {
+            val storeId = store.id ?: throw IllegalArgumentException("Store ID cannot be null")
+
+            val storeMap = mapOf(
+                "name" to store.name,
+                "address" to store.address,
+                "category" to store.category,
+                "image" to store.image,
+                "schedule" to store.schedule,
+                "rating" to store.rating
+            )
+
+            firebase.firestore.collection("stores")
+                .document(storeId)
+                .update(storeMap)
+                .await()
+
+            return true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return false
+        }
+    }
+
+    suspend fun uploadImage(imageUri: Uri): String {
+        try {
+            val imageName = UUID.randomUUID().toString() + ".jpg"
+            val imageRef = firebase.storage.child("stores_images/$imageName")
+
+            val uploadTask = imageRef.putFile(imageUri).await()
+            return uploadTask.storage.downloadUrl.await().toString()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            throw e
+        }
+    }
+
+
     suspend fun getAllStores(): List<Store> {
         val storesList = mutableListOf<Store>()
 

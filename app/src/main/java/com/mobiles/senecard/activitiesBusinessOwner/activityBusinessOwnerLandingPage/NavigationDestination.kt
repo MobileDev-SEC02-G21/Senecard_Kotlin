@@ -3,5 +3,6 @@ package com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerLandin
 enum class NavigationDestination {
     ADVERTISEMENTS,
     QR_SCANNER,
-    INITIAL
+    INITIAL,
+    PROFILE
 }
