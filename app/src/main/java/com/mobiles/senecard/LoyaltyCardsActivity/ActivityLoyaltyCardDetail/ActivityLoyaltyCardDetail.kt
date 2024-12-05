@@ -24,8 +24,8 @@ class ActivityLoyaltyCardDetail : AppCompatActivity() {
         setupBackButton()
         observeViewModel()
 
-        val storeName = intent.getStringExtra(EXTRA_STORE_NAME) ?: "Tienda Desconocida"
-        val storeAddress = intent.getStringExtra(LoyaltyCardAdapter.EXTRA_STORE_ADDRESS) ?: "Dirección Desconocida"
+        val storeName = intent.getStringExtra(EXTRA_STORE_NAME) ?: "Unknown store."
+        val storeAddress = intent.getStringExtra(LoyaltyCardAdapter.EXTRA_STORE_ADDRESS) ?: "Unknown address"
         val storeImage = intent.getStringExtra(EXTRA_STORE_IMAGE)
         val points = intent.getIntExtra(EXTRA_POINTS, 0)
         val maxPoints = intent.getIntExtra(EXTRA_MAX_POINTS, 0)
@@ -41,15 +41,15 @@ class ActivityLoyaltyCardDetail : AppCompatActivity() {
 
     private fun setupBackButton() {
         findViewById<ImageButton>(R.id.back_button).setOnClickListener {
-            setResult(RESULT_OK) // Indica que se cambió algo
-            finish() // Termina la actividad y vuelve a la anterior
+            setResult(RESULT_OK)
+            finish()
         }
     }
 
     private fun observeViewModel() {
         viewModel.backButtonClicked.observe(this) { clicked ->
             if (clicked) {
-                setResult(RESULT_OK) // Establece el resultado
+                setResult(RESULT_OK)
                 finish()
             }
         }
@@ -69,7 +69,7 @@ class ActivityLoyaltyCardDetail : AppCompatActivity() {
         }
 
         val remainingStamps = maxPoints - points
-        findViewById<TextView>(R.id.stamps_needed_text_view).text = "Sellos faltantes: $remainingStamps"
+        findViewById<TextView>(R.id.stamps_needed_text_view).text = "Missing stamps.: $remainingStamps"
 
         Log.d("ActivityLoyaltyCardDetail", "Remaining Stamps: $remainingStamps")
     }
@@ -81,7 +81,6 @@ class ActivityLoyaltyCardDetail : AppCompatActivity() {
         stampsContainer1.removeAllViews()
         stampsContainer2.removeAllViews()
 
-        // Limitar el ciclo hasta el valor mínimo entre `points` y `maxPoints`
         for (i in 1..minOf(points, maxPoints)) {
             val stampImageView = ImageView(this).apply {
                 layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)

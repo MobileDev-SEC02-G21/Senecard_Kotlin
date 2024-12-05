@@ -24,29 +24,27 @@ class ViewModelQRCodeUniandesMember(private val context: Context) : ViewModel() 
     private val _error = MutableLiveData<String?>()
     val error: LiveData<String?> get() = _error
 
-    // Obtiene el ID del usuario actual de Firebase o el caché si no hay conexión
     suspend fun getCurrentUserId(): String? {
         val firebaseUserId = repositoryAuth.getCurrentUser()?.id
 
         return if (firebaseUserId != null) {
-            UserSessionManager.saveUserId(context, firebaseUserId) // Guarda el ID en caché para uso offline
+            UserSessionManager.saveUserId(context, firebaseUserId)
             firebaseUserId
         } else {
-            UserSessionManager.getUserId(context) // Carga el ID desde el caché si no hay conexión
+            UserSessionManager.getUserId(context)
         }
     }
 
-    // Genera el QR con el ID del usuario proporcionado
     fun generateQRCode(userId: String) {
         viewModelScope.launch {
             try {
                 val barcodeEncoder = BarcodeEncoder()
                 val bitmap = barcodeEncoder.encodeBitmap(userId, BarcodeFormat.QR_CODE, 750, 750)
                 _qrCodeBitmap.value = bitmap
-                saveQRCodeToCache(bitmap, userId) // Guarda el QR generado en caché
+                saveQRCodeToCache(bitmap, userId)
             } catch (e: Exception) {
                 e.printStackTrace()
-                _error.value = "Error al generar el código QR"
+                _error.value = "Error generating the QR code."
             }
         }
     }
