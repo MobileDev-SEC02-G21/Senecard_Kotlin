@@ -2,5 +2,6 @@ package com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerProfil
 
 enum class NavigationDestination {
     EDIT_PROFILE,
-    LANDING_PAGE
+    LANDING_PAGE,
+    OFFLINE_WARNING
 }

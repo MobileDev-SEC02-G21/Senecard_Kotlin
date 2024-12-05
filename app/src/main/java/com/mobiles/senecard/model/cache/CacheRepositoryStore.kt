@@ -62,4 +62,51 @@ class CacheRepositoryStore private constructor() {
         return StoreResult.Failure("Failed to fetch store for Business Owner ID: $businessOwnerId from both network and cache.")
     }
 
+    suspend fun updateStore(store: Store): StoreResult {
+        try {
+            val storeId = store.id ?: return StoreResult.Failure("Store ID cannot be null.")
+
+            // Prepare the fields to update
+            val storeMap = mapOf(
+                "name" to store.name,
+                "address" to store.address,
+                "category" to store.category,
+                "image" to store.image,
+                "schedule" to store.schedule,
+                "rating" to store.rating
+            )
+
+            // Ensure the network is available
+            if (!NetworkUtils.isInternetAvailable()) {
+                return StoreResult.Failure("No internet connection. Update requires online access.")
+            }
+
+            // Update Firestore
+            firebase.firestore.collection("stores")
+                .document(storeId)
+                .update(storeMap)
+                .await()
+
+            // Update cache only if Firestore update succeeds
+            storeCache.put(storeId, store)
+            return StoreResult.Success(listOf(store), isFromCache = false)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return StoreResult.Failure("Failed to update store: ${e.message}")
+        }
+    }
+
+
+    suspend fun uploadImage(imageUri: Uri): String {
+        try {
+            val imageName = UUID.randomUUID().toString() + ".jpg"
+            val imageRef = firebase.storage.child("stores_images/$imageName")
+
+            val uploadTask = imageRef.putFile(imageUri).await()
+            return uploadTask.storage.downloadUrl.await().toString()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            throw e
+        }
+    }
 }

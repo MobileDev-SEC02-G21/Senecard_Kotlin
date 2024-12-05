@@ -140,28 +140,6 @@
             android:fontFamily="@font/sen_regular"
             android:layout_marginTop="4dp" />
 
-        <!-- User Email -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="YOUR EMAIL"
-            android:textSize="12sp"
-            android:fontFamily="@font/sen_bold"
-            android:textColor="@color/text"
-            android:layout_marginTop="16dp" />
-
-        <EditText
-            android:id="@+id/userEmailEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Enter your email"
-            android:padding="12dp"
-            android:background="@drawable/rounded_background"
-            android:backgroundTint="@color/lightgray"
-            android:textColor="@color/text"
-            android:fontFamily="@font/sen_regular"
-            android:layout_marginTop="4dp" />
-
         <!-- User Phone -->
         <TextView
             android:layout_width="wrap_content"

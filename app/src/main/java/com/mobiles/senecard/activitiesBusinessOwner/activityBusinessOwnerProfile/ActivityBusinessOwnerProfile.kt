@@ -2,6 +2,7 @@ package com.mobiles.senecard.activitiesBusinessOwner.activityBusinessOwnerProfil
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
@@ -35,8 +36,26 @@ class ActivityBusinessOwnerProfile : AppCompatActivity() {
                 when (it) {
                     NavigationDestination.EDIT_PROFILE -> navigateToActivity(ActivityBusinessOwnerEditProfile::class.java)
                     NavigationDestination.LANDING_PAGE -> navigateToActivity(ActivityBusinessOwnerLandingPage::class.java)
+                    NavigationDestination.OFFLINE_WARNING -> {
+                        Toast.makeText(
+                            this,
+                            "Edit profile is an online-only feature. Please connect to the internet.",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
                 }
                 viewModel.onNavigationHandled()
+            }
+        }
+
+        // Observe offline state
+        viewModel.isOffline.observe(this) { isOffline ->
+            if (isOffline) {
+                Toast.makeText(
+                    this,
+                    "You are viewing offline data. Some information may not be up-to-date.",
+                    Toast.LENGTH_LONG
+                ).show()
             }
         }
 

@@ -5,7 +5,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mobiles.senecard.model.RepositoryAuthentication
-import com.mobiles.senecard.model.RepositoryStore
+import com.mobiles.senecard.model.cache.CacheRepositoryUser
+import com.mobiles.senecard.model.cache.CacheRepositoryStore
+import com.mobiles.senecard.model.cache.StoreResult
+import com.mobiles.senecard.model.cache.UserResult
 import com.mobiles.senecard.model.entities.Store
 import com.mobiles.senecard.model.entities.User
 import kotlinx.coroutines.async
@@ -14,57 +17,79 @@ import kotlinx.coroutines.launch
 
 class ViewModelBusinessOwnerProfile : ViewModel() {
 
-    // Repositories
     private val repositoryAuthentication = RepositoryAuthentication.instance
-    private val repositoryStore = RepositoryStore.instance
+    private val cacheRepositoryUser = CacheRepositoryUser.instance
+    private val repositoryStore = CacheRepositoryStore.instance
 
-    // LiveData for user and store information
     private val _user = MutableLiveData<User?>()
     val user: LiveData<User?> get() = _user
 
     private val _store = MutableLiveData<Store?>()
     val store: LiveData<Store?> get() = _store
 
-    // LiveData for navigation destination
+    private val _isOffline = MutableLiveData<Boolean>()
+    val isOffline: LiveData<Boolean> get() = _isOffline
+
     private val _navigateTo = MutableLiveData<NavigationDestination?>()
     val navigateTo: LiveData<NavigationDestination?> get() = _navigateTo
 
-    // Function to fetch user and store data concurrently
     fun fetchProfileData() {
         viewModelScope.launch {
             try {
-                // Concurrently fetch user and store data
-                val userDeferred = async { repositoryAuthentication.getCurrentUser() }
-                val storeDeferred = async {
-                    val user = repositoryAuthentication.getCurrentUser()
-                    user?.id?.let { repositoryStore.getStoreByBusinessOwnerId(it) }
+                // Fetch user ID from the authentication repository
+                val currentUser = repositoryAuthentication.getCurrentUser()
+                val userId = currentUser?.id
+
+                if (userId != null) {
+                    // Fetch user data from CacheRepositoryUser
+                    val userDeferred = async { cacheRepositoryUser.getUserById(userId) }
+                    val storeDeferred = async { repositoryStore.getStoreByBusinessOwnerId(userId) }
+
+                    val (userResult, storeResult) = listOf(userDeferred, storeDeferred).awaitAll()
+
+                    // Handle user data
+                    when (userResult) {
+                        is UserResult.Success -> {
+                            _user.postValue(userResult.user)
+                            _isOffline.postValue(userResult.isFromCache)
+                        }
+                        is UserResult.Failure -> {
+                            _user.postValue(null)
+                            _isOffline.postValue(true)
+                        }
+                    }
+
+                    // Handle store data
+                    when (storeResult) {
+                        is StoreResult.Success -> _store.postValue(storeResult.stores.firstOrNull())
+                        is StoreResult.Failure -> _store.postValue(null)
+                    }
+                } else {
+                    _user.postValue(null)
+                    _store.postValue(null)
+                    _isOffline.postValue(true)
                 }
-
-                // Wait for both operations to complete
-                val (user, store) = listOf(userDeferred, storeDeferred).awaitAll()
-
-                // Post results to LiveData
-                _user.postValue(user as? User)
-                _store.postValue(store as? Store)
             } catch (e: Exception) {
-                // Handle any errors gracefully (e.g., logging or setting nulls)
+                e.printStackTrace()
                 _user.postValue(null)
                 _store.postValue(null)
+                _isOffline.postValue(true)
             }
         }
     }
 
-    // Function called when the Edit button is clicked
     fun onEditButtonClicked() {
-        _navigateTo.value = NavigationDestination.EDIT_PROFILE
+        if (_isOffline.value == true) {
+            _navigateTo.postValue(NavigationDestination.OFFLINE_WARNING)
+        } else {
+            _navigateTo.postValue(NavigationDestination.EDIT_PROFILE)
+        }
     }
 
-    // Function called when the Back button is clicked
     fun onBackButtonClicked() {
-        _navigateTo.value = NavigationDestination.LANDING_PAGE
+        _navigateTo.postValue(NavigationDestination.LANDING_PAGE)
     }
 
-    // Function to reset the navigation event after it's handled
     fun onNavigationHandled() {
         _navigateTo.value = null
     }

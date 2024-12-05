@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mobiles.senecard.NetworkUtils
 import com.mobiles.senecard.model.RepositoryAuthentication
 import com.mobiles.senecard.model.RepositoryStore
 import com.mobiles.senecard.model.RepositoryUser
@@ -30,9 +31,15 @@ class ViewModelBusinessOwnerEditProfile : ViewModel() {
     private val _saveStatus = MutableLiveData<Boolean>()
     val saveStatus: LiveData<Boolean> get() = _saveStatus
 
+    private val _isOffline = MutableLiveData<Boolean>()
+    val isOffline: LiveData<Boolean> get() = _isOffline
+
     fun fetchProfileData() {
         viewModelScope.launch {
             try {
+                val isOnline = NetworkUtils.isInternetAvailable()
+                _isOffline.postValue(!isOnline)
+
                 // Fetch user and store data concurrently
                 val userDeferred = async { repositoryAuthentication.getCurrentUser() }
                 val storeDeferred = async {
@@ -55,71 +62,50 @@ class ViewModelBusinessOwnerEditProfile : ViewModel() {
 
     fun saveProfileData(user: User, store: Store, imageUri: Uri?) {
         viewModelScope.launch {
+            if (!NetworkUtils.isInternetAvailable()) {
+                _saveStatus.postValue(false)
+                return@launch
+            }
+
             try {
-                Log.d("ViewModel", "Starting saveProfileData process.")
-
-                // Retrieve the full current user and store for missing fields
                 val currentUser = _user.value
-                val currentStore = _store.value
-
-                // Preserve non-changing fields for user
                 val updatedUser = User(
-                    id = currentUser?.id ?: user.id, // Ensure the ID is set
+                    id = currentUser?.id ?: user.id,
                     name = user.name,
-                    email = user.email,
+                    email = currentUser?.email, // Preserve existing email
                     phone = user.phone,
-                    role = currentUser?.role // Preserve the role
+                    role = currentUser?.role ?: user.role
                 )
 
-                // Preserve non-changing fields for store
+                val currentStore = _store.value
                 val updatedStore = Store(
-                    id = currentStore?.id ?: store.id, // Ensure the ID is set
-                    businessOwnerId = currentStore?.businessOwnerId, // Preserve the business owner ID
+                    id = currentStore?.id ?: store.id,
+                    businessOwnerId = currentStore?.businessOwnerId,
                     name = store.name,
                     address = store.address,
-                    category = currentStore?.category, // Preserve the category
-                    image = currentStore?.image, // Preserve the existing image if no new one is provided
-                    schedule = currentStore?.schedule, // Preserve the schedule
-                    rating = currentStore?.rating // Preserve the rating
+                    category = currentStore?.category,
+                    image = currentStore?.image,
+                    schedule = currentStore?.schedule,
+                    rating = currentStore?.rating
                 )
 
-                // Concurrently handle user and store updates
-                val userUpdateDeferred = async {
-                    Log.d("ViewModel", "Updating user data: $updatedUser")
-                    repositoryUser.updateUser(updatedUser).also {
-                        Log.d("ViewModel", "User update result: $it")
-                    }
+                if (imageUri != null) {
+                    val imageUrl = repositoryStore.uploadImage(imageUri)
+                    updatedStore.image = imageUrl
                 }
 
-                val storeUpdateDeferred = async {
-                    Log.d("ViewModel", "Updating store data: $updatedStore")
-                    if (imageUri != null) {
-                        Log.d("ViewModel", "Uploading new image: $imageUri")
-                        val imageUrl = repositoryStore.uploadImage(imageUri)
-                        updatedStore.image = imageUrl
-                        Log.d("ViewModel", "Image uploaded. URL: $imageUrl")
-                    }
-                    repositoryStore.updateStore(updatedStore).also {
-                        Log.d("ViewModel", "Store update result: $it")
-                    }
-                }
+                val userUpdateDeferred = async { repositoryUser.updateUser(updatedUser) }
+                val storeUpdateDeferred = async { repositoryStore.updateStore(updatedStore) }
 
-                // Wait for both operations to complete
                 val (userUpdateResult, storeUpdateResult) = listOf(userUpdateDeferred, storeUpdateDeferred).awaitAll()
 
-                // Post success status if both updates were successful
                 val success = userUpdateResult == true && storeUpdateResult == true
                 _saveStatus.postValue(success)
-
-                if (success) {
-                    Log.d("ViewModel", "Profile save successful.")
-                } else {
-                    Log.e("ViewModel", "Profile save failed.")
-                }
             } catch (e: Exception) {
-                Log.e("ViewModel", "Error during saveProfileData: ${e.message}", e)
+                e.printStackTrace()
                 _saveStatus.postValue(false)
             }
         }
     }
+
 }
